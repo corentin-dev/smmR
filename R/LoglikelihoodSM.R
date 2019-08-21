@@ -7,7 +7,7 @@
 ## distr: matrix of disributions
 ## TypeSojournTime: characer "fij", "fi", "fj" or "f"
 LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, TypeSojournTime){
-  
+
   lois = as.vector(distr)
   ## length of the state space
   S = length(E)
@@ -18,19 +18,19 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
   if( (distr == "NP" && is.null(laws)) || (length(distr) == 1 && distr != "NP" && !is.null(laws)) ){
     stop("The parameter \"param\" must be used with the parameter \"distr\"")
   }
-  
+
   if ( (is.matrix(distr) || is.array(distr) || distr != "NP") && is.null(param) ){
     stop("The parameter \"param\" must be used with the parameter \"distr\"")
   }
-  
+
   if( is.null(param) && is.null(laws) ){
     stop("One of the two parameters \"param\" (with distr) or \"laws\" (without distr) should be given")
   }
-  
+
   if(!is.list(seq)){
     stop("The parameter \"seq\" should be a list")
   }
-  
+
   ## All sequences 
   nbSeq<-length(seq)
   Kmax = 0
@@ -49,7 +49,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
     L[[k]]<-T[[k]] - c(1,T[[k]][-length(T[[k]]-1)]) ## sojourn time
     Kmax <- max(Kmax, max(L[[k]])) 
   }
-  
+
   ## J: list
   ## L: list
   ## S: alphabet size
@@ -64,7 +64,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
   Nk = res$LNk
   Nstarti = res$Nstarti
   Nstart = res$NStart
-  
+
   LV = list()
   for (k in 1:nbSeq) {
     ## Comptuation of log-likelihood terms
@@ -80,7 +80,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
       j = j + 1
     }
     Nuvk.vect = Nuvk[[k]][-diag]
-    
+
     if( "NP" %in% lois ){
       fij = laws
       if(TypeSojournTime == "fij"){
@@ -88,7 +88,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         Nuvk0 = Nuvk.vect[-which(is.infinite(fuv.vect))]
         fuv0 = fuv.vect[-which(is.infinite(Nuvk.vect))]
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk0*log(fuv0))
-        
+
       }else if(TypeSojournTime == "fi"){
         ## Get only the first non-null element of each matrix
         FTEST = apply(X = fij, MARGIN = 2, FUN = unique)
@@ -97,7 +97,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         Nuvk0 = Nuvk.vect[-which(is.infinite(fuv.vect))]
         fuv0 = fuv.vect[-which(is.infinite(Nuvk.vect))]
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk0*log(fuv0))
-        
+
       }else if(TypeSojournTime == "fj"){
         FTEST = apply(X = fij, MARGIN = 1, FUN = unique)
         FT = apply(FTEST, 1, unique)
@@ -105,7 +105,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         Nuvk0 = Nuvk.vect[-which(is.infinite(fuv.vect))]
         fuv0 = fuv.vect[-which(is.infinite(Nuvk.vect))]
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk0*log(fuv0))
-        
+
       }else if(TypeSojournTime == "f"){
         FTEST = apply(X = fij, MARGIN = 3, FUN = unique)
         FT = apply(FTEST, 2, unique)
@@ -113,13 +113,13 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         Nuvk0 = Nuvk.vect[-which(is.infinite(fuv.vect))]
         fuv0 = fuv.vect[-which(is.infinite(Nuvk.vect))]
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk0*log(fuv0))
-        
+
       }else{
         stop("TypeSojournTime must be equal to \"fij\", \"fi\", \"fj\" or \"f\" ")
       }
-      
+
     }else{
-      
+
       if(TypeSojournTime == "fij"){
         qfij = .kernel_param_fij(distr = distr, param = param, Kmax = Kmax, pij = Ptrans, S = S)
         fuv = qfij$f
@@ -128,7 +128,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         fuv.vect = fuv.vect[-which(is.infinite(log(fuv.vect)))] 
         ## Log-likelihood
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk.vect*log(fuv.vect))
-        
+
       }else if(TypeSojournTime == "fi"){
         qfi.j = .kernel_param_fi(distr = distr, param = param, Kmax = Kmax, pij = Ptrans, S = S)
         fu.v = qfij$f
@@ -137,7 +137,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         fuv.vect = fuv.vect[-which(is.infinite(log(fuv.vect)))] 
         ## Log-likelihood
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk.vect*log(fuv.vect))
-        
+
       }else if( TypeSojournTime == "fj" ){
         qfi.j = .kernel_param_fj(distr = distr, param = param, Kmax = Kmax, pij = Ptrans, S = S)
         fu.v = qfij$f
@@ -146,8 +146,8 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
         fuv.vect = fuv.vect[-which(is.infinite(log(fuv.vect)))] 
         ## Log-likelihood
         LV[[k]] = sum(Nstart[[k]]*log(mu)) + sum(Nuv.vect*log(puv.vect)) + sum(Nuvk.vect*log(fuv.vect))
-        
-        
+
+
       }else if( TypeSojournTime == "f" ){
         qf = .kernel_param_f(distr = distr, param = param, Kmax = Kmax, pij = Ptrans, S = S)
         fu.v = qf$f
@@ -159,10 +159,10 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
       }else{
         stop("TypeSojournTime must be equal to \"fij\", \"fi\", \"fj\" or \"f\" ")
       }
-      
+
     }  
   }
-  
-  
+
+
   return (list(L = LV, Kmax = Kmax))
 }

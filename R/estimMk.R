@@ -1,19 +1,19 @@
 estimMk<-function(file = NULL, seq = NULL, E, k){  
-  
+
   #require(seqinr)
-  
+
   ## get the sequences from the given file
   if(!is.null(file)){
     fasta = read.fasta(file = file)
     seq = getSequence(fasta)
     attr = getAnnot(fasta)
   }
-  
+
   ## verify the existence of the sequence
   if( !is.list(seq) ){
     stop("The parameter \"seq\" should be a list")
   }
-  
+
   ## get the state space size
   S = length(E)
   vect.seq<-NULL
@@ -32,7 +32,7 @@ estimMk<-function(file = NULL, seq = NULL, E, k){
     ## get the state at position 1 for each sequence
     SeqP1 = c(SeqP1, vect.seq[1])
   }
-  
+
 
   ## Verify the existence of all transitions
   if( length(which(Nij == 0)) > 0 ){
@@ -43,11 +43,11 @@ estimMk<-function(file = NULL, seq = NULL, E, k){
   if( length(which(Ni == 0)) > 0 ){
     warning("missing observed states")
   }
-  
+
   ## Compute the transition matrix
   Ptrans<-Nij/(Ni)
   Ptrans[which(Ni == 0),] = rep(0, S)
-  
+
   if (nbSeq > 1 ){
     if (k == 1){
       init = .stationnary.law(Pest = Ptrans) ## !!!Warning if k > 1
