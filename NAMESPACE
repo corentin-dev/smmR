@@ -1,0 +1,7 @@
+exportPattern("^[[:alpha:]]+")
+
+import(seqinr)
+import(DiscreteWeibull)
+importFrom("stats", "constrOptim", "dgeom", "dnbinom", "dpois",
+             "dunif", "optim", "pgeom", "pnbinom", "ppois", "punif",
+             "rgeom", "rnbinom", "rpois")
