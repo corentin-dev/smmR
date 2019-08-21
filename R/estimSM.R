@@ -29,10 +29,10 @@ estimSM = function(file = NULL, seq = NULL, E, TypeSojournTime = "fij", distr = 
         
       }
     }else{
-      .estim.plusTraj(seq = seq, E, TypeSojournTime = TypeSojournTime, distr = distr, cens.end = cens.beg, cens.beg = cens.beg)
+      .estim.plusTraj(seq = seq, E, TypeSojournTime = TypeSojournTime, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
     }
   }else{ 
-    .estim.plusTraj(seq = seq, E, TypeSojournTime = TypeSojournTime, distr = distr, cens.end = cens.beg, cens.beg = cens.beg)
+    .estim.plusTraj(seq = seq, E, TypeSojournTime = TypeSojournTime, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
   }
   
 }

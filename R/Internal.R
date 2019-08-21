@@ -1,4 +1,3 @@
-
 ## __________________________________________________________
 ##
 ## .code
@@ -1423,7 +1422,7 @@
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
                                  ddw,
-                                 dunif(1:Kmax, min = 0, max = par[u[1]])), nrow = Kmax)
+                                 dunif(1:Kmax, min = 0, max = par[u[1]])), nrow = 5)
                   
                   
                   # print(MGM)
@@ -1569,7 +1568,7 @@
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
                                  ddw, 
-                                 dunif(1:Kmax, min = 0, max = par[S*(S-2)+u[1]])), nrow = Kmax)
+                                 dunif(1:Kmax, min = 0, max = par[S*(S-2)+u[1]])), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -1774,7 +1773,7 @@
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
                                  ddw,
-                                 dunif(1:Kmax, min = 0, max = par[(S*(S-2)+u[1])])), nrow = Kmax)
+                                 dunif(1:Kmax, min = 0, max = par[(S*(S-2)+u[1])])), nrow = 5)
                   
                   
                   # print(MGM)
@@ -1932,7 +1931,7 @@
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
                                  ddw,
-                                 dunif(1:Kmax, min = 0, max = par[S*(S-2)+u[1]])), nrow = Kmax)
+                                 dunif(1:Kmax, min = 0, max = par[S*(S-2)+u[1]])), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -2105,7 +2104,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -2237,7 +2236,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -2436,7 +2435,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -2600,7 +2599,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
                   if("pois" %in% lois){
@@ -2814,7 +2813,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -2982,7 +2981,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -3187,7 +3186,7 @@
                 MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                               ddw), nrow = Kmax)
+                               ddw), nrow = 5)
                 
                 
                 # print(MGM)
@@ -3326,7 +3325,7 @@
                 MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                               ddw), nrow = Kmax)
+                               ddw), nrow = 5)
                 
                 # print(MGM)
                 fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -3535,7 +3534,7 @@
                 MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[p[1]]), 
                                dgeom(0:(Kmax-1), prob = par[g[1]]),
                                dnbinom(0:(Kmax-1), size = par[nb[1]], mu = par[nb[2]]), 
-                               ddw), nrow = Kmax)
+                               ddw), nrow = 5)
                 
                 
                 # print(MGM)
@@ -3695,7 +3694,7 @@
                 MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                               ddw), nrow = Kmax)
+                               ddw), nrow = 5)
                 # print(MGM)
                 fuv = matrix(nrow = S-1, ncol = Kmax)
                 if("pois" %in% lois){
@@ -3903,7 +3902,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[p[1]]), 
                                  dgeom(0:(Kmax-1), prob = par[g[1]]),
                                  dnbinom(0:(Kmax-1), size = par[nb[1]], mu = par[nb[2]]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -4067,7 +4066,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -4278,7 +4277,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[p[1]]), 
                                  dgeom(0:(Kmax-1), prob = par[g[1]]),
                                  dnbinom(0:(Kmax-1), size = par[nb[1]], mu = par[nb[2]]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -4446,7 +4445,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
@@ -4657,7 +4656,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[p[1]]), 
                                  dgeom(0:(Kmax-1), prob = par[g[1]]),
                                  dnbinom(0:(Kmax-1), size = par[nb[1]], mu = par[nb[2]]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   
                   
                   # print(MGM)
@@ -4829,7 +4828,7 @@
                   MGM = matrix(c(dpois(0:(Kmax-1), lambda = par[(S*(S-2)+p[1])]), 
                                  dgeom(0:(Kmax-1), prob = par[(S*(S-2)+g[1])]),
                                  dnbinom(0:(Kmax-1), size = par[(S*(S-2)+nb[1])], mu = par[(S*(S-2)+nb[2])]), 
-                                 ddw), nrow = Kmax)
+                                 ddw), nrow = 5)
                   # print(MGM)
                   fuv = matrix(nrow = S-1, ncol = Kmax)
                   if("pois" %in% lois){
