@@ -3,7 +3,7 @@ Type: Package
 Title: Simulation and Estimation of Multi-State Discrete-Time
         Semi-Markov and Markov Models
 Version: 1.0.2
-Date: 2017-12-19
+Date: 2020-01-24
 Depends: seqinr, DiscreteWeibull
 Author: Vlad Stefan Barbu, Caroline Berard, Dominique Cellier, Mathilde Sautreuil and Nicolas Vergne
 Maintainer: Nicolas Vergne <nicolas.vergne@univ-rouen.fr>
@@ -16,4 +16,5 @@ License: GPL
 VignetteBuilder: utils
 Suggests: utils
 NeedsCompilation: no
-Packaged: 2017-12-19 10:49:37 UTC; vergne
+Packaged: 2020-01-24 14:04:32 UTC; vergnnic
+Repository: CRAN

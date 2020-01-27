@@ -1,0 +1,12 @@
+image: rocker/rstudio  
+test:  
+  script:
+    - apt update
+    - apt install -y zlib1g-dev libjpeg-dev
+    - R -e 'install.packages(c("DiscreteWeibull","seqinr","qpdf"))'
+    - R CMD build --no-build-vignettes --no-manual SMM
+    - mv SMM*.tar.gz SMM.tar.gz
+    - R CMD check --as-cran SMM --no-build-vignettes --no-manual
+  artifacts:
+    paths:
+      - SMM.tar.gz

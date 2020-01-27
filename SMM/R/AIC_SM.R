@@ -1,16 +1,25 @@
-BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, TypeSojournTime){
+AIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, TypeSojournTime){
 
   S = length(E)
   if(dim(Ptrans)[1] != S || dim(Ptrans)[2] != S){
     stop("The size of the matrix Ptrans must be equal to SxS with S = length(E)")  
   }
 
-  if( (distr == "NP" && is.null(laws)) || (length(distr) == 1 && distr != "NP" && !is.null(laws)) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## parametric case
+  if(is.matrix(distr) || is.array(distr) || distr != "NP"){
+    nonparametric=FALSE
+    if(length(distr) == 1 && !is.null(laws)){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
+    if(is.null(param)){
+    }
   }
-
-  if ( (is.matrix(distr) || is.array(distr) || distr != "NP") && is.null(param) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## non parametric case
+  else{
+    nonparametric=TRUE
+    if( nonparametric && is.null(laws) ){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
   }
 
   if( is.null(param) && is.null(laws) ){
@@ -31,7 +40,7 @@ BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, T
   Compte = 0 
   if ( type == 1 ){
 
-    if( length(distr) == 1 && distr == "NP" ){
+    if( length(distr) == 1 && nonparametric ){
       Kmax = dim(laws)[3]
       Kpar = (Kmax-1)*S*(S-2)
     }else{
@@ -58,7 +67,7 @@ BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, T
 
   }else if ( type == 2 ){
 
-    if( length(distr) == 1 && distr == "NP" ){
+    if( length(distr) == 1 && nonparametric ){
       Kmax = dim(laws)[3]
       Kpar = (Kmax-1)*S*(S-2)
     }else{
@@ -84,7 +93,7 @@ BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, T
 
   }else if ( type == 3 ){
 
-    if( length(distr) == 1 && distr == "NP" ){
+    if( length(distr) == 1 && nonparametric ){
       Kmax = dim(laws)[3]
       Kpar = (Kmax-1)*S*(S-2)
     }else{
@@ -110,7 +119,7 @@ BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, T
 
   }else if ( type == 4 ){
 
-    if( length(distr) == 1 && distr == "NP" ){
+    if( length(distr) == 1 && nonparametric ){
       Kmax = dim(laws)[3]
       Kpar = (Kmax-1)*S*(S-2)
     }else{
@@ -138,18 +147,17 @@ BIC_SM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws = NULL, T
     stop("The parameter \"TypeSojournTime\" must be one of \"fij\", \"fi\", \"fj\" et \"f\".")    
   }
 
-  ## Computation of the log-likelihood for all sequences
+  ## Computation of the log-likelihood for all  sequences 
   res = LoglikelihoodSM(seq = seq, E = E, mu = mu, Ptrans = Ptrans, distr = distr, param = param, 
                         laws = laws, TypeSojournTime = TypeSojournTime)
   LV = res$L
 
-  BIC.list = list()
+  AIC.list = list()
   for (k in 1:nbSeq) {
-    n = length(seq[[k]])
-    BIC.list[[k]] = -2*LV[[k]] + log(n)*Kpar 
+    AIC.list[[k]] = -2*LV[[k]] + 2*Kpar 
   } 
 
 
-  return(BIC = BIC.list)
+  return(AIC = AIC.list)
 
 }

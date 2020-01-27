@@ -1,8 +1,8 @@
-AIC_Mk = function(seq, E, mu, Ptrans, k){
+BIC_Mk = function(seq, E, mu, Ptrans, k){
 
   S = length(E)
-  if(dim(Ptrans)[1] != S || dim(Ptrans)[2] != S){
-    stop("The size of the matrix Ptrans must be equal to SxS with S = length(E)")  
+  if(dim(Ptrans)[1] != S ^ k || dim(Ptrans)[2] != S){
+    stop("The size of the matrix Ptrans must be equal to SxS with S = length(E)")
   }
 
   if( !is.matrix(Ptrans) ){
@@ -18,7 +18,6 @@ AIC_Mk = function(seq, E, mu, Ptrans, k){
   if(!is.list(seq)){
     stop("The parameter \"seq\" should be a list")
   }
-
   ## Kpar: number of parameters of the model
   Kpar = (S-1)*S^k
 
@@ -27,11 +26,12 @@ AIC_Mk = function(seq, E, mu, Ptrans, k){
   LV = res$L
   nbSeq = length(seq)
 
-  AIC.list = list()
+  BIC.list = list()
   for (k in 1:nbSeq) {
-    AIC.list[[k]] = -2*LV[[k]] + 2*Kpar 
+    n = length(seq[[k]])
+    BIC.list[[k]] = -2*LV[[k]] + log(n)*Kpar 
   } 
 
 
-  return(AIC = AIC.list)
+  return(BIC = BIC.list)
 }

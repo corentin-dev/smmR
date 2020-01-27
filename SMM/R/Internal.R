@@ -745,7 +745,7 @@
 ## __________________________________________________________
 ##
 .write.results = function(TypeSojournTime, cens.beg, cens.end, p, param){
-  date.res = paste("results", Sys.Date(), sep="_")
+  date.res = paste("results", "SMM", sep="_")
   File.out = paste(date.res, "txt", sep=".")
   i = 1
   while(file.exists(File.out)){
@@ -888,7 +888,7 @@
     stop("invalid distribution")
 
     ## Non-parametric
-  }else if(distr == "NP"){
+  }else if(length(distr) == 1 && distr == "NP"){
 
     if( type == 4 ){
       # Nij<-rowSums(Nijk,dims=2)

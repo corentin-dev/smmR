@@ -15,12 +15,21 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
     stop("The size of the matrix Ptrans must be equal to SxS with S = length(E)")  
   }
 
-  if( (distr == "NP" && is.null(laws)) || (length(distr) == 1 && distr != "NP" && !is.null(laws)) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## parametric case
+  if(is.matrix(distr) || is.array(distr) || distr != "NP"){
+    nonparametric=FALSE
+    if(length(distr) == 1 && distr != "NP" && !is.null(laws)){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
+    if(is.null(param)){
+    }
   }
-
-  if ( (is.matrix(distr) || is.array(distr) || distr != "NP") && is.null(param) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## non parametric case
+  else{
+    nonparametric=TRUE
+    if( nonparametric && is.null(laws) ){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
   }
 
   if( is.null(param) && is.null(laws) ){

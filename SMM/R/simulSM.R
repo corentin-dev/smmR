@@ -28,12 +28,21 @@ simulSM<-function(E, NbSeq, lengthSeq, TypeSojournTime = "fij", init, Ptrans, di
     stop("The length of \"lengthSeq\" must be equal at the value of NbSeq")  
   }
 
-  if( (distr == "NP" && is.null(laws)) || (length(distr) == 1 && distr != "NP" && !is.null(laws)) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## parametric case
+  if(is.matrix(distr) || is.array(distr) || distr != "NP"){
+    nonparametric=FALSE
+    if(length(distr) == 1 && !is.null(laws)){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
+    if(is.null(param)){
+    }
   }
-
-  if ( (is.matrix(distr) || is.array(distr) || distr != "NP") && is.null(param) ){
-    stop("The parameter \"param\" must be used with the parameter \"distr\"")
+  ## non parametric case
+  else{
+    nonparametric=TRUE
+    if( nonparametric && is.null(laws) ){
+      stop("The parameter \"param\" must be used with the parameter \"distr\"")
+    }
   }
 
   if( is.null(param) && is.null(laws) ){
@@ -52,7 +61,7 @@ simulSM<-function(E, NbSeq, lengthSeq, TypeSojournTime = "fij", init, Ptrans, di
     i<-1
     s = 1
     t<-1
-    if(length(distr) == 1 && distr == "NP"){
+    if(length(distr) == 1 && nonparametric){
 
       f<-laws ## non-parametric distributions
       while (t <= lengthSeq[m]) {

@@ -8,7 +8,7 @@ LoglikelihoodMk = function(seq, E, mu, Ptrans, k){
 
   ## length of the state space
   S = length(E)
-  if(dim(Ptrans)[1] != S || dim(Ptrans)[2] != S){
+  if(dim(Ptrans)[1] != S ^ k || dim(Ptrans)[2] != S){
     stop("The size of the matrix Ptrans must be equal to SxS with S = length(E)")  
   }
 
