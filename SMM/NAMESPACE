@@ -2,6 +2,12 @@ exportPattern("^[[:alpha:]]+")
 
 import(seqinr)
 import(DiscreteWeibull)
-importFrom("stats", "constrOptim", "dgeom", "dnbinom", "dpois",
-             "dunif", "optim", "pgeom", "pnbinom", "ppois", "punif",
-             "rgeom", "rnbinom", "rpois")
+
+importFrom(stats, constrOptim, dgeom, dnbinom, dpois,
+             dunif, optim, pgeom, pnbinom, ppois, punif,
+             rgeom, rnbinom, rpois)
+importFrom(stats, simulate, AIC, BIC)
+
+S3method(simulate, markovmodel)
+S3method(AIC, fittedmarkovmodel)
+S3method(BIC, fittedmarkovmodel)
