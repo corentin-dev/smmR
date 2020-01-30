@@ -1,7 +1,7 @@
 ## __________________________________________________________
-## .getSeq: Gives the character sequence given the processes J and T
+## .get.seq: Gives the character sequence given the processes J and T
 ## __________________________________________________________
-.getSeq <- function(J, T) {
+.get.seq <- function(J, T) {
   seq <- c()
   i <- 1
   n <- length(T)
@@ -58,10 +58,6 @@
 ## .count: Gives the values of the counting processes
 ## __________________________________________________________
 .count <- function(J, L, S, Kmax) {
-  
-  if (!is.list(J) || !is.list(L) || !(length(J) != length(S))) {
-    stop("J and L should be lists and should have the same size")
-  }
   
   nbseq <- length(J)
   
@@ -165,6 +161,62 @@
     )
   )
   
+}
+
+## __________________________________________________________
+## .count.Niujv: Gives the values of the counting processes for the couple (Y, U)
+## __________________________________________________________
+.count.Niujv <- function(Y, U, S, Kmax) {
+  
+  nbseq <-  length(Y)
+  Niujv <- array(0, c(S, Kmax, S, Kmax))
+  
+  for (k in 1:nbseq) {
+    
+    Yi <- Y[[k]]
+    Ui <- U[[k]]
+    M <- length(Yi)
+    
+    for (i in 2:M) {
+      Niujv[Yi[i - 1], Ui[i - 1] + 1, Yi[i], Ui[i] + 1] <-
+        Niujv[Yi[i - 1], Ui[i - 1] + 1, Yi[i], Ui[i] + 1] + 1
+    }
+    
+  }
+  
+  return(Niujv)
+  
+}
+
+## __________________________________________________________
+## .compute.q
+## __________________________________________________________
+.compute.q <- function(p) {
+  
+  S <- dim(p)[1]
+  Kmax <- dim(p)[2]
+  q <- array(0, c(S, S, Kmax))
+  
+  for (i in 1:S) {
+    for (j in 1:S) {
+      for (dk in 1:Kmax) {
+
+        pi <- p[i, dk, j, 1]
+      
+        pr <- pi
+        if (dk >= 2) {
+          for (t in 0:(dk - 2)) {
+            pr = pr * p[i, t + 1, i, t + 2]
+          }
+        }
+        
+        q[i, j, dk] <- pr
+      }
+    }
+  }
+  
+  return(q)
+
 }
 
 ## __________________________________________________________
