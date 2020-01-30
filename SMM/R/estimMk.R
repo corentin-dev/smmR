@@ -28,11 +28,12 @@ estimMk<-function(file = NULL, seq = NULL, E, k){
     vect.seq = seq[[i]]
     Nij <- Nij + matrix(count(seq = vect.seq, wordsize = k+1, alphabet = E), byrow=TRUE, ncol=S)
     ## count the number of states i
-    Ni <- Ni + as.vector(count(seq = vect.seq[1:(length(vect.seq)-k)], wordsize = k, alphabet = E))
+    # Ni <- Ni + as.vector(count(seq = vect.seq[1:(length(vect.seq)-k)], wordsize = k, alphabet = E))
     ## get the state at position 1 for each sequence
     SeqP1 = c(SeqP1, vect.seq[1])
   }
-
+  
+  Ni <- apply(Nij, 1, sum)
 
   ## Verify the existence of all transitions
   if( length(which(Nij == 0)) > 0 ){
