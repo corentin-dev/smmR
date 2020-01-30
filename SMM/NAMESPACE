@@ -9,5 +9,7 @@ importFrom(stats, constrOptim, dgeom, dnbinom, dpois,
 importFrom(stats, simulate, AIC, BIC)
 
 S3method(simulate, markovmodel)
+S3method(simulate, smmparametric)
+S3method(simulate, smmnonparametric)
 S3method(AIC, fittedmarkovmodel)
 S3method(BIC, fittedmarkovmodel)

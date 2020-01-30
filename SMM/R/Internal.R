@@ -1160,6 +1160,9 @@
   nbSeq<-length(seq)
   KmaxStart = 0
   Kmax = 0
+  J<-list()
+  T<-list()
+  L<-list()
   Y<-list()
   U<-list()
   for (k in 1:nbSeq){
