@@ -18,9 +18,9 @@ simulMk <- function(E, nbSeq, lengthSeq, Ptrans, init, k, File.out = NULL){
     stop("The vector \"init\" must be equal to 1")
   }
 
-  seq <- NULL
-  y <- NULL
+  seq <- list()
   for (n in 1:nbSeq) {
+    y <- c()
     for (i in 1:k){
       y[i]<- sample(E,1, prob=init) 
     }
