@@ -320,7 +320,7 @@ simulSM<-function(E, NbSeq, lengthSeq, TypeSojournTime = "fij", init, Ptrans, di
 
           ## unif
           if(distribution == 1){
-            Kmax = f
+            Kmax = f[1]
             T[i] <- t + sample(1:Kmax,1)
             t <- T[i]
             i <- i+1
