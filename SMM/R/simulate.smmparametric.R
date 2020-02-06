@@ -45,7 +45,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], mu = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2]) + 1 # we shift
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], mu = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2]) + 1
           
         }
         
@@ -58,11 +58,11 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i] == object$E)] == "geom") {
           
-          k <- rgeom(1, object$param[which(J[i] == object$E), 1]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rgeom(1, object$param[which(J[i] == object$E), 1]) + 1
           
         } else if (object$distr[which(J[i] == object$E)] == "pois") {
           
-          k <- rpois(1, object$param[which(J[i] == object$E), 1]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rpois(1, object$param[which(J[i] == object$E), 1]) + 1
           
         } else if (object$distr[which(J[i] == object$E)] == "dweibull") {
           
@@ -70,7 +70,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), 1], mu = object$param[which(J[i] == object$E), 2]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), 1], mu = object$param[which(J[i] == object$E), 2]) + 1
           
         }
         
@@ -83,11 +83,11 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i + 1] == object$E)] == "geom") {
           
-          k <- rgeom(1, object$param[which(J[i + 1] == object$E), 1]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rgeom(1, object$param[which(J[i + 1] == object$E), 1]) + 1
           
         } else if (object$distr[which(J[i + 1] == object$E)] == "pois") {
           
-          k <- rpois(1, object$param[which(J[i + 1] == object$E), 1]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rpois(1, object$param[which(J[i + 1] == object$E), 1]) + 1
           
         } else if (object$distr[which(J[i + 1] == object$E)] == "dweibull") {
           
@@ -95,7 +95,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i + 1] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$E), 1], mu = object$param[which(J[i + 1] == object$E), 2]) + 1 # The 1 correspond to the first parameter and we shift
+          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$E), 1], mu = object$param[which(J[i + 1] == object$E), 2]) + 1
           
         }
         
@@ -132,7 +132,9 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
       
     }
     
+    #############################
     # Censoring sequences
+    #############################
     if (object$cens.beg == TRUE && object$cens.end == TRUE) {
       
       l <- t - nsim[m]

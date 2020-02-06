@@ -151,7 +151,7 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
   # Inital distribution
   if (nbseq >= S * 10) {
     init <- Nstart / sum(Nstart)
-  } else{# Computation of the limit distribution
+  } else {
     init <- .limit.distribution(q = q, ptrans = p)
   }
   
@@ -246,7 +246,7 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
   # Initial distribution
   if (nbseq >= S * 10) {
     init <- Nstart / sum(Nstart)
-  } else {# Computation of limit law
+  } else {
     init = .limit.distribution(q = q, ptrans = pij)
   }
   

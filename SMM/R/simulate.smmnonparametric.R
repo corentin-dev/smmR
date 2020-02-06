@@ -52,7 +52,9 @@ simulate.smmnonparametric <- function(object, nsim = 1, seed = NULL, ...) {
       
     }
     
+    #############################
     # Censoring sequences
+    #############################
     if (object$cens.beg == TRUE && object$cens.end == TRUE) {
       
       l <- t - nsim[m]

@@ -47,6 +47,10 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
+  if (!all(diag(ptrans) == 0)) {
+    stop("All the diagonal elements of ptrans must be equal to 0 since transitions to the same state are not allowed")
+  }
+  
   #############################
   # Checking parameter type.sojourn
   #############################
