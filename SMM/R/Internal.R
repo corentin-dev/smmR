@@ -475,6 +475,9 @@
   if ( distr == "nbinom" ){
     f = dnbinom(0:(Kmax-1), size = param[1], mu = param[2])
   }
+  if ( distr == "unif" ){
+    f = 1 / Kmax
+  }
 
   f = rep(f, each = S*S)
   fmat = matrix(f, nrow = Kmax, ncol =S*S, byrow = TRUE)
@@ -8031,7 +8034,7 @@
   }
 
   ## Question : which parameters to return ? 
-  .write.results(TypeSojournTime, cens.beg, cens.end, P, param)
+  # .write.results(TypeSojournTime, cens.beg, cens.end, P, param)
 
   q[which(is.na(q))]<-0
 
