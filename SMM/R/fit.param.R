@@ -26,7 +26,27 @@
     
   } else if (type.sojourn == "fi") {
     
-    warning("To be implemented...")
+    # Estimation of the transition matrix - component #1
+    ptrans <- res$Nij / res$Ni
+    ptrans[which(is.na(ptrans))] <- 0
+    
+    param <- matrix(data = NA, nrow = S, ncol = 2)
+    
+    for (i in 1:S) {
+      
+      if (distr[i] == "dweibull") {
+        param[i, ] <- .fit.param.fi.dweibull(res, i, Kmax, cens.beg, cens.end)
+      } else if (distr[i] == "geom") {
+        param[i, ] <- .fit.param.fi.geom(res, i, Kmax, cens.beg, cens.end)
+      } else if (distr[i] == "nbinom") {
+        param[i, ] <- .fit.param.fi.nbinom(res, i, Kmax, cens.beg, cens.end)
+      } else if (distr[i] == "pois") {
+        param[i, ] <- .fit.param.fi.pois(res, i, Kmax, cens.beg, cens.end)
+      } else if (distr[i] == "unif") {
+        param[i, ] <- .fit.param.fi.unif(res, i, Kmax, cens.beg, cens.end)
+      }
+      
+    }
     
   } else if (type.sojourn == "fj") {
     
