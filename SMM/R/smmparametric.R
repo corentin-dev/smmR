@@ -88,7 +88,7 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
          ".\n Incorrect distribution(s) found in distr: ", paste(as.character(distr)[!(distr %in% distrib.vec)], collapse = ", "))
   }
   
-  if (!all(param >= 0)) {
+  if (!all(param >= 0 || is.na(param))) {
     stop("Every element of param must be positive")
   }
   

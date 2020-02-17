@@ -68,6 +68,6 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = FALSE, cens.end = TRUE")
     }
   } else {
-    warning("To be implemented...")
+    .fit.param(seq = seq, E = E, type.sojourn = type.sojourn, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
   }
 }
