@@ -7,6 +7,7 @@ importFrom(stats, constrOptim, dgeom, dnbinom, dpois,
              dunif, optim, pgeom, pnbinom, ppois, punif,
              rgeom, rnbinom, rpois)
 importFrom(stats, simulate, AIC, BIC)
+importFrom(utils, tail)
 
 S3method(simulate, markovmodel)
 S3method(simulate, smmparametric)

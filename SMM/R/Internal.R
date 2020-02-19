@@ -7301,6 +7301,7 @@
             ## Functions to estimate
             logvrais = function(par){
               m = matrix(par[1:(S*(S-2))], ncol = S-2, byrow = TRUE)
+              p = cbind(m, 1-rowSums(m))
               puv = rep(rowSums(p), each=Kmax)
               Nbjv = Nbj[i,]
               Njkv = Njk[i,]
