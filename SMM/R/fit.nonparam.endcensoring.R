@@ -69,7 +69,7 @@
   # Initial distribution
   if (nbseq >= S * 10) {
     init <- Nstart / sum(Nstart)
-  } else {# Computation of limit law
+  } else {# Computation of the limit distribution
     init = .limit.distribution(q = q, ptrans = pij)
   }
   
@@ -83,8 +83,7 @@
       param = NULL,
       laws = f,
       cens.beg = FALSE,
-      cens.end = FALSE,
-      q = q
+      cens.end = FALSE
     )
   
 }

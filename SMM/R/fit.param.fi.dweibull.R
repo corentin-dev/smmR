@@ -1,9 +1,7 @@
 .fit.param.fi.dweibull <- function(res, i, Kmax, cens.beg, cens.end) {
   
   # Estimation of the parameters of the distribution (No censoring case)
-  # try(theta0 <- suppressWarnings(suppressMessages(estdweibull(x = unlist(sapply(1:Kmax, function(x) rep(x, res$Nik[i, x]))), method = "M", zero = FALSE))), silent = TRUE)
-  try(theta0 <- suppressWarnings(suppressMessages(estdweibull(x = unlist(sapply(1:Kmax, function(x) rep(x, res$Nik[i, x]))), method = "P", zero = FALSE))), silent = TRUE)
-  try(theta0 <- suppressWarnings(suppressMessages(estdweibull(x = unlist(sapply(1:Kmax, function(x) rep(x, res$Nik[i, x]))), method = "ML", zero = FALSE))), silent = TRUE)
+  theta0 <- suppressMessages(estdweibull(x = unlist(sapply(1:Kmax, function(x) rep(x, res$Nik[i, x]))), method = "ML", zero = FALSE))
 
   loglik <- function(par) {
     return(

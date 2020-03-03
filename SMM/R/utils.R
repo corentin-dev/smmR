@@ -242,7 +242,6 @@
 ## __________________________________________________________
 ## .limit.distribution
 ## __________________________________________________________
-
 .limit.distribution <- function(q, ptrans) {
   
   if (dim(q)[1] != dim(ptrans)[1] && dim(ptrans)[2] != dim(q)[2]) {
