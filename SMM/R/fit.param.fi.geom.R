@@ -6,10 +6,18 @@
   if (!cens.beg && cens.end) {# Censoring at the end
     
     loglik <- function(par) {
-      return(
-        -(sum(res$Nik[i, ] * dgeom(x = 0:(Kmax - 1), prob = par, log = TRUE))
-          + sum(res$Neik[i, ] * log(pgeom(q = 0:(Kmax - 1), prob = par, lower.tail = FALSE))))
-        )
+      
+      mask <- res$Nik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = Kmax)
+      fk[mask] <- dgeom(x = kmask, prob = par, log = TRUE)
+      
+      mask <- res$Neik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = Kmax)
+      Fk[mask] <- pgeom(q = kmask, prob = par, lower.tail = FALSE, log.p = TRUE)
+      
+      return(-(sum(res$Nik[i, ] * fk) + sum(res$Neik[i, ] * Fk)))
     }
     
     CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
@@ -18,10 +26,18 @@
   } else if (cens.beg && !cens.end) {# censoring at the beginning
     
     loglik <- function(par) {
-      return(
-        -(sum(res$Nik[i, ] * dgeom(x = 0:(Kmax - 1), prob = par, log = TRUE)) 
-          + sum(res$Nbik[i, ] * log(pgeom(q = 0:(Kmax - 1), prob = par, lower.tail = FALSE))))
-        )
+      
+      mask <- res$Nik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = Kmax)
+      fk[mask] <- dgeom(x = kmask, prob = par, log = TRUE)
+      
+      mask <- res$Nbik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = Kmax)
+      Fk[mask] <- pgeom(q = kmask, prob = par, lower.tail = FALSE, log.p = TRUE)
+      
+      return(-(sum(res$Nik[i, ] * fk) + sum(res$Nbik[i, ] * Fk)))
     }
     
     CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
@@ -30,10 +46,18 @@
   } else if (cens.beg && cens.end) {# censoring at the beginningand at the end
     
     loglik <- function(par) {
-      return(
-        -(sum(res$Nik[i, ] * dgeom(x = 0:(Kmax - 1), prob = par, log = TRUE)) 
-          + sum(res$Nebik[i, ] * log(pgeom(q = 0:(Kmax - 1), prob = par, lower.tail = FALSE))))
-        )
+      
+      mask <- res$Nik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = Kmax)
+      fk[mask] <- dgeom(x = kmask, prob = par, log = TRUE)
+      
+      mask <- res$Nebik[i, ] != 0
+      kmask <- (0:(Kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = Kmax)
+      Fk[mask] <- pgeom(q = kmask, prob = par, lower.tail = FALSE, log.p = TRUE)
+      
+      return(-(sum(res$Nik[i, ] * fk) + sum(res$Nebik[i, ] * Fk)))
     }
 
     CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
