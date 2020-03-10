@@ -82,7 +82,8 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
     stop("distr must be a vector of length S and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
   }
   
-  distrib.vec <- c("unif", "geom", "pois", "dweibull", "nbinom")
+  
+  distrib.vec <- c("unif", "geom", "pois", "dweibull", "nbinom", NA)
   if (!all(distr %in% distrib.vec)) {
     stop("The specified distributions must be either ", paste(distrib.vec, collapse = ", "), 
          ".\n Incorrect distribution(s) found in distr: ", paste(as.character(distr)[!(distr %in% distrib.vec)], collapse = ", "))
@@ -90,6 +91,20 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   
   if (!all(param >= 0 || is.na(param))) {
     stop("Every element of param must be positive")
+  }
+  
+  if (type.sojourn == "fij") {
+    if (!(all(is.na(diag(distr))))) {
+      stop("All the diagonal elements of distr must be equal to NA since transitions to the same state are not allowed")
+    }
+    
+    if (!(all(is.na(diag(param[, , 1]))) && all(is.na(diag(param[, , 2]))))) {
+      stop("All the diagonal elements of param must be equal to NA since transitions to the same state are not allowed")
+    }
+    
+    if (!all(!is.na(distr[row(distr) != col(distr)]))) {
+      stop("All the non-diagonal elements of distr must be specified. Found NAs values.")
+    }
   }
   
   #############################
