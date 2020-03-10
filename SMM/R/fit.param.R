@@ -22,7 +22,44 @@
   
   if (type.sojourn == "fij") {
     
-    warning("To be implemented...")
+    if (cens.end) {# We can't decompose the loglikelihood as a sum of optimization problems
+      
+      ptrans <- matrix(0, nrow = S, ncol = S)
+      param <- array(data = NA, dim = c(S, S, 2))
+      
+      for (i in 1:S) {
+        estparam <- .fit.param.fij.endcensoring(res, i, S, Kmax, distr, cens.beg)
+        ptrans[i, ] <- estparam$ptrans
+        param[i, , ] <- estparam$param
+      }
+      
+    } else {
+      
+      # Estimation of the transition matrix - component #1
+      ptrans <- res$Nij / res$Ni
+      ptrans[which(is.na(ptrans))] <- 0
+      
+      param <- array(data = NA, dim = c(S, S, 2))
+      
+      for (i in 1:S) {
+        for (j in 1:S) {
+          if (i != j) {
+            if (distr[i, j] == "dweibull") {
+              param[i, j, ] <- .fit.param.fij.dweibull(res, i, j, Kmax, cens.beg)
+            } else if (distr[i, j] == "geom") {
+              param[i, j, ] <- .fit.param.fij.geom(res, i, j, Kmax, cens.beg)
+            } else if (distr[i, j] == "nbinom") {
+              param[i, j, ] <- .fit.param.fij.nbinom(res, i, j, Kmax, cens.beg)
+            } else if (distr[i, j] == "pois") {
+              param[i, j, ] <- .fit.param.fij.pois(res, i, j, Kmax, cens.beg)
+            } else if (distr[i, j] == "unif") {
+              param[i, j, ] <- .fit.param.fij.unif(res, i, j, Kmax)
+            }
+          }
+        }
+      }
+      
+    }
     
   } else if (type.sojourn == "fi") {
     

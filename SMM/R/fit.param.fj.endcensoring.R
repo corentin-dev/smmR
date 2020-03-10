@@ -1,7 +1,7 @@
 .fit.param.fj.endcensoring <- function(res, S, Kmax, distr, cens.beg) {
   
   # We use the non-censoring case as initial values for the optimization problem
-  theta0 <- matrix(data = NA, ncol = S, nrow = 2)
+  theta0 <- matrix(data = NA, nrow = 2, ncol = S)
   for (j in 1:S) {
     
     if (distr[j] == "dweibull") {
