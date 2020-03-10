@@ -50,7 +50,37 @@
     
   } else if (type.sojourn == "fj") {
     
-    warning("To be implemented...")
+    if (cens.end) {# We can't decompose the loglikelihood as a sum of optimization problems
+      
+      estparam <- .fit.param.fj.endcensoring(res, S, Kmax, distr, cens.beg)
+      ptrans <- estparam$ptrans
+      param <- estparam$param
+      
+    } else {
+      
+      # Estimation of the transition matrix - component #1
+      ptrans <- res$Nij / res$Ni
+      ptrans[which(is.na(ptrans))] <- 0
+      
+      param <- matrix(data = NA, nrow = S, ncol = 2)
+      
+      for (j in 1:S) {
+        
+        if (distr[j] == "dweibull") {
+          param[j, ] <- .fit.param.fj.dweibull(res, j, Kmax, cens.beg)
+        } else if (distr[j] == "geom") {
+          param[j, ] <- .fit.param.fj.geom(res, j, Kmax, cens.beg)
+        } else if (distr[j] == "nbinom") {
+          param[j, ] <- .fit.param.fj.nbinom(res, j, Kmax, cens.beg)
+        } else if (distr[j] == "pois") {
+          param[j, ] <- .fit.param.fj.pois(res, j, Kmax, cens.beg)
+        } else if (distr[j] == "unif") {
+          param[j, ] <- .fit.param.fj.unif(res, j, Kmax)
+        }
+        
+      }
+      
+    }
     
   } else if (type.sojourn == "f") {
     
@@ -72,6 +102,28 @@
     
   }
   
-  return(list(ptrans = ptrans, param = param))
+  # Inital distribution
+  if (nbseq >= S * 10) {
+    init <- res$Nstarti / sum(res$Nstarti)
+  } else {# Computation of the limit distribution
+    # init <- .limit.distribution(q = q, ptrans = p)
+    warning("The estimation of the initialization distribution based 
+            on the limit distribution is not implemented yet")
+    init <- res$Nstarti / sum(res$Nstarti)
+  }
+  
+  estimate <-
+    list(
+      E = E,
+      init = init,
+      type.sojourn = type.sojourn,
+      ptrans = ptrans,
+      distr = distr,
+      param = param,
+      cens.beg = FALSE,
+      cens.end = FALSE
+    )
+  
+  return(estimate)
   
 }
