@@ -1,4 +1,4 @@
-.fit.param.fi.unif <- function(res, i, Kmax, cens.beg, cens.end) {
+.fit.param.fi.unif <- function(res, i, Kmax) {
   
   theta <- tail(which(res$Nik[i, ] != 0), 1)
   

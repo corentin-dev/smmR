@@ -43,7 +43,7 @@
       } else if (distr[i] == "pois") {
         param[i, ] <- .fit.param.fi.pois(res, i, Kmax, cens.beg, cens.end)
       } else if (distr[i] == "unif") {
-        param[i, ] <- .fit.param.fi.unif(res, i, Kmax, cens.beg, cens.end)
+        param[i, ] <- .fit.param.fi.unif(res, i, Kmax)
       }
       
     }
@@ -67,7 +67,7 @@
     } else if (distr == "pois") {
       param <- .fit.param.f.pois(res, Kmax, cens.beg, cens.end)
     } else if (distr == "unif") {
-      param <- .fit.param.f.unif(res, Kmax, cens.beg, cens.end)
+      param <- .fit.param.f.unif(res, Kmax)
     }
     
   }

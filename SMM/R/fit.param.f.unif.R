@@ -1,4 +1,4 @@
-.fit.param.f.unif <- function(res, Kmax, cens.beg, cens.end) {
+.fit.param.f.unif <- function(res, Kmax) {
   
   theta <- Kmax
   
