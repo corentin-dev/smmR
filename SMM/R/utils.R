@@ -270,7 +270,7 @@
   if ("unif" %in% distr) {
     indices <- which(distr == "unif")
     for (j in indices) {
-      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= par[j], 1 / par[j], 0))
+      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= param[j], 1 / param[j], 0))
     }
   }
   
