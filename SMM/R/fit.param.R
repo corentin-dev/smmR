@@ -143,10 +143,8 @@
   if (nbseq >= S * 10) {
     init <- res$Nstarti / sum(res$Nstarti)
   } else {# Computation of the limit distribution
-    # init <- .limit.distribution(q = q, ptrans = p)
-    warning("The estimation of the initialization distribution based 
-            on the limit distribution is not implemented yet")
-    init <- res$Nstarti / sum(res$Nstarti)
+    q <- .get.kernel(type.sojourn = type.sojourn, distr = distr, param = param, pij = ptrans, Kmax = Kmax, S = S)
+    init <- .limit.distribution(q = q, pij = ptrans)
   }
   
   estimate <-

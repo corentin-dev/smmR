@@ -220,18 +220,93 @@
 }
 
 ## __________________________________________________________
+## .get.kernel
+## __________________________________________________________
+.get.kernel <- function(type.sojourn = c("fij", "fi", "fj", "f"), 
+                        distr, param, pij, Kmax, S) {
+  
+  if (type.sojourn == "fij") {
+    param1 <- param[, , 1]
+    param2 <- param[, , 2]
+    f <- matrix(0, nrow = S * S, ncol = Kmax)
+  } else if (type.sojourn == "fj") {
+    param1 <- param[, 1]
+    param2 <- param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else if (type.sojourn == "fi") {
+    param1 <- param[, 1]
+    param2 <- param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else {
+    param1 <- param[1]
+    param2 <- param[2]
+    f <- matrix(0, nrow = 1, ncol = Kmax)
+  }
+  
+  if ("dweibull" %in% distr) {
+    indices <- which(distr == "dweibull")
+    for (j in indices) {
+      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param1[j], zero = FALSE)
+    }
+  }
+  if ("geom" %in% distr) {
+    indices <- which(distr == "geom")
+    for (j in indices) {
+      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
+    }
+  }
+  if ("nbinom" %in% distr) {
+    indices <- which(distr == "nbinom")
+    for (j in indices) {
+      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], mu = param2[j])
+    }
+  }
+  if ("pois" %in% distr) {
+    indices <- which(distr == "pois")
+    for (j in indices) {
+      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
+    }
+  }
+  if ("unif" %in% distr) {
+    indices <- which(distr == "unif")
+    for (j in indices) {
+      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= par[j], 1 / par[j], 0))
+    }
+  }
+  
+  if (type.sojourn == "fij") {
+    fijk <- array(f, c(S, S, Kmax))
+    q <- array(pij, c(S, S, Kmax)) * fijk
+  } else if (type.sojourn == "fi") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    fi.k <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
+    q <- array(pij, c(S, S, Kmax)) * fi.k
+  } else if (type.sojourn == "fj") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    q <- array(pij, c(S, S, Kmax)) * fk
+  } else {
+    f <- rep(f, each = S * S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    q <- array(pij, c(S, S, Kmax)) * fk
+  }
+  
+  return(q)
+  
+}
+
+## __________________________________________________________
 ## .stationary.distribution
 ## __________________________________________________________
-.stationary.distribution <- function(ptrans) {
+.stationary.distribution <- function(pij) {
   
+  m <- dim(pij)[1] # Number of states
   
-  ###############################################################################
-  # Attention : Verifier que la loi stationnaire existe Florian Lecocq
-  ###############################################################################
-  
-  m <- dim(ptrans)[1] # Number of states
-  
-  A <- t(ptrans) - diag(1, m, m)
+  A <- t(pij) - diag(1, m, m)
   A[m, ] <- 1
   b <- c(rep(0, (m - 1)), 1)
   statlaw <- solve(A, b)
@@ -242,22 +317,21 @@
 ## __________________________________________________________
 ## .limit.distribution
 ## __________________________________________________________
-.limit.distribution <- function(q, ptrans) {
+.limit.distribution <- function(q, pij) {
   
-  if (dim(q)[1] != dim(ptrans)[1] && dim(ptrans)[2] != dim(q)[2]) {
+  if (dim(q)[1] != dim(pij)[1] && dim(pij)[2] != dim(q)[2]) {
     stop("The state number is not valid")
   }
   
   Kmax <- dim(q)[3]
-  S <- dim(ptrans)[1]
+  S <- dim(pij)[1]
   
-  hj = apply(q, c(1, 3), sum)
-  ksup1 <- rep(1:Kmax, S)
-  mj_int <- matrix(ksup1 * as.vector(t(hj)), nrow = S, ncol = Kmax, byrow = TRUE)
-  mj <- rowSums(mj_int)
-  statLaw <- .stationary.distribution(ptrans)
+  fik <- apply(q, c(1, 3), sum)
+  mi <- apply(fik, 1, function(x) sum((1:Kmax) * x))
   
-  out <- statLaw * mj / sum(statLaw * mj)
+  statlaw <- .stationary.distribution(pij)
+  
+  out <- statlaw * mi / sum(statlaw * mi)
   
   return(out)
 }
