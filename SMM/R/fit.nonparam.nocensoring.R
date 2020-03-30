@@ -1,35 +1,27 @@
-.fit.nonparam.nocensoring <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f")) {
+.fit.nonparam.nocensoring <- function(seq, type.sojourn = c("fij", "fi", "fj", "f"), cens.beg = cens.beg) {
   
-  S <- length(E)
-  nbseq <- length(seq)
+  S <- seq$S
+  E <- seq$E
+  nbSeq <- seq$nbSeq
+  S <- seq$S
+  Y <- seq$Y
+  J <- seq$J
+  T <- seq$T
+  L <- seq$L
+  U <- seq$U
+  Kmax <- seq$Kmax
+  counting <- seq$counting
   
-  Kmax <- 0
-  J <- list()
-  T <- list()
-  L <- list()
-  
-  for (m in 1:nbseq) {
-    
-    processes <- .getprocesses(seq[[m]], E)
-    
-    J[[m]] <- processes$J
-    T[[m]] <- processes$T
-    L[[m]] <- T[[m]] - c(1, T[[m]][-length(T[[m]] - 1)]) # Sojourn time
-    Kmax <- max(Kmax, max(L[[m]])) # Maximal sojourn time
-  }
-  
-  # Get the counts
-  res <- .count(J, L, S, Kmax)
-  
-  Nij <- res$Nij
-  Ni <- res$Ni
-  Nj <- res$Nj
-  N <- res$N
-  Nk <- res$Nk
-  Nik <- res$Nik
-  Njk <- res$Njk
-  Nijk <- res$Nijk
-  Nstart <- res$Nstarti
+
+  Nij <- counting$Nij
+  Ni <- counting$Ni
+  Nj <- counting$Nj
+  N <- counting$N
+  Nk <- counting$Nk
+  Nik <- counting$Nik
+  Njk <- counting$Njk
+  Nijk <- counting$Nijk
+  Nstart <- counting$Nstarti
   
   if (length(which(Ni == 0)) != 0) {# Presence of all states
     warning("Missing states")
@@ -43,9 +35,6 @@
   
   p <- Nij / tcrossprod(Ni, rep.int(1, S))
   p[which(is.na(p))] <- 0
-  
-  q <- Nijk / array(Ni, c(S, S, Kmax))
-  q[which(is.na(q))] <- 0
   
   if (type.sojourn == "fij") {
     
@@ -70,24 +59,28 @@
   }
   
   # Initial distribution
-  if (nbseq >= S * 10) {
+  if (nbSeq >= S * 10) {
     init <- Nstart / sum(Nstart)
   } else {# Computation of the limit distribution
-    init <- .limit.distribution(q = q, pij = p)
+    q <- Nijk / array(Ni, c(S, S, Kmax))
+    q[which(is.na(q))] <- 0
+    init <- .limitDistribution(q = q, ptrans = p)
   }
   
   estimate <-
     list(
       E = E,
+      S = S,
+      Kmax = Kmax,
       init = init,
       type.sojourn = type.sojourn,
       ptrans = p,
-      distr = "nonparametric",
-      param = NULL,
       laws = f,
-      cens.beg = FALSE,
+      cens.beg = cens.beg,
       cens.end = FALSE
     )
+  
+  class(estimate) <- c("smm", "smmnonparametric")
   
   return(estimate)
 }

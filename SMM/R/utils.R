@@ -1,7 +1,8 @@
 ## __________________________________________________________
-## .get.seq: Gives the character sequence given the processes J and T
+## .getSeq: Returns the character sequence given the processes J and T
 ## __________________________________________________________
-.get.seq <- function(J, T) {
+.getSeq <- function(J, T) {
+  
   seq <- c()
   i <- 1
   n <- length(T)
@@ -18,9 +19,9 @@
 }
 
 ## __________________________________________________________
-## .getprocesses: Gives the processes Y, J, T and U given the sequence of state
+## .getProcesses: Returns the processes Y, J, T, L and U given the sequence of state
 ## __________________________________________________________
-.getprocesses <- function(seq, E) {
+.getProcesses <- function(seq, E) {
   
   Y <- sapply(seq, function(x) which(E == x), USE.NAMES = FALSE)
   
@@ -41,23 +42,23 @@
   }
   
   n2 <- length(J)
-  L <- c(1, T)
+  L <- T - c(1, T[-length(T)])
   U <- c()
   
   for (i in 1:n2) {
-    for (j in 0:(L[i + 1] - L[i] - 1)) {
+    for (j in 0:(L[i] - 1)) {
       U <- c(U, j)
     }
   }
   
-  return(list(Y = Y, J = J, T = T, U = U))
+  return(list(Y = Y, J = J, T = T, L = L, U = U))
   
 }
 
 ## __________________________________________________________
-## .count: Gives the values of the counting processes
+## .getCountingProcesses: Gives the values of the counting processes
 ## __________________________________________________________
-.count <- function(J, L, S, Kmax) {
+.getCountingProcesses <- function(J, L, S, Kmax) {
   
   nbseq <- length(J)
   
@@ -166,7 +167,7 @@
 ## __________________________________________________________
 ## .count.Niujv: Gives the values of the counting processes for the couple (Y, U)
 ## __________________________________________________________
-.count.Niujv <- function(Y, U, S, Kmax) {
+.getCountingNiujv <- function(Y, U, S, Kmax) {
   
   nbseq <-  length(Y)
   Niujv <- array(0, c(S, Kmax, S, Kmax))
@@ -189,9 +190,9 @@
 }
 
 ## __________________________________________________________
-## .compute.q
+## .computeKernelNonParamEndcensoring
 ## __________________________________________________________
-.compute.q <- function(p) {
+.computeKernelNonParamEndcensoring <- function(p) {
   
   S <- dim(p)[1]
   Kmax <- dim(p)[2]
@@ -200,9 +201,9 @@
   for (i in 1:S) {
     for (j in 1:S) {
       for (dk in 1:Kmax) {
-
+        
         pi <- p[i, dk, j, 1]
-      
+        
         pr <- pi
         if (dk >= 2) {
           for (t in 0:(dk - 2)) {
@@ -216,97 +217,17 @@
   }
   
   return(q)
-
-}
-
-## __________________________________________________________
-## .get.kernel
-## __________________________________________________________
-.get.kernel <- function(type.sojourn = c("fij", "fi", "fj", "f"), 
-                        distr, param, pij, Kmax, S) {
-  
-  if (type.sojourn == "fij") {
-    param1 <- param[, , 1]
-    param2 <- param[, , 2]
-    f <- matrix(0, nrow = S * S, ncol = Kmax)
-  } else if (type.sojourn == "fj") {
-    param1 <- param[, 1]
-    param2 <- param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
-  } else if (type.sojourn == "fi") {
-    param1 <- param[, 1]
-    param2 <- param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
-  } else {
-    param1 <- param[1]
-    param2 <- param[2]
-    f <- matrix(0, nrow = 1, ncol = Kmax)
-  }
-  
-  if ("dweibull" %in% distr) {
-    indices <- which(distr == "dweibull")
-    for (j in indices) {
-      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param1[j], zero = FALSE)
-    }
-  }
-  if ("geom" %in% distr) {
-    indices <- which(distr == "geom")
-    for (j in indices) {
-      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
-    }
-  }
-  if ("nbinom" %in% distr) {
-    indices <- which(distr == "nbinom")
-    for (j in indices) {
-      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], mu = param2[j])
-    }
-  }
-  if ("pois" %in% distr) {
-    indices <- which(distr == "pois")
-    for (j in indices) {
-      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
-    }
-  }
-  if ("unif" %in% distr) {
-    indices <- which(distr == "unif")
-    for (j in indices) {
-      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= param[j], 1 / param[j], 0))
-    }
-  }
-  
-  if (type.sojourn == "fij") {
-    fijk <- array(f, c(S, S, Kmax))
-    q <- array(pij, c(S, S, Kmax)) * fijk
-  } else if (type.sojourn == "fi") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-    fi.k <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
-    q <- array(pij, c(S, S, Kmax)) * fi.k
-  } else if (type.sojourn == "fj") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-    q <- array(pij, c(S, S, Kmax)) * fk
-  } else {
-    f <- rep(f, each = S * S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-    q <- array(pij, c(S, S, Kmax)) * fk
-  }
-  
-  return(q)
   
 }
 
 ## __________________________________________________________
-## .stationary.distribution
+## .stationaryDistribution
 ## __________________________________________________________
-.stationary.distribution <- function(pij) {
+.stationaryDistribution <- function(ptrans) {
   
-  m <- dim(pij)[1] # Number of states
+  m <- dim(ptrans)[1] # Number of states
   
-  A <- t(pij) - diag(1, m, m)
+  A <- t(ptrans) - diag(1, m, m)
   A[m, ] <- 1
   b <- c(rep(0, (m - 1)), 1)
   statlaw <- solve(A, b)
@@ -315,21 +236,17 @@
 }
 
 ## __________________________________________________________
-## .limit.distribution
+## .limitDistribution
 ## __________________________________________________________
-.limit.distribution <- function(q, pij) {
-  
-  if (dim(q)[1] != dim(pij)[1] && dim(pij)[2] != dim(q)[2]) {
-    stop("The state number is not valid")
-  }
+.limitDistribution <- function(q = q, ptrans = ptrans) {
   
   Kmax <- dim(q)[3]
-  S <- dim(pij)[1]
+  S <- dim(ptrans)[1]
   
   fik <- apply(q, c(1, 3), sum)
   mi <- apply(fik, 1, function(x) sum((1:Kmax) * x))
   
-  statlaw <- .stationary.distribution(pij)
+  statlaw <- .stationaryDistribution(ptrans)
   
   out <- statlaw * mi / sum(statlaw * mi)
   

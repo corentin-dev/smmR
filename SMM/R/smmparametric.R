@@ -119,6 +119,7 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   ans <-
     list(
       E = E,
+      S = S,
       init = init,
       type.sojourn = type.sojourn,
       ptrans = ptrans,
@@ -128,11 +129,111 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
       cens.end = cens.end
     )
   
-  class(ans) <- "smmparametric"
+  class(ans) <- c("smm", "smmparametric")
   
   return(ans)
 }
 
 is.smmparametric <- function(x) {
   inherits(x, "smmparametric")
+}
+
+.get.f.smmparametric <- function(x, Kmax) {
+  
+  S <- x$S
+  
+  if (x$type.sojourn == "fij") {
+    param1 <- x$param[, , 1]
+    param2 <- x$param[, , 2]
+    f <- matrix(0, nrow = S * S, ncol = Kmax)
+  } else if (x$type.sojourn == "fj") {
+    param1 <- x$param[, 1]
+    param2 <- x$param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else if (x$type.sojourn == "fi") {
+    param1 <- x$param[, 1]
+    param2 <- x$param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else {
+    param1 <- x$param[1]
+    param2 <- x$param[2]
+    f <- matrix(0, nrow = 1, ncol = Kmax)
+  }
+  
+  if ("dweibull" %in% x$distr) {
+    indices <- which(x$distr == "dweibull")
+    for (j in indices) {
+      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param2[j], zero = FALSE)
+    }
+  }
+  if ("geom" %in% x$distr) {
+    indices <- which(x$distr == "geom")
+    for (j in indices) {
+      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
+    }
+  }
+  if ("nbinom" %in% x$distr) {
+    indices <- which(x$distr == "nbinom")
+    for (j in indices) {
+      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], mu = param2[j])
+    }
+  }
+  if ("pois" %in% x$distr) {
+    indices <- which(x$distr == "pois")
+    for (j in indices) {
+      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
+    }
+  }
+  if ("unif" %in% x$distr) {
+    indices <- which(x$distr == "unif")
+    for (j in indices) {
+      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+    }
+  }
+  
+  if (x$type.sojourn == "fij") {
+    fijk <- f
+  } else if (x$type.sojourn == "fi") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
+  } else if (x$type.sojourn == "fj") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+  } else {
+    f <- rep(f, each = S * S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+  }
+  
+  return(fijk)
+  
+}
+
+.get.q.smmparametric <- function(x, Kmax) {
+  
+  S <- x$S
+  
+  fijk <- .get.f(x, Kmax)
+  q <- array(x$ptrans, c(S, S, Kmax)) * fijk
+  
+  return(q)
+  
+}
+
+.getKpar.smmparametric <- function(x) {
+  
+  distr <- x$distr
+  
+  nbDweibull <- length(which(distr == "dweibull"))
+  nbGeom <- length(which(distr == "geom"))
+  nbNbinom <- length(which(distr == "nbinom"))
+  nbPois <- length(which(distr == "pois"))
+  nbUnif <- length(which(distr == "unif"))
+  
+  Kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
+  
+  return(Kpar)
 }

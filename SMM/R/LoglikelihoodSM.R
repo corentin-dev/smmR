@@ -72,7 +72,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
   Nvk = res$LNjk
   Nk = res$LNk
   Nstarti = res$Nstarti
-  Nstart = res$NStart
+  Nstart = res$Nstart
 
   LV = list()
   for (k in 1:nbSeq) {
@@ -93,6 +93,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
     if( "NP" %in% lois ){
       fij = laws
       if(TypeSojournTime == "fij"){
+        
         fuv.vect = fij[-diag]
         Nuvk0 = Nuvk.vect[-which(is.infinite(fuv.vect))]
         fuv0 = fuv.vect[-which(is.infinite(Nuvk.vect))]
@@ -149,7 +150,7 @@ LoglikelihoodSM = function(seq, E, mu, Ptrans, distr = "NP", param = NULL, laws 
 
       }else if( TypeSojournTime == "fj" ){
         qfi.j = .kernel_param_fj(distr = distr, param = param, Kmax = Kmax, pij = Ptrans, S = S)
-        fu.v = qfij$f
+        fu.v = qfi.j$f
         fuv.vect = fu.v[-diag]
         Nuvk.vect = Nuvk.vect[-which(is.infinite(log(fuv.vect)))]
         fuv.vect = fuv.vect[-which(is.infinite(log(fuv.vect)))] 

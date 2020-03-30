@@ -53,7 +53,7 @@ fitmarkovmodel <- function(seq, E, k = 1) {
   ptrans[which(is.na(ptrans))] <- 0
   
   if (k == 1) {
-    init <- .stationary.distribution(ptrans)
+    init <- .stationaryDistribution(ptrans)
   } else {
     Nstart <- as.vector(count(seq = unlist(seq), wordsize = 1, alphabet = E)) ## initial law for k > 1 ???
     init <- Nstart / sum(Nstart)

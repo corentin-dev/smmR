@@ -109,10 +109,19 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("cens.beg and cens.end must be TRUE or FALSE")
   }
   
+  if (type.sojourn == "fij") {
+    Kmax <- dim(laws)[3]
+  } else if (type.sojourn %in% c("fi", "fj")) {
+    Kmax <- dim(laws)[2]
+  } else {
+    Kmax <- length(laws)
+  }
   
   ans <-
     list(
       E = E,
+      S = S,
+      Kmax = Kmax,
       init = init,
       type.sojourn = type.sojourn,
       ptrans = ptrans,
@@ -121,11 +130,64 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
       cens.end = cens.end
     )
   
-  class(ans) <- "smmnonparametric"
+  class(ans) <- c("smm", "smmnonparametric")
   
   return(ans)
 }
 
 is.smmnonparametric <- function(x) {
   inherits(x, "smmnonparametric")
+}
+
+.get.f.smmnonparametric <- function(x, Kmax) {
+  
+  f <- x$laws
+  type.sojourn <- x$type.sojourn
+  S <- x$S
+  
+  if (type.sojourn == "fij") {
+    
+    fijk <- f
+    
+  } else if (type.sojourn == "fi") {
+    
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
+    
+  } else if (type.sojourn == "fj") {
+    
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    
+  } else {
+    
+    f <- rep(f, each = S * S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    
+  }
+  
+  return(fijk)
+}
+
+.getKpar.smmnonparametric <- function(x) {
+  
+  S <- x$S
+  Kmax <- x$Kmax
+  type.sojourn <- x$type.sojourn
+  
+  if (type.sojourn == "fij") {
+    Kpar <- S * (S - 2) * (Kmax - 1)
+  } else if (type.sojourn == "fi") {
+    Kpar <- S * (Kmax - 1)
+  } else if (type.sojourn == "fj") {
+    Kpar <- S * (Kmax - 1)
+  } else {
+    Kpar <- Kmax - 1
+  }
+  
+  return(Kpar)
 }

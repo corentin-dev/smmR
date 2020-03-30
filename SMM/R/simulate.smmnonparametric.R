@@ -61,23 +61,23 @@ simulate.smmnonparametric <- function(object, nsim = 1, seed = NULL, ...) {
       n <- nsim[m]
       Nl <- floor(l / 2)
       
-      y <- .get.seq(J, T)
+      y <- .getSeq(J, T)
       y <- y[Nl:(t - 1 - Nl)]
       
     } else if (object$cens.beg == FALSE && object$cens.end == TRUE) {# First time is a Jump Time
       
-      y <- .get.seq(J, T)
+      y <- .getSeq(J, T)
       y <- y[1:nsim[m]]
       
     } else if (object$cens.beg == 1 && object$cens.end == 0) {
       
       l <- t - nsim[m]
-      y <- .get.seq(J, T)
+      y <- .getSeq(J, T)
       y <- y[l:(t - 1)]
       
     } else {# First and last times are jump times
       
-      y <- .get.seq(J, T)
+      y <- .getSeq(J, T)
       
     }
     

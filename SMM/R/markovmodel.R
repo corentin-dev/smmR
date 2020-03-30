@@ -65,3 +65,42 @@ markovmodel <- function(E, init, ptrans, k = 1) {
 is.markovmodel <- function(x) {
   inherits(x, "markovmodel")
 }
+
+.stationary.distribution.markovmodel <- function(x) {
+  
+  m <- dim(x$ptrans)[1] # Number of states
+  
+  A <- t(x$ptrans) - diag(1, m, m)
+  A[m, ] <- 1
+  b <- c(rep(0, (m - 1)), 1)
+  statlaw <- solve(A, b)
+  
+  return(statlaw)
+}
+
+AIC.fittedmarkovmodel <- function(object, ..., k = 2) {
+  
+  S <- length(object$estimate$E)
+  
+  # Kpar: number of parameters of the model
+  Kpar <- (S - 1) * S ^ object$estimate$k
+  
+  vecAIC <- -2 * object$logliks + k * Kpar
+  
+  return(vecAIC)
+  
+}
+
+BIC.fittedmarkovmodel <- function(object, ...) {
+  
+  S <- length(object$estimate$E)
+  
+  # Kpar: number of parameters of the model
+  Kpar <- (S - 1) * S ^ object$estimate$k
+  
+  n <- sapply(object$seq, length)
+  
+  vecBIC <- -2 * object$logliks + log(n) * Kpar
+  
+  return(vecBIC)
+}

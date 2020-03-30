@@ -6,7 +6,7 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
   #############################
 
   if (!is.list(seq)) {
-    stop("The parameter seq should be a vector")
+    stop("The parameter seq should be a list")
   }
 
   if (!all(unique(unlist(seq)) %in% E)) {
@@ -66,17 +66,17 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
     
   }
 
-
+  seq <- sequences(listSeq = seq, E = E)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     if (!cens.beg && !cens.end) {
-      .fit.nonparam.nocensoring(seq = seq, E = E, type.sojourn = type.sojourn)
+      .fit.nonparam.nocensoring(seq = seq, type.sojourn = type.sojourn, cens.beg = cens.beg)
     } else if (cens.beg && !cens.end) {
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = FALSE")
     } else if (!cens.beg && cens.end) {
-      .fit.nonparam.endcensoring(seq = seq, E = E, type.sojourn = type.sojourn)
+      .fit.nonparam.endcensoring(seq = seq, E = E, type.sojourn = type.sojourn, cens.beg = cens.beg)
     } else {
-      warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = FALSE, cens.end = TRUE")
+      warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = TRUE")
     }
   } else {
     .fit.param(seq = seq, E = E, type.sojourn = type.sojourn, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
