@@ -12,23 +12,32 @@ is.smm <- function(x) {
   UseMethod(".get.q", x)
 }
 
-# Method to get the log-likelihood
-.loglik <- function(x, ...) {
-  UseMethod(".loglik", x)
-}
-
-.loglik.smm <- function(x, listSeq, E) {
+#' Loglikelihood
+#'
+#' @description Computation of the loglikelihood for a semi-Markov model
+#'
+#' @param x An object inheriting from the class smm
+#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param seq A list of vectors representing the sequences for which the 
+#'   log-likelihood must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the loglikelihood for each sequence.
+#' 
+#' 
+#' @export
+#'
+loglik.smm <- function(x, seq, E) {
   
   #############################
-  # Checking parameters listSeq and E
+  # Checking parameters seq and E
   #############################
   
-  if (!is.list(listSeq)) {
-    stop("The parameter listSeq should be a list")
+  if (!is.list(seq)) {
+    stop("The parameter seq should be a list")
   }
   
-  if (!all(unique(unlist(listSeq)) %in% E)) {
-    stop("Some states in the list of observed sequences listSeq are not in the state space E")
+  if (!all(unique(unlist(seq)) %in% E)) {
+    stop("Some states in the list of observed sequences seq are not in the state space E")
   }
   
   S <- length(E)
@@ -46,7 +55,7 @@ is.smm <- function(x) {
   }
   
   
-  seq <- sequences(listSeq = listSeq, E = E)
+  seq <- sequences(listSeq = seq, E = E)
   Kmax <- seq$Kmax
   
   if (!(is.null(x$Kmax))) {
@@ -76,7 +85,7 @@ is.smm <- function(x) {
     
   }
   
-  return(list(seq = seq, loglik = loglik))
+  return(loglik)
 }
 
 # Method to get the number of parameters
@@ -84,16 +93,24 @@ is.smm <- function(x) {
   UseMethod(".getKpar", x)
 }
 
-# Method to get the AIC
-AICSMM <- function(x, listSeq, E) {
-  UseMethod("AICSMM", x)
-}
-
-AICSMM.smm <- function(x, listSeq, E) {
+#' Akaike Information Criterion (AIC)
+#'
+#' @description Computation of the Akaike Information Criterion.
+#'
+#' @param x An object inheriting from the class smm
+#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param seq A list of vectors representing the sequences for which the 
+#'   AIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the AIC for each sequence.
+#' 
+#' 
+#' @export
+#'
+aic.smm <- function(x, seq, E) {
   
-  out <- .loglik(x, listSeq, E)
-  seq <- out$seq
-  loglik <- out$loglik
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(listSeq = seq, E = E)
   
   S <- x$S
   Kmax <- seq$Kmax
@@ -109,16 +126,24 @@ AICSMM.smm <- function(x, listSeq, E) {
   
 }
 
-# Method to get the AIC
-BICSMM <- function(x, listSeq, E) {
-  UseMethod("BICSMM", x)
-}
-
-BICSMM.smm <- function(x, listSeq, E) {
+#' Bayesian Information Criterion (BIC)
+#'
+#' @description Computation of the Bayesian Information Criterion.
+#'
+#' @param x An object inheriting from the class smm
+#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param seq A list of vectors representing the sequences for which the 
+#'   BIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the BIC for each sequence.
+#' 
+#' 
+#' @export
+#'
+bic.smm <- function(x, seq, E) {
   
-  out <- .loglik(x, listSeq, E)
-  seq <- out$seq
-  loglik <- out$loglik
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(listSeq = seq, E = E)
     
   S <- x$S
   Kmax <- seq$Kmax
@@ -127,7 +152,7 @@ BICSMM.smm <- function(x, listSeq, E) {
   
   bic <- rep.int(x = NA, times = seq$nbSeq)
   for (l in 1:seq$nbSeq) {
-    n <- length(listSeq[[l]])
+    n <- length(seq$J[[l]])
     bic[l] <- -2 * loglik[l] + log(n) * Kpar
   }
   

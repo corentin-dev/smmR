@@ -1,3 +1,18 @@
+#' Markov model specification
+#'
+#' @description Creates a model specification of a Markov model.
+#'
+#' @param E Vector of state space of length S.
+#' @param init Vector of initial distribution of length S.
+#' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
+#'   \eqn{J=(J_m)_{m}} of size SxS.
+#' @param k Order of the Markov chain.
+#' @return An object of class [markovmodel][markovmodel].
+#' 
+#' 
+#' @seealso [simulate], [fitmarkovmodel], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
+#' @export
+#'
 markovmodel <- function(E, init, ptrans, k = 1) {
 
   #############################
@@ -78,29 +93,136 @@ is.markovmodel <- function(x) {
   return(statlaw)
 }
 
-AIC.fittedmarkovmodel <- function(object, ..., k = 2) {
+#' Loglikelihood
+#'
+#' @description Computation of the loglikelihood for a semi-Markov model
+#'
+#' @param x An object of class [markovmodel][markovmodel].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   log-likelihood must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the loglikelihood for each sequence.
+#' 
+#' 
+#' @export
+#'
+loglik.markovmodel <- function(x, seq, E) {
   
-  S <- length(object$estimate$E)
+  #############################
+  # Checking parameters seq and E
+  #############################
   
-  # Kpar: number of parameters of the model
-  Kpar <- (S - 1) * S ^ object$estimate$k
+  if (!is.list(seq)) {
+    stop("The parameter seq should be a list")
+  }
   
-  vecAIC <- -2 * object$logliks + k * Kpar
+  if (!all(unique(unlist(seq)) %in% E)) {
+    stop("Some states in the list of observed sequences seq are not in the state space E")
+  }
   
-  return(vecAIC)
+  S <- length(E)
+  
+  #############################
+  # Checking markovmodel parameter
+  #############################
+  
+  if ((x$S != S)) {
+    stop("The size of the matrix ptrans must be equal to SxS with S = length(E)")
+  }
+  
+  if (!all.equal(E, x$E)) {
+    stop("The state space of the estimated Markov model is different from the given state E")
+  }
+  
+  
+  nbseq <- length(seq) # Number of sequences
+  vect.seq <- c()
+  
+  # Count the number of transitions from i to j in k steps
+  Nijl <- array(0, c(S ^ x$k, S, nbseq))
+  
+  for (i in 1:nbseq) {
+    
+    Nijl[, , i] <- matrix(count(seq = seq[[i]], wordsize = x$k + 1, alphabet = x$E), byrow = TRUE, ncol = x$S)
+    
+  }
+  
+  loglik <- rep.int(x = NA, times = nbseq)
+  for (j in 1:nbseq) {
+    s <- 0
+    for (i in 1:x$k) {# Warning to initial law
+      s <- s + log(x$init[which(x$E == seq[[j]][i])])
+    }
+    loglik[j] <- s + sum(as.numeric(Nijl[, , j])[which(x$ptrans != 0)] * log(x$ptrans[which(x$ptrans != 0)]))
+  }
+  
+  return(list(seq = seq, loglik = loglik))
+}
+
+# Method to get the number of parameters
+.getKpar.markovmodel <- function(x) {
+  
+  Kpar <- (x$S - 1) * x$S ^ x$k
+  
+  return(Kpar)
+}
+
+#' Akaike Information Criterion (AIC)
+#'
+#' @description Computation of the Akaike Information Criterion.
+#'
+#' @param x An object of class [markovmodel][markovmodel].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   AIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the AIC for each sequence.
+#' 
+#' 
+#' @export
+#'
+aic.markovmodel <- function(x, seq, E) {
+  
+  out <- loglik(x, seq, E)
+  nbseq <- length(seq)
+  loglik <- out$loglik
+  
+  Kpar <- .getKpar(x)
+  
+  aic <- rep.int(x = NA, times = nbseq)
+  for (l in 1:nbseq) {
+    aic[l] <- -2 * loglik[l] + 2 * Kpar
+  }
+  
+  return(aic)
   
 }
 
-BIC.fittedmarkovmodel <- function(object, ...) {
+#' Bayesian Information Criterion (BIC)
+#'
+#' @description Computation of the Bayesian Information Criterion.
+#'
+#' @param x An object of class [markovmodel][markovmodel].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   BIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the BIC for each sequence.
+#' 
+#' 
+#' @export
+#'
+bic.markovmodel <- function(x, seq, E) {
   
-  S <- length(object$estimate$E)
+  out <- loglik(x, seq, E)
+  nbseq <- length(seq)
+  loglik <- out$loglik
   
-  # Kpar: number of parameters of the model
-  Kpar <- (S - 1) * S ^ object$estimate$k
+  Kpar <- .getKpar(x)
   
-  n <- sapply(object$seq, length)
+  bic <- rep.int(x = NA, times = nbseq)
+  for (l in 1:nbseq) {
+    n <- length(seq[[l]])
+    bic[l] <- -2 * loglik[l] + log(n) * Kpar
+  }
   
-  vecBIC <- -2 * object$logliks + log(n) * Kpar
-  
-  return(vecBIC)
+  return(bic)
 }

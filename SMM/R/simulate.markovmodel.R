@@ -1,8 +1,23 @@
+#' Simulates k-th order Markov chains
+#'
+#' @description Simulates k-th order Markov chains.
+#'
+#' @details If `nsim` is a single integer then a chain of that length is 
+#'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
+#'   sequences are generated with respective lengths.
+#'
+#' @param object An object of class [markovmodel].
+#' @param nsim An integer or vector of integers (for multiple sequences) 
+#'   specifying the length of the sequence(s).
+#' @param seed `seed` for the random number generator.
+#' @param ... further arguments passed to or from other methods.
+#' @return A list of vectors representing the sequences.
+#' 
+#' 
+#' @seealso [fitmarkovmodel], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
+#' @export
+#'
 simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
-  
-  # If nsim is a single integer then a MM of that length is produced.
-  #   If nsim is a vector of integers, then length(nsim) sequences are
-  #   generated with respective lengths.
   
   if (!is.null(seed)) {
     set.seed(seed)

@@ -1,3 +1,65 @@
+#' Non-parametric semi-Markov model specification
+#'
+#' @description Creates a non-parametric model specification for a semi-Markov model.
+#'
+#' @details This function creates a semi-Markov model object in the 
+#' non-parametric case, taking into account the type of sojourn time and the 
+#' censoring described in references. The non-parametric specification concerns 
+#' sojourn time distributions defined by the user.
+#'
+#' The difference between the Markov model and the semi-Markov model concerns 
+#' the modelisation of the sojourn time. With a Markov chain, the sojourn time 
+#' distribution is modeled by a Geometric distribution (in discrete time). 
+#' With a semi-Markov chain, the sojourn time can be any arbitrary distribution.
+#' 
+#' We define :
+#'  \itemize{
+#'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
+#'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in E} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
+#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, S};
+#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in E,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
+#'  }
+#'
+#' In this package we can choose differents types of sojourn time.
+#' Four options are available for the sojourn times:
+#' \itemize{
+#'   \item depending on the present state and on the next state (\eqn{f_{ij}});
+#'   \item depending only on the present state (\eqn{f_{i}});
+#'   \item depending only on the next state (\eqn{f_{j}});
+#'   \item depending neither on the current, nor on the next state (\eqn{f}).
+#' }
+#' 
+#' Let define Kmax the maximum length of the sojourn times.
+#' If  `type.sojourn = "fij"`, `laws` is an array of size SxSxKmax.
+#' If `type.sojourn = "fi"` or `"fj"`, `laws` must be a matrix of size SxKmax.
+#' If `type.sojourn = "f"`, `laws` must be a vector of length Kmax.
+#' 
+#' If the sequence is censored at the beginning and at the end, `cens.beg` 
+#' must be equal to `TRUE` and `cens.end` must be equal to `TRUE` too. 
+#' All the sequences must be censored in the same way.
+#'
+#' @param E Vector of state space of length S.
+#' @param init Vector of initial distribution of length S.
+#' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
+#'   \eqn{J=(J_m)_{m}} of size SxS.
+#' @param type.sojourn Type of sojourn time (for more explanations, see Details).
+#' @param laws
+#'   \itemize{
+#'     \item Array of size SxSxKmax if `type.sojourn = "fij"`;
+#'     \item Matrix of size SxKmax if `type.sojourn = "fi"` or `"fj"`;
+#'     \item Vector of length Kmax if the `type.sojourn = "f"`.
+#'   }
+#'   Kmax is the maximum length of the sojourn times.
+#' @param cens.beg Optional. A logical value indicating whether or not 
+#'   sequences are censored at the beginning.
+#' @param cens.end Optional. A logical value indicating whether or not 
+#'   sequences are censored at the end.
+#' @return Returns an object of class [smmnonparametric][smmnonparametric].
+#' 
+#' 
+#' @seealso [simulate], [fitsemimarkovmodel], [smmparametric]
+#' @export
+#'
 smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                              laws, cens.beg = FALSE, cens.end = FALSE) {
   

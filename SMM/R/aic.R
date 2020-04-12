@@ -1,18 +1,17 @@
-#' Loglikelihood
+#' Akaike Information Criterion (AIC)
 #'
-#' @description Computation of the loglikelihood for a Markov or a semi-Markov 
-#'   model
+#' @description Computation of the Akaike Information Criterion.
 #'
 #' @param x An object of class [markovmodel] or inheriting from the class smm.
 #'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
 #' @param seq A list of vectors representing the sequences for which the 
-#'   log-likelihood must be computed.
+#'   AIC criterion must be computed.
 #' @param E Vector of state space (of length S).
-#' @return A vector giving the value of the loglikelihood for each sequence.
+#' @return A vector giving the value of the AIC for each sequence.
 #' 
 #' 
 #' @export
 #'
-loglik <- function(x, seq, E) {
-  UseMethod("loglik", x)
+aic <- function(x, seq, E) {
+  UseMethod("aic", x)
 }

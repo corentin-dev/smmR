@@ -1,3 +1,33 @@
+#' Estimation of a k-th order Markov chain
+#'
+#' @description Estimation of the transition matrix and initial law of a k-th 
+#'   order Markov chain starting from one or several sequences.
+#'
+#' @details Let \eqn{X_1, X_2, ..., X_n} be a trajectory of length \eqn{n} of 
+#'   the Markov chain \eqn{X = (X_m)_{m \in N}} of order \eqn{k = 1} with 
+  #'   transition matrix \eqn{p_{trans}(i,j) = P(X_{m+1} = j | X_m = i)}. The 
+#'   estimation of the transition matrix is \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}, 
+#'   where \eqn{N_{ij}} is the number of transitions from state \eqn{i} to state 
+#'   \eqn{j} and \eqn{N_{i.}} is the number of transition from state \eqn{i} 
+#'   to any state. For \eqn{k > 1} we have similar expressions.
+#'
+#'  The initial distribution of a k-th order Markov chain is defined as 
+#'  \eqn{\mu_i = P(X_1 = i)}. An estimation of the initial law for a first order 
+#'  Markov chain is assumed to be the estimation of the stationary distribution. 
+#'  If the order of the Markov is greater than 1, then an estimation of the 
+#'  initial law is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where \eqn{N_i} is the number occurences 
+#'  of state \eqn{i} in the sequences and \eqn{N} is the sum of the sequence 
+#'  lengths.
+#'
+#' @param seq A list of vectors representing the sequences.
+#' @param E Vector of state space (of length S).
+#' @param k Order of the Markov chain.
+#' @return An object of class [markovmodel][markovmodel].
+#' 
+#' 
+#' @seealso [markovmodel], [simulate], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
+#' @export
+#'
 fitmarkovmodel <- function(seq, E, k = 1) {
   
   #############################
@@ -59,24 +89,8 @@ fitmarkovmodel <- function(seq, E, k = 1) {
     init <- Nstart / sum(Nstart)
   }
   
-  #############################
-  # Compute the log-likelihood
-  #############################
-  logliks <- rep.int(NA, nbseq)
-  for (j in 1:nbseq) {
-    s <- 0
-    for (i in 1:k) {# Warning to initial law
-      s <- s + log(init[which(E == seq[[j]][i])])
-    }
-    logliks[j] <- s + sum(as.numeric(Nijl[, , j])[which(ptrans != 0)] * log(ptrans[which(ptrans != 0)]))
-  }
-  
-  
-  estimate <- list(E = E, init = init, ptrans = ptrans, k = k)
+  estimate <- list(E = E, S = S, init = init, ptrans = ptrans, k = k)
   class(estimate) <- "markovmodel"
   
-  ret <- list(estimate = estimate, seq = seq, logliks = logliks)
-  class(ret) <- "fittedmarkovmodel"
-  
-  return(ret)
+  return(estimate)
 }

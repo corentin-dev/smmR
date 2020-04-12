@@ -16,9 +16,6 @@ Moreover, the estimation can be done on the basis of one or several sample
 paths, with or without censoring at the beginning or/and at the end of the
 sample paths. Estimation and simulation of discrete-time k-th order Markov
 chains are also considered.
-
-To learn more about \code{SMM}, start with the vignettes:
-\code{browseVignettes(package = "SMM")}
 }
 \keyword{censored}
 \keyword{estimation}

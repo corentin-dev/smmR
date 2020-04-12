@@ -11,9 +11,6 @@
 #' sample paths. Estimation and simulation of discrete-time k-th order Markov 
 #' chains are also considered.
 #'
-#' To learn more about `SMM`, start with the vignettes:
-#' `browseVignettes(package = "SMM")`
-#'
 #' @keywords markov semi-markov simulation estimation censored
 #'
 #' @import utils
