@@ -37,6 +37,21 @@ initial law is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where \eqn{N_i} is the num
 of state \eqn{i} in the sequences and \eqn{N} is the sum of the sequence
 lengths.
 }
+\examples{
+E <- c("a", "c", "g", "t")
+S <- length(E)
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+k <- 2
+p <- matrix(0.25, nrow = S ^ k, ncol = S)
+
+# Specify the Markov model
+markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+
+seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
+
+est <- fitmarkovmodel(seq = seq1, E = E, k = 2)
+
+}
 \seealso{
 \link{markovmodel}, \link{simulate}, \link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
 }

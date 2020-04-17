@@ -60,6 +60,35 @@
 #' @seealso [simulate], [fitsemimarkovmodel], [smmparametric]
 #' @export
 #'
+#' @examples 
+#' E <- c("a", "c", "g", "t")
+#' S <- length(E)
+#' 
+#' # Creation of the initial distribution
+#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+#' 
+#' # Creation of transition matrix
+#' pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+#'                 0.2, 0, 0.3, 0.5, 
+#'                 0.3, 0.5, 0, 0.2, 
+#'                 0.4, 0.2, 0.4, 0), 
+#'               ncol = S, byrow = TRUE)
+#' 
+#' # Creation of a matrix corresponding to the 
+#' # conditional sojourn time distributions
+#' Kmax <- 6
+#' nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
+#'                           0.2, 0, 0.4, 0.2, 
+#'                           0.1, 0, 0.2, 0.1, 
+#'                           0.5, 0.3, 0.15, 0.05, 
+#'                           0, 0, 0.3, 0.2, 
+#'                           0.1, 0.2, 0.2, 0), 
+#'                         nrow = S, ncol = Kmax, byrow = TRUE)
+#' 
+#' smm2 <- smmnonparametric(E = E, init = vect.init, ptrans = pij, 
+#'                          type.sojourn = "fj", laws = nparam.matrix)
+#' 
+#' smm2
 smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                              laws, cens.beg = FALSE, cens.end = FALSE) {
   
@@ -127,7 +156,7 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("laws must be an array of size SxSxKmax since type.sojourn == \"fij\"")
   }
   
-  if ((type.sojourn == "fi" || type.sojourn == "fj") && !is.matrix(laws)) {
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !is.matrix(laws)) {
     stop("laws must be a matrix of size SxKmax since type.sojourn == \"fi\" or \"fj\"")
   }
   
@@ -140,11 +169,11 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("laws must be an array of size SxSxKmax since type.sojourn == \"fij\"")
   }
   
-  if ((type.sojourn == "fi" || type.sojourn == "fj") && !(dim(laws)[1] == S)) {
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !(dim(laws)[1] == S)) {
     stop("laws must be a matrix of size SxKmax since type.sojourn == \"fi\" or \"fj\"")
   }
   
-  if (!all(laws >= 0) || !all(laws <= 1)) {
+  if (!all(laws >= 0) | !all(laws <= 1)) {
     stop("Probabilities in laws must be between [0, 1]")
   }
   
@@ -155,7 +184,7 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("laws is not a stochastic matrix")
   }
   
-  if ((type.sojourn == "fi" || type.sojourn == "fj") && !(all(apply(laws, 1, sum) == 1))) {
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !(all(apply(laws, 1, sum) == 1))) {
     stop("laws is not a stochastic matrix")
   }
   

@@ -27,6 +27,38 @@ If \code{nsim} is a single integer then a chain of that length is
 produced. If \code{nsim} is a vector of integers, then \code{length(nsim)}
 sequences are generated with respective lengths.
 }
+\examples{
+E <- c("a", "c", "g", "t")
+S <- length(E)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = S, byrow = TRUE)
+
+# Creation of a matrix corresponding to the 
+# conditional sojourn time distributions
+Kmax <- 6
+nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
+                          0.2, 0, 0.4, 0.2, 
+                          0.1, 0, 0.2, 0.1, 
+                          0.5, 0.3, 0.15, 0.05, 
+                          0, 0, 0.3, 0.2, 
+                          0.1, 0.2, 0.2, 0), 
+                        nrow = S, ncol = Kmax, byrow = TRUE)
+
+smm2 <- smmnonparametric(E = E, init = vect.init, ptrans = pij, 
+                         type.sojourn = "fj", laws = nparam.matrix)
+
+seq2 <- simulate(object = smm2, nsim = c(1000, 10000, 2000), seed = 100)
+seq2[[1]][1:15]
+
+}
 \seealso{
 \link{smmparametric}, \link{fitsemimarkovmodel}
 }

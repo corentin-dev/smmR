@@ -80,6 +80,36 @@ If the sequence is censored at the beginning and at the end, \code{cens.beg}
 must be equal to \code{TRUE} and \code{cens.end} must be equal to \code{TRUE} too.
 All the sequences must be censored in the same way.
 }
+\examples{
+E <- c("a", "c", "g", "t")
+S <- length(E)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = S, byrow = TRUE)
+
+# Creation of a matrix corresponding to the 
+# conditional sojourn time distributions
+Kmax <- 6
+nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
+                          0.2, 0, 0.4, 0.2, 
+                          0.1, 0, 0.2, 0.1, 
+                          0.5, 0.3, 0.15, 0.05, 
+                          0, 0, 0.3, 0.2, 
+                          0.1, 0.2, 0.2, 0), 
+                        nrow = S, ncol = Kmax, byrow = TRUE)
+
+smm2 <- smmnonparametric(E = E, init = vect.init, ptrans = pij, 
+                         type.sojourn = "fj", laws = nparam.matrix)
+
+smm2
+}
 \seealso{
 \link{simulate}, \link{fitsemimarkovmodel}, \link{smmparametric}
 }

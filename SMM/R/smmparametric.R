@@ -61,16 +61,17 @@
 #' @param type.sojourn Type of sojourn time (for more explanations, see Details).
 #' @param distr
 #'   \itemize{
-#'     \item Matrix of distributions of size SxS if `type.sojourn` = "fij";
-#'     \item Vector of distributions of size S if `type.sojourn` = "fi" or "fj;
-#'     \item A distribution if `type.sojourn` = "f".
+#'     \item Matrix of distributions of size SxS if `type.sojourn = "fij"`;
+#'     \item Vector of distributions of size S if `type.sojourn = "fi"` or `"fj`;
+#'     \item A distribution if `type.sojourn = "f"`.
 #'   }
-#' @param param
+#'   where the distributions to be used can be one of `unif`, `geom`, `pois`, `dweibull` or `nbinom`.
+#' @param param Parameters of sojourn time distributions:
 #'   \itemize{
 #'     \item Array of distribution parameters of size SxSx2 
-#'       (2 corresponds to the maximal number of distribution parameters) if `type.sojourn` = "fij";
-#'     \item Matrix of distribution parameters of size Sx2 if `type.sojourn` = "fi" or "fj";
-#'     \item Vector of distribution parameters of length 2 if `type.sojourn` = "f".
+#'       (2 corresponds to the maximal number of distribution parameters) if `type.sojourn = "fij"`;
+#'     \item Matrix of distribution parameters of size Sx2 if `type.sojourn = "fi"` or `"fj"`;
+#'     \item Vector of distribution parameters of length 2 if `type.sojourn = "f"`.
 #'   }
 #'   
 #'  When parameters/values are not necessary (e.g. the Poisson distribution has 
@@ -86,6 +87,49 @@
 #' @seealso [simulate], [fitsemimarkovmodel], [smmnonparametric]
 #' @export
 #'
+#' @examples 
+#' E <- c("a", "c", "g", "t")
+#' S <- length(E)
+#' 
+#' # Creation of the initial distribution
+#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+#' 
+#' # Creation of transition matrix
+#' pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+#'                 0.2, 0, 0.3, 0.5, 
+#'                 0.3, 0.5, 0, 0.2, 
+#'                 0.4, 0.2, 0.4, 0), 
+#'               ncol = S, byrow = TRUE)
+#' 
+#' # Creation of the distribution matrix
+#' 
+#' distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
+#'                          "geom", NA, "pois", "dweibull",
+#'                          "pois", "pois", NA, "geom", 
+#'                          "pois", "geom", "geom", NA), 
+#'                        nrow = S, ncol = S, byrow = TRUE)
+#' 
+#' # Creation of an array containing the parameters
+#' param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
+#'                           0.7, NA, 5, 0.6, 
+#'                           2, 3, NA, 0.6, 
+#'                           4, 0.3, 0.4, NA), 
+#'                         nrow = S, ncol = S, byrow = TRUE)
+#' 
+#' param2.matrix <- matrix(c(NA, NA, NA, 2, 
+#'                           NA, NA, NA, 0.8, 
+#'                           NA, NA, NA, NA, 
+#'                           NA, NA, NA, NA), 
+#'                         nrow = S, ncol = S, byrow = TRUE)
+#' 
+#' param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+#' 
+#' # Specify the semi-Markov model
+#' smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+#'                       type.sojourn = "fij", distr = distr.matrix, 
+#'                       param = param.array)
+#' smm1
+#' 
 smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                           distr, param, cens.beg = FALSE, cens.end = FALSE) {
   
@@ -153,7 +197,7 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
     stop("distr must be a matrix of size SxS and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
   }
   
-  if ((type.sojourn == "fi" || type.sojourn == "fj") && !(is.vector(distr) && is.matrix(param))) {
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !(is.vector(distr) && is.matrix(param))) {
     stop("distr must be a vector of length S and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
   }
   
@@ -166,7 +210,7 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
     stop("distr must be a matrix of size SxS and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
   }
   
-  if ((type.sojourn == "fi" || type.sojourn == "fj") && !((length(distr) == S) && (dim(param)[1] == S && dim(param)[2] == 2))) {
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !((length(distr) == S) && (dim(param)[1] == S && dim(param)[2] == 2))) {
     stop("distr must be a vector of length S and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
   }
   
@@ -177,7 +221,7 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
          ".\n Incorrect distribution(s) found in distr: ", paste(as.character(distr)[!(distr %in% distrib.vec)], collapse = ", "))
   }
   
-  if (!all(param >= 0 || is.na(param))) {
+  if (!all(param >= 0 | is.na(param))) {
     stop("Every element of param must be positive")
   }
   
@@ -280,7 +324,7 @@ is.smmparametric <- function(x) {
   }
   
   if (x$type.sojourn == "fij") {
-    fijk <- f
+    fijk <- array(f, c(S, S, Kmax))
   } else if (x$type.sojourn == "fi") {
     f <- rep(as.vector(t(f)), each = S)
     fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)

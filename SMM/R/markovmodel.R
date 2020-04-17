@@ -156,7 +156,7 @@ loglik.markovmodel <- function(x, seq, E) {
     loglik[j] <- s + sum(as.numeric(Nijl[, , j])[which(x$ptrans != 0)] * log(x$ptrans[which(x$ptrans != 0)]))
   }
   
-  return(list(seq = seq, loglik = loglik))
+  return(loglik)
 }
 
 # Method to get the number of parameters
@@ -182,9 +182,8 @@ loglik.markovmodel <- function(x, seq, E) {
 #'
 aic.markovmodel <- function(x, seq, E) {
   
-  out <- loglik(x, seq, E)
+  loglik <- loglik(x, seq, E)
   nbseq <- length(seq)
-  loglik <- out$loglik
   
   Kpar <- .getKpar(x)
   
@@ -210,6 +209,17 @@ aic.markovmodel <- function(x, seq, E) {
 #' 
 #' @export
 #'
+#' @examples
+#' E <- c("a", "c", "g", "t")
+#' S <- length(E)
+#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+#' k <- 2
+#' p <- matrix(0.25, nrow = S ^ k, ncol = S)
+#' 
+#' # Specify the Markov model
+#' markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+#' markov1
+#' 
 bic.markovmodel <- function(x, seq, E) {
   
   out <- loglik(x, seq, E)

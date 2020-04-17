@@ -26,16 +26,18 @@ smmparametric(
 \item{type.sojourn}{Type of sojourn time (for more explanations, see Details).}
 
 \item{distr}{\itemize{
-\item Matrix of distributions of size SxS if \code{type.sojourn} = "fij";
-\item Vector of distributions of size S if \code{type.sojourn} = "fi" or "fj;
-\item A distribution if \code{type.sojourn} = "f".
-}}
+\item Matrix of distributions of size SxS if \code{type.sojourn = "fij"};
+\item Vector of distributions of size S if \code{type.sojourn = "fi"} or \verb{"fj};
+\item A distribution if \code{type.sojourn = "f"}.
+}
+where the distributions to be used can be one of \code{unif}, \code{geom}, \code{pois}, \code{dweibull} or \code{nbinom}.}
 
-\item{param}{\itemize{
+\item{param}{Parameters of sojourn time distributions:
+\itemize{
 \item Array of distribution parameters of size SxSx2
-(2 corresponds to the maximal number of distribution parameters) if \code{type.sojourn} = "fij";
-\item Matrix of distribution parameters of size Sx2 if \code{type.sojourn} = "fi" or "fj";
-\item Vector of distribution parameters of length 2 if \code{type.sojourn} = "f".
+(2 corresponds to the maximal number of distribution parameters) if \code{type.sojourn = "fij"};
+\item Matrix of distribution parameters of size Sx2 if \code{type.sojourn = "fi"} or \code{"fj"};
+\item Vector of distribution parameters of length 2 if \code{type.sojourn = "f"}.
 }
 
 When parameters/values are not necessary (e.g. the Poisson distribution has
@@ -106,6 +108,50 @@ type of sojourn time given.
 If the sequence is censored at the beginning and at the end, \code{cens.beg}
 must be equal to \code{TRUE} and \code{cens.end} must be equal to \code{TRUE} too.
 All the sequences must be censored in the same way.
+}
+\examples{
+E <- c("a", "c", "g", "t")
+S <- length(E)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = S, byrow = TRUE)
+
+# Creation of the distribution matrix
+
+distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
+                         "geom", NA, "pois", "dweibull",
+                         "pois", "pois", NA, "geom", 
+                         "pois", "geom", "geom", NA), 
+                       nrow = S, ncol = S, byrow = TRUE)
+
+# Creation of an array containing the parameters
+param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
+                          0.7, NA, 5, 0.6, 
+                          2, 3, NA, 0.6, 
+                          4, 0.3, 0.4, NA), 
+                        nrow = S, ncol = S, byrow = TRUE)
+
+param2.matrix <- matrix(c(NA, NA, NA, 2, 
+                          NA, NA, NA, 0.8, 
+                          NA, NA, NA, NA, 
+                          NA, NA, NA, NA), 
+                        nrow = S, ncol = S, byrow = TRUE)
+
+param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+
+# Specify the semi-Markov model
+smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+                      type.sojourn = "fij", distr = distr.matrix, 
+                      param = param.array)
+smm1
+
 }
 \seealso{
 \link{simulate}, \link{fitsemimarkovmodel}, \link{smmnonparametric}

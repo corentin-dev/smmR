@@ -20,3 +20,15 @@ A vector giving the value of the BIC for each sequence.
 \description{
 Computation of the Bayesian Information Criterion.
 }
+\examples{
+E <- c("a", "c", "g", "t")
+S <- length(E)
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+k <- 2
+p <- matrix(0.25, nrow = S ^ k, ncol = S)
+
+# Specify the Markov model
+markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+markov1
+
+}
