@@ -44,6 +44,8 @@ simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
     y <- rep.int(NA, nsim[n])
     
     y[1:object$k] <- sample(x = object$E, size = object$k, replace = TRUE, prob = object$init)
+    # y[1:object$k] <- s2c(sample(x = as.character(words(length = k, alphabet = E)), 
+    #                         size = 1, prob = object$init))
     
     for (i in 1:(nsim[n] - object$k)) {
       ind <- which(object$E == y[i + object$k - 1])

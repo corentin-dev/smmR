@@ -118,16 +118,14 @@
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\author{
-%Vlad Stefan Barbu \\ Universit\'e de Rouen--Normandie, LMRS \And Caroline B\'erard \\ Universit\'e de Rouen--Normandie, LITIS \And Dominique Cellier \\ Universit\'e de Rouen--Normandie, LITIS \AND Mathilde Sautreuil \\ Universit\'e de Rouen--Normandie, LMRS \And Nicolas Vergne \\ Universit\'e de Rouen--Normandie, LMRS
-%}
-
-%\author{
-%Vlad Stefan Barbu \\ Universit\'e de Rouen--Normandie \And Caroline B\'erard \\ Universit\'e de Rouen--Normandie \AND Dominique Cellier \\ Universit\'e de Rouen--Normandie \And Mathilde Sautreuil \\ Universit\'e de Rouen--Normandie \And Nicolas Vergne \\ Universit\'e de Rouen--Normandie
-%}
+% \author{
+% Vlad Stefan Barbu \And Caroline B\'erard \And Dominique Cellier \And Florian Lecocq \And  Corentin Lothod\'e \And Mathilde Sautreuil \AND Nicolas Vergne \\ Universit\'e de Rouen--Normandie
+% }
 
 \author{
-Vlad Stefan Barbu  \And Caroline B\'erard  \And Dominique Cellier  \And Mathilde Sautreuil \AND Nicolas Vergne \\ Universit\'e de Rouen--Normandie
+Vlad Stefan Barbu \And Caroline B\'erard \And Dominique Cellier
+\AND Florian Lecocq \And Corentin Lothod\'e \And Mathilde Sautreuil\\
+\AND Nicolas Vergne \\ Universit\'e de Rouen--Normandie
 }
 
 
@@ -136,7 +134,8 @@ Vlad Stefan Barbu  \And Caroline B\'erard  \And Dominique Cellier  \And Mathilde
 \title{\pkg{SMM}: An \proglang{R} Package for Estimation and Simulation of Discrete-time semi-Markov Models}%{\tt R}
 
 %% for pretty printing and a nice hypersummary also set:
-\Plainauthor{Vlad Stefan Barbu, Caroline B\'erard, Dominique Cellier, Mathilde Sautreuil, Nicolas Vergne} %% comma-separated
+% \Plainauthor{Vlad Stefan Barbu, Caroline B\'erard, Dominique Cellier, Florian Lecocq, \\ Corentin Lothod\'e, Mathilde Sautreuil, Nicolas Vergne} %% comma-separated
+\Plainauthor{V. S. Barbu, C. B\'erard, D. Cellier, F. Lecocq, C. Lothod\'e, M. Sautreuil, N. Vergne} %% comma-separated
 \Plaintitle{SMM: An R package for estimation and simulation of discrete-time semi-Markov models} %% without formatting
 \Shorttitle{\pkg{SMM}: Estimation and simulation of semi-Markov models} %% a short title (if necessary)
 
@@ -207,6 +206,23 @@ uniform, geometric, poisson, discrete weibull and binomial negative.
   E-mail: \email{mathilde.sautreuil@etu.univ-rouen.fr}\\
   URL: \url{http://lmrs.univ-rouen.fr/Persopage/Sautreuil/index.html} \\
 
+  Florian Lecocq\\
+  Universit\'e de Rouen-Normandie \\
+  Laboratoire de Math\'ematiques Rapha\"el Salem\\
+  UFR des Sciences et Techniques\\
+  Avenue de l'Universit\'e, BP. 12\\
+  76801 Saint-\'Etienne-du-Rouvray, France\\
+  E-mail: \email{florian.lecocq@outlook.com}\\
+
+  Corentin Lothod\'e\\
+  Universit\'e de Rouen-Normandie \\
+  Laboratoire de Math\'ematiques Rapha\"el Salem\\
+  UFR des Sciences et Techniques\\
+  Avenue de l'Universit\'e, BP. 12\\
+  76801 Saint-\'Etienne-du-Rouvray, France\\
+  E-mail: \email{corentin.lothode@univ-rouen.fr}\\
+  URL: \url{https://lmrs.univ-rouen.fr/fr/persopage/corentin-lothode} \\
+
   Nicolas Vergne\\
   Universit\'e de Rouen-Normandie \\
   Laboratoire de Math\'ematiques Rapha\"el Salem\\
@@ -263,7 +279,7 @@ Several remarks need to be done here.
 
 First, concerning the censoring, the simplest situation is the one when all the sojourn times are completely observed (non censored).  A more complicated and realistic framework is when the last sojourn time is not completely observed, thus being right censored; in most practical situations this case occurs. An analogous situation is when the first sojourn time is not completely observed, thus being also right censored. In practice, this case occurs when one does not know the beginning of a phenomenon modelled by a semi-Markov chain. The most complete framework is when both the first and the last sojourn times are right censored. Details on parametric estimation of semi-Markov chains can be found in \citet{BaBeCeSaVe}. 
 
-Second,  when considering estimation starting* from several independent sample paths of a semi-Markov chain, it is assumed that all the trajectories are censored in the same way;  note that this is not a real constraint, but we imposed this condition only in order to avoid useless technical notations that would make the comprehension more difficult.
+Second,  when considering estimation starting from several independent sample paths of a semi-Markov chain, it is assumed that all the trajectories are censored in the same way;  note that this is not a real constraint, but we imposed this condition only in order to avoid useless technical notations that would make the comprehension more difficult.
 
 
 Third, note that it is important for the four types of models (of sojourn times) to be considered separately because: (i) in practical situations, one model could be more adapted than some other; (ii) different models will yield specific parameter estimators, so it is important to study them separately.
