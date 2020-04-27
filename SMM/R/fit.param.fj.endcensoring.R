@@ -66,8 +66,8 @@
                   Fv[j, maskNeNb] <- pgeom(q = (0:(Kmax - 1))[maskNeNb], prob = par[skipindex], lower.tail = FALSE, log.p = TRUE)
                   skipindex <- skipindex + 1
                 } else if (distr[j] == "nbinom") {
-                  fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-                  Fv[j, maskNeNb] <- pnbinom(q = (0:(Kmax - 1))[maskNeNb], size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
+                  fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+                  Fv[j, maskNeNb] <- pnbinom(q = (0:(Kmax - 1))[maskNeNb], size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
                   skipindex <- skipindex + 2
                 } else if (distr[j] == "pois") {
                   fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -104,8 +104,8 @@
                   Fv[j, maskNeik] <- pgeom(q = (0:(Kmax - 1))[maskNeik], prob = par[skipindex], lower.tail = FALSE, log.p = TRUE)
                   skipindex <- skipindex + 1
                 } else if (distr[j] == "nbinom") {
-                  fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-                  Fv[j, maskNeik] <- pnbinom(q = (0:(Kmax - 1))[maskNeik], size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
+                  fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+                  Fv[j, maskNeik] <- pnbinom(q = (0:(Kmax - 1))[maskNeik], size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
                   skipindex <- skipindex + 2
                 } else if (distr[j] == "pois") {
                   fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -131,7 +131,7 @@
             c0 <- c(0, 0)
             
             # q < 1
-            u1 <- matrix(data = c(1, 0), nrow = 1, ncol = 2)
+            u1 <- matrix(data = c(-1, 0), nrow = 1, ncol = 2)
             c1 <- c(-1)
             
             CO2 <- constrOptim(
@@ -153,15 +153,19 @@
             
             # Constraints about the values of the parameters
             
-            # alpha, mu > 0
+            # alpha, p > 0
             u0 <- diag(x = 1, nrow = 2)
             c0 <- c(0, 0)
+            
+            # p < 1
+            u1 <- matrix(data = c(0, -1), nrow = 1, ncol = 2)
+            c1 <- c(-1)
             
             CO2 <- constrOptim(
               theta = theta0,
               f = loglik,
-              ui = u0,
-              ci = c0,
+              ui = rbind(u0, u1),
+              ci = c(c0, c1),
               method = "Nelder-Mead"
             )
             param[j, ] <- CO2$par
@@ -201,8 +205,8 @@
               Fv[j, maskNeNb] <- pgeom(q = (0:(Kmax - 1))[maskNeNb], prob = par[skipindex], lower.tail = FALSE, log.p = TRUE)
               skipindex <- skipindex + 1
             } else if (distr[j] == "nbinom") {
-              fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-              Fv[j, maskNeNb] <- pnbinom(q = (0:(Kmax - 1))[maskNeNb], size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
+              fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+              Fv[j, maskNeNb] <- pnbinom(q = (0:(Kmax - 1))[maskNeNb], size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
               skipindex <- skipindex + 2
             } else if (distr[j] == "pois") {
               fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -240,8 +244,8 @@
               Fv[j, maskNeik] <- pgeom(q = (0:(Kmax - 1))[maskNeik], prob = par[skipindex], lower.tail = FALSE, log.p = TRUE)
               skipindex <- skipindex + 1
             } else if (distr[j] == "nbinom") {
-              fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-              Fv[j, maskNeik] <- pnbinom(q = (0:(Kmax - 1))[maskNeik], size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
+              fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+              Fv[j, maskNeik] <- pnbinom(q = (0:(Kmax - 1))[maskNeik], size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
               skipindex <- skipindex + 2
             } else if (distr[j] == "pois") {
               fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -278,7 +282,8 @@
           u1[skipindex, skipindex] <- -1
           skipindex <- skipindex + 1
         } else if (distr[j] == "nbinom") {
-          rowstoremove <- c(rowstoremove, skipindex, skipindex + 1)
+          u1[skipindex + 1, skipindex + 1] <- -1
+          rowstoremove <- c(rowstoremove, skipindex)
           skipindex <- skipindex + 2
         } else if (distr[j] == "pois") {
           rowstoremove <- c(rowstoremove, skipindex)
@@ -366,9 +371,9 @@
             Fv2[j, ] <- pgeom(q = 0:(Kmax - 1), prob = par[skipindex], lower.tail = FALSE)
             skipindex <- skipindex + 1
           } else if (distr[j] == "nbinom") {
-            fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-            Fv[j, maskNbjk] <- pnbinom(q = (0:(Kmax - 1))[maskNbjk], size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
-            Fv2[j, ] <- pnbinom(q = 0:(Kmax - 1), size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE)
+            fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+            Fv[j, maskNbjk] <- pnbinom(q = (0:(Kmax - 1))[maskNbjk], size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE, log.p = TRUE)
+            Fv2[j, ] <- pnbinom(q = 0:(Kmax - 1), size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE)
             skipindex <- skipindex + 2
           } else if (distr[j] == "pois") {
             fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -416,8 +421,8 @@
             Fv2[j, ] <- pgeom(q = 0:(Kmax - 1), prob = par[skipindex], lower.tail = FALSE)
             skipindex <- skipindex + 1
           } else if (distr[j] == "nbinom") {
-            fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], mu = par[skipindex + 1], log = TRUE)
-            Fv2[j, ] <- pnbinom(q = 0:(Kmax - 1), size = par[skipindex], mu = par[skipindex + 1], lower.tail = FALSE)
+            fv[j, maskNjk] <- dnbinom(x = (0:(Kmax - 1))[maskNjk], size = par[skipindex], prob = par[skipindex + 1], log = TRUE)
+            Fv2[j, ] <- pnbinom(q = 0:(Kmax - 1), size = par[skipindex], prob = par[skipindex + 1], lower.tail = FALSE)
             skipindex <- skipindex + 2
           } else if (distr[j] == "pois") {
             fv[j, maskNjk] <- dpois(x = (0:(Kmax - 1))[maskNjk], lambda = par[skipindex], log = TRUE)
@@ -469,7 +474,8 @@
         u3[skipindex, skipindex + S * (S - 2)] <- -1
         skipindex <- skipindex + 1
       } else if (distr[j] == "nbinom") {
-        rowstoremove <- c(rowstoremove, skipindex, skipindex + 1)
+        u3[skipindex + 1, skipindex + 1 + S * (S - 2)] <- -1
+        rowstoremove <- c(rowstoremove, skipindex)
         skipindex <- skipindex + 2
       } else if (distr[j] == "pois") {
         rowstoremove <- c(rowstoremove, skipindex)

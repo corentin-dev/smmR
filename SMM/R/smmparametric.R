@@ -17,7 +17,10 @@
 #'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^x} for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{0 < \theta \le 1}, with \eqn{n > 0} and \eqn{\theta} is the probability of success;
 #'    \item Poisson: \eqn{f(x) = (\lambda^x exp(-\lambda))/x!} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{n > 0} and \eqn{\lambda > 0};
 #'    \item Discrete Weibull of type 1: \eqn{f(x)=q^{(x-1)^{\beta}}-q^{x^{\beta}}, x=1,2,3,\ldots,n}, with \eqn{n > 0}, \eqn{q} is the first parameter and \eqn{\beta} is the second parameter;
-#'    \item Negative binomial: \eqn{f(x)=\Gamma(x+\alpha)/(\Gamma(\alpha) x!) (\alpha/(\alpha+\mu))^{\alpha} (\mu/(\alpha+\mu))^x}, for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{n > 0,\ \Gamma } is the Gamma function, \eqn{\alpha} is the parameter of overdispersion and \eqn{\mu} is the mean;
+#'    \item Negative binomial: \eqn{f(x)=\frac{\Gamma(x+\alpha)}{\Gamma(\alpha) x!} p^{\alpha} (1 - p)^x}, 
+#'      for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{\Gamma} is the Gamma function, 
+#'      \eqn{\alpha} is the parameter of overdispersion and \eqn{p} is the 
+#'      probability of success, \eqn{0 < p < 1};
 #'    \item Non-parametric.
 #'  }
 #' We define :
@@ -116,7 +119,7 @@
 #'                           4, 0.3, 0.4, NA), 
 #'                         nrow = S, ncol = S, byrow = TRUE)
 #' 
-#' param2.matrix <- matrix(c(NA, NA, NA, 2, 
+#' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 
@@ -307,7 +310,7 @@ is.smmparametric <- function(x) {
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], mu = param2[j])
+      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {

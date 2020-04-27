@@ -9,31 +9,35 @@
   }
   
   alphahat <- xbar ^ 2 / (s2 - xbar)
-  muhat <- xbar
+  phat <- xbar / s2
   
-  theta0 <- c(alphahat, muhat)
+  theta0 <- c(alphahat, phat)
   
   loglik <- function(par) {
     
     mask <- res$Njk[j, ] != 0
     kmask <- (0:(Kmax - 1))[mask]
     fk <- rep.int(x = 0, times = Kmax)
-    fk[mask] <- dnbinom(x = kmask, size = par[1], mu = par[2], log = TRUE)
+    fk[mask] <- dnbinom(x = kmask, size = par[1], prob = par[2], log = TRUE)
     
     return(-(sum(res$Njk[j, ] * fk)))
   }
   
   # Constraints about the values of the parameters:
   
-  # alpha, mu > 0
+  # alpha, p > 0
   u0 <- diag(x = 1, nrow = 2)
   c0 <- c(0, 0)
+  
+  # p < 1
+  u1 <- matrix(data = c(0, -1), nrow = 1, ncol = 2)
+  c1 <- c(-1)
   
   CO2 <- constrOptim(
     theta = theta0,
     f = loglik,
-    ui = u0,
-    ci = c0,
+    ui = rbind(u0, u1),
+    ci = c(c0, c1),
     method = "Nelder-Mead"
   )
   theta0 <- CO2$par
@@ -45,12 +49,12 @@
       mask <- res$Njk[j, ] != 0
       kmask <- (0:(Kmax - 1))[mask]
       fk <- rep.int(x = 0, times = Kmax)
-      fk[mask] <- dnbinom(x = kmask, size = par[1], mu = par[2], log = TRUE)
+      fk[mask] <- dnbinom(x = kmask, size = par[1], prob = par[2], log = TRUE)
       
       mask <- res$Nbjk[j, ] != 0
       kmask <- (0:(Kmax - 1))[mask]
       Fk <- rep.int(x = 0, times = Kmax)
-      Fk[mask] <- pnbinom(q = kmask, size = par[1], mu = par[2], lower.tail = FALSE, log.p = TRUE)
+      Fk[mask] <- pnbinom(q = kmask, size = par[1], prob = par[2], lower.tail = FALSE, log.p = TRUE)
       
       return(-(sum(res$Njk[j, ] * fk) + sum(res$Nbjk[j, ] * Fk)))
     }
@@ -58,8 +62,8 @@
     CO2 <- constrOptim(
       theta = theta0,
       f = loglik,
-      ui = u0,
-      ci = c0,
+      ui = rbind(u0, u1),
+      ci = c(c0, c1),
       method = "Nelder-Mead"
     )
     theta <- CO2$par

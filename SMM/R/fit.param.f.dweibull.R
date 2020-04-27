@@ -21,7 +21,7 @@
   c0 <- c(0, 0)
   
   # q < 1
-  u1 <- matrix(data = c(1, 0), nrow = 1, ncol = 2)
+  u1 <- matrix(data = c(-1, 0), nrow = 1, ncol = 2)
   c1 <- c(-1)
   
   CO2 <- constrOptim(

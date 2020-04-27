@@ -3,16 +3,6 @@
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- sum(res$Nk) / sum(1:Kmax * res$Nk)
 
-  # Constraints about the values of the parameters:
-  
-  # p > 0
-  u0 <- diag(x = 1, nrow = 1)
-  c0 <- c(0)
-  
-  # p < 1
-  u1 <- matrix(data = 1, nrow = 1, ncol = 1)
-  c1 <- c(-1)
-  
   if (!cens.beg && cens.end) {# Censoring at the end
     
     loglik <- function(par) {

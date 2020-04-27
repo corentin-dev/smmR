@@ -24,8 +24,10 @@
 #'    \item Poisson: \eqn{f(x) = \frac{\lambda^x exp(-\lambda)}{x!}} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{\lambda > 0};
 #'    \item Discrete Weibull of type 1: \eqn{f(x)=q^{(x-1)^{\beta}}-q^{x^{\beta}}}, \eqn{x = 1, 2,\ldots,n}, 
 #'      with \eqn{q}, the first parameter and \eqn{\beta} the second parameter;
-#'    \item Negative binomial: \eqn{f(x)=\frac{\Gamma(x+\alpha)}{(\Gamma(\alpha) x!)} (\frac{\alpha}{\alpha+\mu})^{\alpha} (\frac{\mu}{\alpha+\mu})^x}, 
-#'      for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{\Gamma} is the Gamma function, \eqn{\alpha} is the parameter of overdispersion and \eqn{\mu} is the mean;
+#'    \item Negative binomial: \eqn{f(x)=\frac{\Gamma(x+\alpha)}{\Gamma(\alpha) x!} p^{\alpha} (1 - p)^x}, 
+#'      for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{\Gamma} is the Gamma function, 
+#'      \eqn{\alpha} is the parameter of overdispersion and \eqn{p} is the 
+#'      probability of success, \eqn{0 < p < 1};
 #'    \item Non-parametric.
 #'  }
 #'  
@@ -142,7 +144,7 @@
 #'                           4, 0.3, 0.4, NA), 
 #'                         nrow = S, ncol = S, byrow = TRUE)
 #' 
-#' param2.matrix <- matrix(c(NA, NA, NA, 2, 
+#' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 

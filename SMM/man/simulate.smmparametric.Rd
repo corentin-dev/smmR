@@ -56,7 +56,7 @@ param1.matrix <- matrix(c(NA, 2, 0.4, 4,
                           4, 0.3, 0.4, NA), 
                         nrow = S, ncol = S, byrow = TRUE)
 
-param2.matrix <- matrix(c(NA, NA, NA, 2, 
+param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
                           NA, NA, NA, 0.8, 
                           NA, NA, NA, NA, 
                           NA, NA, NA, NA), 

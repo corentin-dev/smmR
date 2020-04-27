@@ -46,7 +46,7 @@
 #'                           4, 0.3, 0.4, NA), 
 #'                         nrow = S, ncol = S, byrow = TRUE)
 #' 
-#' param2.matrix <- matrix(c(NA, NA, NA, 2, 
+#' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 
@@ -109,7 +109,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], mu = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], prob = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2]) + 1
           
         }
         
@@ -134,7 +134,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), 1], mu = object$param[which(J[i] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), 1], prob = object$param[which(J[i] == object$E), 2]) + 1
           
         }
         
@@ -159,7 +159,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr[which(J[i + 1] == object$E)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$E), 1], mu = object$param[which(J[i + 1] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$E), 1], prob = object$param[which(J[i + 1] == object$E), 2]) + 1
           
         }
         
@@ -184,7 +184,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
           
         } else if (object$distr == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[1], mu = object$param[2]) + 1 # we shift
+          k <- rnbinom(n = 1, size = object$param[1], prob = object$param[2]) + 1 # we shift
           
         }
         
