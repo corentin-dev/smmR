@@ -541,6 +541,15 @@ The \pkg{SMM} \proglang{R} package is also devoted to the simulation and estimat
   of a Markov model.
 \end{itemize}
 
+The main structure of the package is illustrated in Figure \ref{fig}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.1\textwidth]{SMM_package.png}
+  \caption{Main structure of \pkg{SMM} package.}
+  \label{fig}
+\end{figure}
+
 \newpage
 
 
