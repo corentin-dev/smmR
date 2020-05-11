@@ -4,9 +4,9 @@ test:
     - apt update
     - apt install -y zlib1g-dev libjpeg-dev
     - R -e 'install.packages(c("DiscreteWeibull","seqinr","qpdf"))'
-    - R CMD build --no-build-vignettes --no-manual SMM
+    - R CMD build SMM
     - mv SMM*.tar.gz SMM.tar.gz
-    - R CMD check --as-cran SMM --no-build-vignettes --no-manual
+    - R CMD check --as-cran SMM.tar.gz
   artifacts:
     paths:
       - SMM.tar.gz
