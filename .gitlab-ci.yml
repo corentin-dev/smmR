@@ -9,7 +9,7 @@ test:
     - cd -
     - R CMD build SMM
     - mv SMM*.tar.gz SMM.tar.gz
-    - R CMD check --as-cran --no-build-vignettes --no-manual SMM.tar.gz
+    - R CMD check --as-cran SMM.tar.gz
   artifacts:
     paths:
       - SMM.tar.gz
