@@ -1,4 +1,4 @@
-image: rocker/verse
+image: rocker/tidyverse
 test:  
   script:
     - apt update
