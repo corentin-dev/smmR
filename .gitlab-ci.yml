@@ -13,3 +13,4 @@ test:
   artifacts:
     paths:
       - SMM.tar.gz
+      - SMM/inst/doc/smm.pdf
