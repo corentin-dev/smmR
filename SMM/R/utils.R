@@ -1,17 +1,17 @@
 ## __________________________________________________________
 ## .getSeq: Returns the character sequence given the processes J and T
 ## __________________________________________________________
-.getSeq <- function(J, T) {
+.getSeq <- function(Jm, Tm) {
   
   seq <- c()
   i <- 1
-  n <- length(T)
+  n <- length(Tm)
   t <- 1
   
   while (i <= n) {
-    k <- T[i] - t
-    seq <- c(seq, rep(J[i], k))
-    t <- T[i]
+    k <- Tm[i] - t
+    seq <- c(seq, rep(Jm[i], k))
+    t <- Tm[i]
     i <- i + 1
   }
   
@@ -23,64 +23,64 @@
 ## __________________________________________________________
 .getProcesses <- function(seq, E) {
   
-  Y <- sapply(seq, function(x) which(E == x), USE.NAMES = FALSE)
+  Ym <- sapply(seq, function(x) which(E == x), USE.NAMES = FALSE)
   
   n1 <- length(seq)
   i1 <- 1
   i2 <- 2
-  J <- c()
-  T <- c()
+  Jm <- c()
+  Tm <- c()
   
   while (i1 <= n1) {
-    while (i2 <= n1 && (Y[i2] == Y[i1])) {
+    while (i2 <= n1 && (Ym[i2] == Ym[i1])) {
       i2 <- i2 + 1
     }
-    J <- c(J, Y[i1])
-    T <- c(T, i2)
+    Jm <- c(Jm, Ym[i1])
+    Tm <- c(Tm, i2)
     i1 <- i2
     i2 <- i1 + 1
   }
   
-  n2 <- length(J)
-  L <- T - c(1, T[-length(T)])
-  U <- c()
+  n2 <- length(Jm)
+  Lm <- Tm - c(1, Tm[-length(Tm)])
+  Um <- c()
   
   for (i in 1:n2) {
-    for (j in 0:(L[i] - 1)) {
-      U <- c(U, j)
+    for (j in 0:(Lm[i] - 1)) {
+      Um <- c(Um, j)
     }
   }
   
-  return(list(Y = Y, J = J, T = T, L = L, U = U))
+  return(list(Ym = Ym, Jm = Jm, Tm = Tm, Lm = Lm, Um = Um))
   
 }
 
 ## __________________________________________________________
 ## .getCountingProcesses: Gives the values of the counting processes
 ## __________________________________________________________
-.getCountingProcesses <- function(J, L, S, Kmax) {
+.getCountingProcesses <- function(Jm, Lm, S, Kmax) {
   
-  nbseq <- length(J)
+  L <- length(Jm)
   
   Nstart <- c()
   Nstarti <- rep.int(0, S)
-  Nstartil <- matrix(0, S, nbseq)
-  Nijkl <- array(0, c(S, S, Kmax, nbseq))
+  Nstartil <- matrix(0, S, L)
+  Nijkl <- array(0, c(S, S, Kmax, L))
   
-  Nbijkl <- array(0, c(S, S, Kmax, nbseq))
-  Neikl <- array(0, c(S, Kmax, nbseq))
+  Nbijkl <- array(0, c(S, S, Kmax, L))
+  Neikl <- array(0, c(S, Kmax, L))
   
-  for (l in 1:nbseq) {
+  for (l in 1:L) {
     
-    Jl <- J[[l]]
-    Ll <- L[[l]]
-    M <- length(Jl)
+    Jl <- Jm[[l]]
+    Ll <- Lm[[l]]
+    n <- length(Jl)
     
     Nstart <- c(Nstart, Jl[1]) # Initial state
     Nbijkl[Jl[1], Jl[2], Ll[1], l] <- Nbijkl[Jl[1], Jl[2], Ll[1], l] + 1
-    Neikl[Jl[M], Ll[M], l] <- Neikl[Jl[M], Ll[M], l] + 1
+    Neikl[Jl[n], Ll[n], l] <- Neikl[Jl[n], Ll[n], l] + 1
     
-    for (i in 2:M) {
+    for (i in 2:n) {
       Nijkl[Jl[i - 1], Jl[i], Ll[i - 1], l] <- Nijkl[Jl[i - 1], Jl[i], Ll[i - 1], l] + 1
     }
   }
@@ -167,18 +167,18 @@
 ## __________________________________________________________
 ## .count.Niujv: Gives the values of the counting processes for the couple (Y, U)
 ## __________________________________________________________
-.getCountingNiujv <- function(Y, U, S, Kmax) {
+.getCountingNiujv <- function(Ym, Um, S, Kmax) {
   
-  nbseq <-  length(Y)
+  L <-  length(Ym)
   Niujv <- array(0, c(S, Kmax, S, Kmax))
   
-  for (k in 1:nbseq) {
+  for (k in 1:L) {
     
-    Yi <- Y[[k]]
-    Ui <- U[[k]]
-    M <- length(Yi)
+    Yi <- Ym[[k]]
+    Ui <- Um[[k]]
+    n <- length(Yi)
     
-    for (i in 2:M) {
+    for (i in 2:n) {
       Niujv[Yi[i - 1], Ui[i - 1] + 1, Yi[i], Ui[i] + 1] <-
         Niujv[Yi[i - 1], Ui[i - 1] + 1, Yi[i], Ui[i] + 1] + 1
     }

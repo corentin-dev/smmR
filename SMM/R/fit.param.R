@@ -2,13 +2,8 @@
   
   S <- seq$S
   E <- seq$E
-  nbSeq <- seq$nbSeq
-  S <- seq$S
-  Y <- seq$Y
-  J <- seq$J
-  T <- seq$T
   L <- seq$L
-  U <- seq$U
+  S <- seq$S
   Kmax <- seq$Kmax
   counting <- seq$counting
   
@@ -32,6 +27,7 @@
       ptrans <- counting$Nij / counting$Ni
       ptrans[which(is.na(ptrans))] <- 0
       
+      # Estimation of the parameters of each distribution
       param <- array(data = NA, dim = c(S, S, 2))
       
       for (i in 1:S) {
@@ -60,6 +56,7 @@
     ptrans <- counting$Nij / counting$Ni
     ptrans[which(is.na(ptrans))] <- 0
     
+    # Estimation of the parameters of each distribution
     param <- matrix(data = NA, nrow = S, ncol = 2)
     
     for (i in 1:S) {
@@ -92,6 +89,7 @@
       ptrans <- counting$Nij / counting$Ni
       ptrans[which(is.na(ptrans))] <- 0
       
+      # Estimation of the parameters of each distribution
       param <- matrix(data = NA, nrow = S, ncol = 2)
       
       for (j in 1:S) {
@@ -118,6 +116,9 @@
     ptrans <- counting$Nij / counting$Ni
     ptrans[which(is.na(ptrans))] <- 0
     
+    # Estimation of the parameters of each distribution
+    param <- rep.int(x = NA, times = 2)
+    
     if (distr == "dweibull") {
       param <- .fit.param.f.dweibull(counting, Kmax, cens.beg, cens.end)
     } else if (distr == "geom") {
@@ -134,8 +135,8 @@
   
   estimate <-
     list(
-      S = S,
       E = E,
+      S = S,
       init = rep.int(x = NA, times = S),
       type.sojourn = type.sojourn,
       ptrans = ptrans,
@@ -148,7 +149,7 @@
   class(estimate) <- c("smm", "smmparametric")
   
   # Inital distribution
-  if (nbSeq >= S * 10) {
+  if (L >= S * 10) {
     estimate$init <- counting$Nstarti / sum(counting$Nstarti)
   } else {# Computation of the limit distribution
     q <- .get.q(estimate, Kmax)

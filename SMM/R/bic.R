@@ -1,13 +1,13 @@
 #' Bayesian Information Criterion (BIC)
 #'
-#' @description Computation of the Bayesian Information Criterion.
+#' @description Generic function computing the Bayesian Information Criterion 
+#'   of the model `x`, with the list of sequences `seq`.
 #'
-#' @param x An object of class [markovmodel] or inheriting from the class smm.
-#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param x An object for which the logikelihood can be computed.
 #' @param seq A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
 #' @param E Vector of state space (of length S).
-#' @return A vector giving the value of the BIC for each sequence.
+#' @return A numeric value giving the value of the BIC.
 #' 
 #' 
 #' @export

@@ -232,7 +232,7 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
     
   }
 
-  seq <- sequences(listSeq = seq, E = E)
+  seq <- sequences(seq = seq, E = E)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     if (!cens.beg && !cens.end) {

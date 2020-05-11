@@ -15,7 +15,7 @@ AIC criterion must be computed.}
 \item{E}{Vector of state space (of length S).}
 }
 \value{
-A vector giving the value of the AIC for each sequence.
+A numeric value giving the value of the AIC.
 }
 \description{
 Computation of the Akaike Information Criterion.

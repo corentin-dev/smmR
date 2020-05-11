@@ -3,10 +3,10 @@
 #' @description Creates a model specification of a Markov model.
 #'
 #' @param E Vector of state space of length S.
+#' @param k Order of the Markov chain.
 #' @param init Vector of initial distribution of length S.
 #' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
 #'   \eqn{J=(J_m)_{m}} of size SxS.
-#' @param k Order of the Markov chain.
 #' @return An object of class [markovmodel][markovmodel].
 #' 
 #' 
@@ -70,17 +70,19 @@ markovmodel <- function(E, init, ptrans, k = 1) {
   }
 
 
-  ans <- list(E = E, init = init, ptrans = ptrans, k = k)
+  ans <- list(E = E, k = k, init = init, ptrans = ptrans)
   
   class(ans) <- "markovmodel"
   
   return(ans)
 }
 
+# Function to check if an object is of class markovmodel
 is.markovmodel <- function(x) {
   inherits(x, "markovmodel")
 }
 
+# Method to compute the stationary distribution of the Markov model x
 .stationary.distribution.markovmodel <- function(x) {
   
   m <- dim(x$ptrans)[1] # Number of states
@@ -140,26 +142,30 @@ loglik.markovmodel <- function(x, seq, E) {
   
   # Count the number of transitions from i to j in k steps
   Nijl <- array(0, c(S ^ x$k, S, nbseq))
+  contrInit <- rep.int(x = 0, times = nbseq)
   
   for (i in 1:nbseq) {
     
     Nijl[, , i] <- matrix(count(seq = seq[[i]], wordsize = x$k + 1, alphabet = x$E), byrow = TRUE, ncol = x$S)
     
+    for (j in 1:x$k) {# Warning to initial law
+      if (x$init[which(x$E == seq[[i]][j])] != 0) {
+        contrInit[i] <- contrInit[i] + log(x$init[which(x$E == seq[[i]][j])])  
+      }
+    }
+    
   }
   
-  loglik <- rep.int(x = NA, times = nbseq)
-  for (j in 1:nbseq) {
-    s <- 0
-    for (i in 1:x$k) {# Warning to initial law
-      s <- s + log(x$init[which(x$E == seq[[j]][i])])
-    }
-    loglik[j] <- s + sum(as.numeric(Nijl[, , j])[which(x$ptrans != 0)] * log(x$ptrans[which(x$ptrans != 0)]))
-  }
+  Nij <- apply(Nijl, c(1, 2), sum)
+  maskNij <- Nij != 0 & x$ptrans != 0
+  
+  loglik <- sum(contrInit) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
   
   return(loglik)
 }
 
 # Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
 .getKpar.markovmodel <- function(x) {
   
   Kpar <- (x$S - 1) * x$S ^ x$k
@@ -175,7 +181,7 @@ loglik.markovmodel <- function(x, seq, E) {
 #' @param seq A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
 #' @param E Vector of state space (of length S).
-#' @return A vector giving the value of the AIC for each sequence.
+#' @return A numeric value giving the value of the AIC.
 #' 
 #' 
 #' @export
@@ -183,14 +189,10 @@ loglik.markovmodel <- function(x, seq, E) {
 aic.markovmodel <- function(x, seq, E) {
   
   loglik <- loglik(x, seq, E)
-  nbseq <- length(seq)
   
   Kpar <- .getKpar(x)
   
-  aic <- rep.int(x = NA, times = nbseq)
-  for (l in 1:nbseq) {
-    aic[l] <- -2 * loglik[l] + 2 * Kpar
-  }
+  aic <- -2 * loglik + 2 * Kpar
   
   return(aic)
   
@@ -204,35 +206,19 @@ aic.markovmodel <- function(x, seq, E) {
 #' @param seq A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
 #' @param E Vector of state space (of length S).
-#' @return A vector giving the value of the BIC for each sequence.
+#' @return A numeric value giving the value of the BIC.
 #' 
 #' 
 #' @export
 #'
-#' @examples
-#' E <- c("a", "c", "g", "t")
-#' S <- length(E)
-#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-#' k <- 2
-#' p <- matrix(0.25, nrow = S ^ k, ncol = S)
-#' 
-#' # Specify the Markov model
-#' markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
-#' markov1
-#' 
 bic.markovmodel <- function(x, seq, E) {
   
-  out <- loglik(x, seq, E)
-  nbseq <- length(seq)
-  loglik <- out$loglik
+  loglik <- loglik(x, seq, E)
   
   Kpar <- .getKpar(x)
   
-  bic <- rep.int(x = NA, times = nbseq)
-  for (l in 1:nbseq) {
-    n <- length(seq[[l]])
-    bic[l] <- -2 * loglik[l] + log(n) * Kpar
-  }
+  n <- sum(unlist(lapply(seq, length)))
+  bic <- -2 * loglik + log(n) * Kpar
   
   return(bic)
 }

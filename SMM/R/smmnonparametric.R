@@ -177,11 +177,13 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
     stop("Probabilities in laws must be between [0, 1]")
   }
   
-  
-  temp <- apply(laws, c(1, 2), sum)
-  indexdiag <- seq(1, S * S, by = S + 1)
-  if (type.sojourn == "fij" && !(all(diag(temp == 0)) && all(temp[-indexdiag] == 1))) {
-    stop("laws is not a stochastic matrix")
+  if (type.sojourn == "fij") {
+    temp <- apply(laws, c(1, 2), sum)
+    indexdiag <- seq(1, S * S, by = S + 1)
+    
+    if (!(all(diag(temp == 0)) && all(temp[-indexdiag] == 1))) {
+      stop("laws is not a stochastic matrix")
+    }
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(all(apply(laws, 1, sum) == 1))) {
@@ -226,44 +228,159 @@ smmnonparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj"
   return(ans)
 }
 
+# Function to check if an object is of class smmnonparametric
 is.smmnonparametric <- function(x) {
   inherits(x, "smmnonparametric")
 }
 
-.get.f.smmnonparametric <- function(x, Kmax) {
+#' Loglikelihood
+#'
+#' @description Computation of the loglikelihood for a semi-Markov model
+#'
+#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   log-likelihood must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the loglikelihood for each sequence.
+#' 
+#' 
+#' @export
+#'
+loglik.smmnonparametric <- function(x, seq, E) {
   
-  f <- x$laws
+  #############################
+  # Checking parameters seq and E
+  #############################
+  
+  if (!is.list(seq)) {
+    stop("The parameter seq should be a list")
+  }
+  
+  if (!all(unique(unlist(seq)) %in% E)) {
+    stop("Some states in the list of observed sequences seq are not in the state space E")
+  }
+  
+  S <- length(E)
+  
+  #############################
+  # Checking smm parameter
+  #############################
+  
+  if ((x$S != S)) {
+    stop("The size of the matrix ptrans must be equal to SxS with S = length(E)")
+  }
+  
+  if (!all.equal(E, x$E)) {
+    stop("The state space of the estimated SMM smm is different from the given state E")
+  }
+  
+  
+  seq <- sequences(seq = seq, E = E)
+  Kmax <- seq$Kmax
+  
+  if (!(Kmax == x$Kmax)) {
+    stop("Kmax of the given sequences is different from the Kmax of the estimated SMM model")  
+  }
+  
   type.sojourn <- x$type.sojourn
-  S <- x$S
+  cens.end <- x$cens.end
   
-  if (type.sojourn == "fij") {
+  #############################
+  # Let's compute the loglikelihood
+  #############################
+  
+  init <- x$init # Initial distribution
+  Nstarti <- seq$counting$Nstarti
+  maskNstarti <- Nstarti != 0 & init != 0
+  
+  if (!cens.end) {# No censoring
     
-    fijk <- f
+    pij <- x$ptrans # Transition matrix
+    Nij <- seq$counting$Nij
+    maskNij <- Nij != 0 & pij != 0
     
-  } else if (type.sojourn == "fi") {
+    # Contribution of the initial distribution and 
+    # the transition matrix to the loglikelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij]))
     
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-    fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
     
-  } else if (type.sojourn == "fj") {
+    # Contribution of the sojourn time distribution
+    if (type.sojourn == "fij") {
+      
+      Nijk <- seq$counting$Nijk
+      maskNijk <- Nijk != 0 & x$laws != 0
+      
+      loglik <- loglik + sum(Nijk[maskNijk] * log(x$laws[maskNijk]))
+      
+    } else if (type.sojourn == "fi") {
+      
+      Nik <- seq$counting$Nik
+      maskNik <- Nik != 0 & x$laws != 0
+      
+      loglik <- loglik + sum(Nik[maskNik] * log(x$laws[maskNik]))
+      
+    } else if (type.sojourn == "fj") {
+      
+      Njk <- seq$counting$Njk
+      maskNjk <- Njk != 0 & x$laws != 0
+      
+      loglik <- loglik + sum(Njk[maskNjk] * log(x$laws[maskNjk]))
+      
+    } else {
+      
+      Nk <- seq$counting$Nk
+      maskNk <- Nk != 0 & x$laws != 0
+      
+      loglik <- loglik + sum(Nk[maskNk] * log(x$laws[maskNk]))
+      
+    }
     
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+  } else {# Censoring
     
-  } else {
+    S <- seq$S
+    Y <- seq$Y
+    U <- seq$U
     
-    f <- rep(f, each = S * S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    
+    # Computation of Niujv (couple Markov chain (Y, U))
+    Niujv <- .getCountingNiujv(Y, U, S, Kmax)
+    Niu <- apply(Niujv, c(1, 2), sum)
+    
+    phat <- Niujv / array(Niu, c(S, Kmax, S, Kmax))
+    phat[is.na(phat)] <- 0
+    
+    # Computation of q
+    q <- .computeKernelNonParamEndcensoring(phat)
+    
+    piujv <-
+      apply(
+        X = phat,
+        MARGIN = c(1, 2, 3),
+        FUN = function(x)
+          ifelse(length(x[x != 0]) > 0, x[x != 0], 0)
+      )
+    
+    Niub <-
+      apply(
+        X = Niujv,
+        MARGIN = c(1, 2, 3),
+        FUN = function(x)
+          ifelse(length(x[x != 0]) > 0, x[x != 0], 0)
+      )
+    
+    maskNiub <- Niub != 0 & piujv != 0
+    
+    loglik <- sum(Nstarti * log(init)) +
+      sum(Niub[maskNiub] * log(piujv[maskNiub]))
     
   }
   
-  return(fijk)
+  return(loglik)
 }
 
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
 .getKpar.smmnonparametric <- function(x) {
   
   S <- x$S
@@ -281,4 +398,64 @@ is.smmnonparametric <- function(x) {
   }
   
   return(Kpar)
+}
+
+#' Akaike Information Criterion (AIC)
+#'
+#' @description Computation of the Akaike Information Criterion.
+#'
+#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   AIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A numeric value giving the value of the AIC.
+#' 
+#' 
+#' @export
+#'
+aic.smmnonparametric <- function(x, seq, E) {
+  
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(seq = seq, E = E)
+  
+  S <- x$S
+  Kmax <- seq$Kmax
+  
+  Kpar <- .getKpar(x)
+  
+  aic <- -2 * loglik + 2 * Kpar
+  
+  return(aic)
+  
+}
+
+#' Bayesian Information Criterion (BIC)
+#'
+#' @description Computation of the Bayesian Information Criterion.
+#'
+#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   BIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A numeric value giving the value of the BIC.
+#' 
+#' 
+#' @export
+#'
+bic.smmnonparametric <- function(x, seq, E) {
+  
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(seq = seq, E = E)
+  
+  S <- x$S
+  Kmax <- seq$Kmax
+  
+  Kpar <- .getKpar(x)
+  
+  n <- sum(sapply(seq$Ym, length))
+  
+  bic <- -2 * loglik + log(n) * Kpar
+  
+  return(bic)
+  
 }

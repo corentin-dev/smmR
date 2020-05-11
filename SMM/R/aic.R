@@ -1,13 +1,13 @@
 #' Akaike Information Criterion (AIC)
 #'
-#' @description Computation of the Akaike Information Criterion.
+#' @description Generic function computing the Akaike Information Criterion of 
+#'   the model `x`, with the list of sequences `seq`.
 #'
-#' @param x An object of class [markovmodel] or inheriting from the class smm.
-#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param x An object for which the logikelihood can be computed.
 #' @param seq A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
 #' @param E Vector of state space (of length S).
-#' @return A vector giving the value of the AIC for each sequence.
+#' @return A numeric value giving the value of the AIC.
 #' 
 #' 
 #' @export

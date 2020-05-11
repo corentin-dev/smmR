@@ -269,10 +269,87 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   return(ans)
 }
 
+# Function to check if an object is of class smmparametric
 is.smmparametric <- function(x) {
   inherits(x, "smmparametric")
 }
 
+# Method used to compute the semi-Markov kernel q (see method .get.q.smmparametric)
+.get.fijk.smmparametric <- function(x, Kmax) {
+  
+  S <- x$S
+
+  if (x$type.sojourn == "fij") {
+    param1 <- x$param[, , 1]
+    param2 <- x$param[, , 2]
+    f <- matrix(0, nrow = S * S, ncol = Kmax)
+  } else if (x$type.sojourn == "fj") {
+    param1 <- x$param[, 1]
+    param2 <- x$param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else if (x$type.sojourn == "fi") {
+    param1 <- x$param[, 1]
+    param2 <- x$param[, 2]
+    f <- matrix(0, nrow = S, ncol = Kmax)
+  } else {
+    param1 <- x$param[1]
+    param2 <- x$param[2]
+    f <- matrix(0, nrow = 1, ncol = Kmax)
+  }
+
+  if ("dweibull" %in% x$distr) {
+    indices <- which(x$distr == "dweibull")
+    for (j in indices) {
+      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param2[j], zero = FALSE)
+    }
+  }
+  if ("geom" %in% x$distr) {
+    indices <- which(x$distr == "geom")
+    for (j in indices) {
+      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
+    }
+  }
+  if ("nbinom" %in% x$distr) {
+    indices <- which(x$distr == "nbinom")
+    for (j in indices) {
+      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], prob = param2[j])
+    }
+  }
+  if ("pois" %in% x$distr) {
+    indices <- which(x$distr == "pois")
+    for (j in indices) {
+      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
+    }
+  }
+  if ("unif" %in% x$distr) {
+    indices <- which(x$distr == "unif")
+    for (j in indices) {
+      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+    }
+  }
+
+  if (x$type.sojourn == "fij") {
+    fijk <- array(f, c(S, S, Kmax))
+  } else if (x$type.sojourn == "fi") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
+  } else if (x$type.sojourn == "fj") {
+    f <- rep(as.vector(t(f)), each = S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+  } else {
+    f <- rep(f, each = S * S)
+    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+  }
+
+  return(fijk)
+  
+}
+
+# Method to get the sojourn time distribution f
 .get.f.smmparametric <- function(x, Kmax) {
   
   S <- x$S
@@ -327,37 +404,229 @@ is.smmparametric <- function(x) {
   }
   
   if (x$type.sojourn == "fij") {
-    fijk <- array(f, c(S, S, Kmax))
-  } else if (x$type.sojourn == "fi") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-    fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
-  } else if (x$type.sojourn == "fj") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
-  } else {
-    f <- rep(f, each = S * S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    f <- array(f, c(S, S, Kmax))
   }
   
-  return(fijk)
+  return(f)
   
 }
 
+# Method to get the survival/reliability function Fbar
+# (useful to compute the contribution to the likelihood when censoring)
+.get.Fbar.smmparametric <- function(x, Kmax) {
+  
+  f <- .get.f.smmparametric(x, Kmax)
+  
+  if (x$type.sojourn == "fij") {
+    Fbar <- 1 - apply(X = f, MARGIN = c(1, 2), cumsum)
+    Fbar <- aperm(a = Fbar, perm = c(2, 3, 1))
+  } else {
+    Fbar <- 1 - t(apply(f, 1, cumsum))
+  }
+  
+  return(Fbar)
+  
+}
+
+# Method to get the semi-Markov kernel q
 .get.q.smmparametric <- function(x, Kmax) {
   
   S <- x$S
   
-  fijk <- .get.f(x, Kmax)
+  fijk <- .get.fijk.smmparametric(x, Kmax)
   q <- array(x$ptrans, c(S, S, Kmax)) * fijk
   
   return(q)
   
 }
 
+#' Loglikelihood
+#'
+#' @description Computation of the loglikelihood for a semi-Markov model
+#'
+#' @param x An object of class [smmparametric][smmparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   log-likelihood must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A vector giving the value of the loglikelihood for each sequence.
+#' 
+#' 
+#' @export
+#'
+loglik.smmparametric <- function(x, seq, E) {
+  
+  #############################
+  # Checking parameters seq and E
+  #############################
+  
+  if (!is.list(seq)) {
+    stop("The parameter seq should be a list")
+  }
+  
+  if (!all(unique(unlist(seq)) %in% E)) {
+    stop("Some states in the list of observed sequences seq are not in the state space E")
+  }
+  
+  S <- length(E)
+  
+  #############################
+  # Checking smm parameter
+  #############################
+  
+  if ((x$S != S)) {
+    stop("The size of the matrix ptrans must be equal to SxS with S = length(E)")
+  }
+  
+  if (!all.equal(E, x$E)) {
+    stop("The state space of the estimated SMM smm is different from the given state E")
+  }
+  
+  
+  seq <- sequences(seq = seq, E = E)
+  Kmax <- seq$Kmax
+  
+  if (!(is.null(x$Kmax))) {
+    if (!(Kmax == x$Kmax)) {
+      stop("Kmax of the given sequences is different from the Kmax of the estimated SMM model")  
+    }
+  }
+  
+  type.sojourn <- x$type.sojourn
+  cens.beg <- x$cens.beg
+  cens.end <- x$cens.end
+  
+  #############################
+  # Let's compute the loglikelihood
+  #############################
+  
+  init <- x$init # Initial distributiob
+  Nstarti <- seq$counting$Nstarti
+  maskNstarti <- Nstarti != 0 & init != 0
+  
+  pij <- x$ptrans # Transition matrix
+  Nij <- seq$counting$Nij
+  maskNij <- Nij != 0 & pij != 0
+  
+  f <- .get.f(x, Kmax = Kmax) # Compute the sojourn time distribution
+  
+  
+  if (type.sojourn == "fij") {
+    
+    Nijk <- seq$counting$Nijk
+    maskNijk <- Nijk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nijk[maskNijk] * log(f[maskNijk]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first right censored time to the loglikelihood
+      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      
+      Nbijk <- seq$counting$Nbijk
+      maskNbijk <- Nbijk != 0 & Fbar != 0
+      
+      # Contribution of the last right censored time to the loglikelihood
+      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x, Kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      
+      Neik <- seq$counting$Neik
+      maskNeik <- Neik != 0 & Fbarj != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
+      
+    }
+    
+  } else if (type.sojourn == "fi") {
+    
+    Nik <- seq$counting$Nik
+    maskNik <- Nik != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nik[maskNik] * log(f[maskNik]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first and last right censored time to the loglikelihood
+      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      
+      Nbik <- seq$counting$Nbik
+      maskNbik <- Nbik != 0 & Fbar != 0
+      
+      Neik <- seq$counting$Neik
+      maskNeik <- Neik != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbar[maskNeik]))
+      
+    }
+    
+  } else if (type.sojourn == "fj") {
+    
+    Njk <- seq$counting$Njk
+    maskNjk <- Njk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Njk[maskNjk] * log(f[maskNjk]))
+    
+    if (cens.beg || cens.end) {
+      
+      # Contribution of the first right censored time to the loglikelihood
+      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      
+      Nbjk <- seq$counting$Nbjk
+      maskNbjk <- Nbjk != 0 & Fbar != 0
+      
+      # Contribution of the last right censored time to the loglikelihood
+      Fbarj <- pij %*% Fbar
+      
+      Neik <- seq$counting$Neik
+      maskNeik <- Neik != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
+      
+    }
+    
+  } else {
+    
+    Nk <- seq$counting$Nk
+    maskNk <- Nk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nk[maskNk] * log(f[maskNk]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first and last right censored time to the loglikelihood
+      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      
+      Nbk <- seq$counting$Nbk
+      maskNbk <- Nbk != 0 & Fbar != 0
+      
+      Nek <- seq$counting$Nek
+      maskNek <- Nek != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
+        (1 * cens.end) * sum(Nek[maskNek] * log(Fbar[maskNek]))
+      
+    }
+    
+  }
+  
+  return(loglik)
+}
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
 .getKpar.smmparametric <- function(x) {
   
   distr <- x$distr
@@ -371,4 +640,64 @@ is.smmparametric <- function(x) {
   Kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
   
   return(Kpar)
+}
+
+#' Akaike Information Criterion (AIC)
+#'
+#' @description Computation of the Akaike Information Criterion.
+#'
+#' @param x An object of class [smmparametric][smmparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   AIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A numeric value giving the value of the AIC.
+#' 
+#' 
+#' @export
+#'
+aic.smmparametric <- function(x, seq, E) {
+  
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(seq = seq, E = E)
+  
+  S <- x$S
+  Kmax <- seq$Kmax
+  
+  Kpar <- .getKpar(x)
+  
+  aic <- -2 * loglik + 2 * Kpar
+  
+  return(aic)
+  
+}
+
+#' Bayesian Information Criterion (BIC)
+#'
+#' @description Computation of the Bayesian Information Criterion.
+#'
+#' @param x An object of class [smmparametric][smmparametric].
+#' @param seq A list of vectors representing the sequences for which the 
+#'   BIC criterion must be computed.
+#' @param E Vector of state space (of length S).
+#' @return A numeric value giving the value of the BIC.
+#' 
+#' 
+#' @export
+#'
+bic.smmparametric <- function(x, seq, E) {
+  
+  loglik <- loglik(x, seq, E)
+  seq <- sequences(seq = seq, E = E)
+  
+  S <- x$S
+  Kmax <- seq$Kmax
+  
+  Kpar <- .getKpar(x)
+  
+  n <- sum(sapply(seq$Ym, length))
+  
+  bic <- -2 * loglik + log(n) * Kpar
+  
+  return(bic)
+  
 }

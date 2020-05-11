@@ -1,10 +1,9 @@
 #' Loglikelihood
 #'
-#' @description Computation of the loglikelihood for a Markov or a semi-Markov 
-#'   model
+#' @description Generic function computing the loglikelihood of the model `x`,
+#'   with the list of sequences `seq`.
 #'
-#' @param x An object of class [markovmodel] or inheriting from the class smm.
-#'   ([smmnonparametric][smmnonparametric] or [smmparametric][smmparametric]).
+#' @param x An object for which the logikelihood can be computed.
 #' @param seq A list of vectors representing the sequences for which the 
 #'   log-likelihood must be computed.
 #' @param E Vector of state space (of length S).

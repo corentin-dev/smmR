@@ -2,30 +2,16 @@
   
   S <- seq$S
   E <- seq$E
-  nbSeq <- seq$nbSeq
-  S <- seq$S
-  Y <- seq$Y
-  J <- seq$J
-  T <- seq$T
   L <- seq$L
-  U <- seq$U
+  Ym <- seq$Ym
+  Um <- seq$Um
   Kmax <- seq$Kmax
   counting <- seq$counting
-  
-  
-  Nij <- counting$Nij
-  Ni <- counting$Ni
-  Nj <- counting$Nj
-  N <- counting$N
-  Nk <- counting$Nk
-  Nik <- counting$Nik
-  Njk <- counting$Njk
-  Nijk <- counting$Nijk
   Nstart <- counting$Nstarti
 
   
   # Computation of Niujv
-  Niujv <- .getCountingNiujv(Y, U, S, Kmax)
+  Niujv <- .getCountingNiujv(Ym, Um, S, Kmax)
   Niu <- apply(Niujv, c(1, 2), sum)
   
   phat <- Niujv / array(Niu, c(S, Kmax, S, Kmax))
@@ -48,7 +34,7 @@
     
   } else if (type.sojourn == "fj") {
     
-    f <- apply(q, c(2,3),sum)
+    f <- apply(q, c(2, 3), sum)
     f[which(is.na(f))] <- 0
     
   } else if (type.sojourn == "f") {
@@ -59,7 +45,7 @@
   }
   
   # Initial distribution
-  if (nbSeq >= S * 10) {
+  if (L >= S * 10) {
     init <- Nstart / sum(Nstart)
   } else {# Computation of the limit distribution
     init <- .limitDistribution(q = q, ptrans = ptrans)

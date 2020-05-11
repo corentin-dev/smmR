@@ -5,7 +5,7 @@ Title: Simulation and Estimation of Multi-State Discrete-Time
 Version: 1.0.2
 Date: 2020-01-24
 Depends: seqinr, DiscreteWeibull
-Author: Vlad Stefan Barbu, Caroline Berard, Dominique Cellier, Mathilde Sautreuil and Nicolas Vergne
+Author: Vlad Stefan Barbu, Caroline Berard, Dominique Cellier, Florian Lecocq, Corentin Lothode, Mathilde Sautreuil and Nicolas Vergne
 Maintainer: Nicolas Vergne <nicolas.vergne@univ-rouen.fr>
 Description: Performs parametric and non-parametric estimation and simulation for multi-state discrete-time semi-Markov processes. 
 	For the parametric estimation, several discrete distributions are considered for the sojourn times: Uniform, Geometric, Poisson, Discrete Weibull and Negative Binomial. The non-parametric estimation concerns the sojourn time distributions, where no assumptions are done on the shape of distributions. 

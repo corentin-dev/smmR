@@ -2,13 +2,7 @@
   
   S <- seq$S
   E <- seq$E
-  nbSeq <- seq$nbSeq
-  S <- seq$S
-  Y <- seq$Y
-  J <- seq$J
-  T <- seq$T
   L <- seq$L
-  U <- seq$U
   Kmax <- seq$Kmax
   counting <- seq$counting
   
@@ -33,9 +27,11 @@
     warning("All the transitions are not observed")
   }
   
+  # Estimation of the transition matrix
   p <- Nij / tcrossprod(Ni, rep.int(1, S))
   p[which(is.na(p))] <- 0
   
+  # Estimation of the sojourn time distribution
   if (type.sojourn == "fij") {
     
     f <- Nijk / array(Nij, c(S, S, Kmax))
@@ -59,7 +55,7 @@
   }
   
   # Initial distribution
-  if (nbSeq >= S * 10) {
+  if (L >= S * 10) {
     init <- Nstart / sum(Nstart)
   } else {# Computation of the limit distribution
     q <- Nijk / array(Ni, c(S, S, Kmax))

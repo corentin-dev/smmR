@@ -7,8 +7,7 @@
 bic(x, seq, E)
 }
 \arguments{
-\item{x}{An object of class \link{markovmodel} or inheriting from the class smm.
-(\link{smmnonparametric} or \link{smmparametric}).}
+\item{x}{An object for which the logikelihood can be computed.}
 
 \item{seq}{A list of vectors representing the sequences for which the
 BIC criterion must be computed.}
@@ -16,8 +15,9 @@ BIC criterion must be computed.}
 \item{E}{Vector of state space (of length S).}
 }
 \value{
-A vector giving the value of the BIC for each sequence.
+A numeric value giving the value of the BIC.
 }
 \description{
-Computation of the Bayesian Information Criterion.
+Generic function computing the Bayesian Information Criterion
+of the model \code{x}, with the list of sequences \code{seq}.
 }
