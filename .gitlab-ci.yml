@@ -2,8 +2,8 @@ image: rocker/verse
 test:  
   script:
     - apt update
-    - apt install -y zlib1g-dev libjpeg-dev
-    - R -e 'install.packages(c("DiscreteWeibull","seqinr","qpdf","roxygen2"))'
+    - apt install -y zlib1g-dev libjpeg-dev r-cran-seqinr r-cran-qpdf r-cran-roxygen2
+    - R -e 'install.packages(c("DiscreteWeibull"))'
     - cd SMM
     - R -e 'devtools::document()'
     - cd -
