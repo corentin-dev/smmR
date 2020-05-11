@@ -6,6 +6,12 @@
 install.packages('SMM')
 ```
 
+## Get sources
+
+You need to have git. Then:
+```
+```
+
 ## Build
 
 ```bash
