@@ -34,7 +34,7 @@
     
   } else if (type.sojourn == "fj") {
     
-    f <- apply(q, c(2, 3), sum)
+    f <- apply(q, c(2, 3), sum) / apply(ptrans, 2, sum)
     f[which(is.na(f))] <- 0
     
   } else if (type.sojourn == "f") {

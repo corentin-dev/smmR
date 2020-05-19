@@ -233,6 +233,23 @@ is.smmnonparametric <- function(x) {
   inherits(x, "smmnonparametric")
 }
 
+# Method to get the semi-Markov kernel q
+.get.q.smmnonparametric <- function(x, Kmax = x$Kmax) {
+  
+  if (x$type.sojourn == "fij") {
+    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * x$laws
+  } else if (x$type.sojourn == "fi") {
+    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(x$S, Kmax, x$S)), c(1, 3, 2))
+  } else if (x$type.sojourn == "fj") {
+    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(x$S, Kmax, x$S)), c(3, 1, 2))
+  } else if (x$type.sojourn == "f") {
+    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(Kmax, x$S, x$S)), c(2, 3, 1))
+  }
+  
+  return(q)
+  
+}
+
 #' Loglikelihood
 #'
 #' @description Computation of the loglikelihood for a semi-Markov model
