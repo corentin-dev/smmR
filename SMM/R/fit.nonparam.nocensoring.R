@@ -17,16 +17,6 @@
   Nijk <- counting$Nijk
   Nstart <- counting$Nstarti
   
-  if (length(which(Ni == 0)) != 0) {# Presence of all states
-    warning("Missing states")
-  }
-  
-  indexdiag <- seq(1, S * S, by = S + 1)
-  Nij.temp <- as.vector(Nij)[-indexdiag]
-  if (length(which(Nij.temp == 0)) != 0) {# Presence of all transitions
-    warning("All the transitions are not observed")
-  }
-  
   # Estimation of the transition matrix
   p <- Nij / tcrossprod(Ni, rep.int(1, S))
   p[which(is.na(p))] <- 0

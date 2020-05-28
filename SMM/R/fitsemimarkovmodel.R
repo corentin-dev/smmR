@@ -224,10 +224,6 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
       if (!(all(is.na(diag(distr))))) {
         stop("All the diagonal elements of distr must be equal to NA since transitions to the same state are not allowed")
       }
-      
-      if (!all(!is.na(distr[row(distr) != col(distr)]))) {
-        stop("All the non-diagonal elements of distr must be specified. Found NAs values.")
-      }
     }
     
   }

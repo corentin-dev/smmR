@@ -237,9 +237,6 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
       stop("All the diagonal elements of param must be equal to NA since transitions to the same state are not allowed")
     }
     
-    if (!all(!is.na(distr[row(distr) != col(distr)]))) {
-      stop("All the non-diagonal elements of distr must be specified. Found NAs values.")
-    }
   }
   
   #############################

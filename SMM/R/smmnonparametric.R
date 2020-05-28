@@ -236,14 +236,16 @@ is.smmnonparametric <- function(x) {
 # Method to get the semi-Markov kernel q
 .get.q.smmnonparametric <- function(x, Kmax = x$Kmax) {
   
+  q <- array(data = 0, dim = c(x$S, x$S, Kmax))
+  
   if (x$type.sojourn == "fij") {
-    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * x$laws
+    q[, , 1:x$Kmax] <- array(x$ptrans, c(x$S, x$S, x$Kmax)) * x$laws
   } else if (x$type.sojourn == "fi") {
-    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(x$S, Kmax, x$S)), c(1, 3, 2))
+    q[, , 1:x$Kmax] <- array(x$ptrans, c(x$S, x$S, x$Kmax)) * aperm(array(x$laws, c(x$S, x$Kmax, x$S)), c(1, 3, 2))
   } else if (x$type.sojourn == "fj") {
-    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(x$S, Kmax, x$S)), c(3, 1, 2))
+    q[, , 1:x$Kmax] <- array(x$ptrans, c(x$S, x$S, x$Kmax)) * aperm(array(x$laws, c(x$S, x$Kmax, x$S)), c(3, 1, 2))
   } else if (x$type.sojourn == "f") {
-    q <- array(x$ptrans, c(x$S, x$S, Kmax)) * aperm(array(x$laws, c(Kmax, x$S, x$S)), c(2, 3, 1))
+    q[, , 1:x$Kmax] <- array(x$ptrans, c(x$S, x$S, x$Kmax)) * aperm(array(x$laws, c(x$Kmax, x$S, x$S)), c(2, 3, 1))
   }
   
   return(q)

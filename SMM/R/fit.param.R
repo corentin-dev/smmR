@@ -32,7 +32,7 @@
       
       for (i in 1:S) {
         for (j in 1:S) {
-          if (i != j) {
+          if (i != j & !is.na(distr[i, j])) {
             if (distr[i, j] == "dweibull") {
               param[i, j, ] <- .fit.param.fij.dweibull(counting, i, j, Kmax, cens.beg)
             } else if (distr[i, j] == "geom") {
@@ -60,19 +60,19 @@
     param <- matrix(data = NA, nrow = S, ncol = 2)
     
     for (i in 1:S) {
-      
-      if (distr[i] == "dweibull") {
-        param[i, ] <- .fit.param.fi.dweibull(counting, i, Kmax, cens.beg, cens.end)
-      } else if (distr[i] == "geom") {
-        param[i, ] <- .fit.param.fi.geom(counting, i, Kmax, cens.beg, cens.end)
-      } else if (distr[i] == "nbinom") {
-        param[i, ] <- .fit.param.fi.nbinom(counting, i, Kmax, cens.beg, cens.end)
-      } else if (distr[i] == "pois") {
-        param[i, ] <- .fit.param.fi.pois(counting, i, Kmax, cens.beg, cens.end)
-      } else if (distr[i] == "unif") {
-        param[i, ] <- .fit.param.fi.unif(counting, i, Kmax)
+      if (!is.na(distr[i])) {
+        if (distr[i] == "dweibull") {
+          param[i, ] <- .fit.param.fi.dweibull(counting, i, Kmax, cens.beg, cens.end)
+        } else if (distr[i] == "geom") {
+          param[i, ] <- .fit.param.fi.geom(counting, i, Kmax, cens.beg, cens.end)
+        } else if (distr[i] == "nbinom") {
+          param[i, ] <- .fit.param.fi.nbinom(counting, i, Kmax, cens.beg, cens.end)
+        } else if (distr[i] == "pois") {
+          param[i, ] <- .fit.param.fi.pois(counting, i, Kmax, cens.beg, cens.end)
+        } else if (distr[i] == "unif") {
+          param[i, ] <- .fit.param.fi.unif(counting, i, Kmax)
+        }
       }
-      
     }
     
   } else if (type.sojourn == "fj") {
@@ -93,19 +93,19 @@
       param <- matrix(data = NA, nrow = S, ncol = 2)
       
       for (j in 1:S) {
-        
-        if (distr[j] == "dweibull") {
-          param[j, ] <- .fit.param.fj.dweibull(counting, j, Kmax, cens.beg)
-        } else if (distr[j] == "geom") {
-          param[j, ] <- .fit.param.fj.geom(counting, j, Kmax, cens.beg)
-        } else if (distr[j] == "nbinom") {
-          param[j, ] <- .fit.param.fj.nbinom(counting, j, Kmax, cens.beg)
-        } else if (distr[j] == "pois") {
-          param[j, ] <- .fit.param.fj.pois(counting, j, Kmax, cens.beg)
-        } else if (distr[j] == "unif") {
-          param[j, ] <- .fit.param.fj.unif(counting, j, Kmax)
+        if (!is.na(distr[j])) {
+          if (distr[j] == "dweibull") {
+            param[j, ] <- .fit.param.fj.dweibull(counting, j, Kmax, cens.beg)
+          } else if (distr[j] == "geom") {
+            param[j, ] <- .fit.param.fj.geom(counting, j, Kmax, cens.beg)
+          } else if (distr[j] == "nbinom") {
+            param[j, ] <- .fit.param.fj.nbinom(counting, j, Kmax, cens.beg)
+          } else if (distr[j] == "pois") {
+            param[j, ] <- .fit.param.fj.pois(counting, j, Kmax, cens.beg)
+          } else if (distr[j] == "unif") {
+            param[j, ] <- .fit.param.fj.unif(counting, j, Kmax)
+          }
         }
-        
       }
       
     }

@@ -92,8 +92,18 @@
   
   indexdiag <- seq(1, S * S, by = S + 1)
   Nij.temp <- as.vector(Nij)[-indexdiag]
-  if (length(which(Nij.temp == 0)) != 0) {
-    warning("Warning : missing transitions")
+  
+  statesi <- row(Nij)[-indexdiag][which(Nij.temp == 0)]
+  statesj <- col(Nij)[-indexdiag][which(Nij.temp == 0)]
+  
+  if ((length(statesi) != 0) | (length(statesj) != 0)) {
+    warning(
+      "Some transitions from state i to state j are not observed.
+            The following are ",
+      paste0(sapply(1:length(statesi), function(x)
+        paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", "),
+      "."
+    )
   }
   
   Nbijk <- apply(Nbijkl, c(1, 2, 3), sum)
@@ -112,14 +122,15 @@
   Ni <- apply(Nij, 1, sum)
   
   if (length(which(Ni == 0)) != 0) {
-    warning("Warning : missing state space(s)")
+    warning("Warning: missing state space(s)")
   }
   
   Nj <- apply(Nij, 2, sum)
   
   Nj <- colSums(Nij)
+  
   if (length(which(Nj == 0)) != 0) {
-    warning("Warning : missing state space(s)")
+    warning("Warning: missing state space(s)")
   }
   
   N <- sum(Nij)
