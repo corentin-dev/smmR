@@ -3,29 +3,29 @@
 ## __________________________________________________________
 .getSeq <- function(Jm, Tm) {
   
-  seq <- c()
+  sequences <- c()
   i <- 1
   n <- length(Tm)
   t <- 1
   
   while (i <= n) {
     k <- Tm[i] - t
-    seq <- c(seq, rep(Jm[i], k))
+    sequences <- c(sequences, rep(Jm[i], k))
     t <- Tm[i]
     i <- i + 1
   }
   
-  return(seq)
+  return(sequences)
 }
 
 ## __________________________________________________________
 ## .getProcesses: Returns the processes Y, J, T, L and U given the sequence of state
 ## __________________________________________________________
-.getProcesses <- function(seq, E) {
+.getProcesses <- function(sequences, states) {
   
-  Ym <- sapply(seq, function(x) which(E == x), USE.NAMES = FALSE)
+  Ym <- sapply(sequences, function(x) which(states == x), USE.NAMES = FALSE)
   
-  n1 <- length(seq)
+  n1 <- length(sequences)
   i1 <- 1
   i2 <- 2
   Jm <- c()
@@ -58,17 +58,17 @@
 ## __________________________________________________________
 ## .getCountingProcesses: Gives the values of the counting processes
 ## __________________________________________________________
-.getCountingProcesses <- function(Jm, Lm, S, Kmax) {
+.getCountingProcesses <- function(Jm, Lm, s, kmax) {
   
   L <- length(Jm)
   
   Nstart <- c()
-  Nstarti <- rep.int(0, S)
-  Nstartil <- matrix(0, S, L)
-  Nijkl <- array(0, c(S, S, Kmax, L))
+  Nstarti <- rep.int(0, s)
+  Nstartil <- matrix(0, s, L)
+  Nijkl <- array(0, c(s, s, kmax, L))
   
-  Nbijkl <- array(0, c(S, S, Kmax, L))
-  Neikl <- array(0, c(S, Kmax, L))
+  Nbijkl <- array(0, c(s, s, kmax, L))
+  Neikl <- array(0, c(s, kmax, L))
   
   for (l in 1:L) {
     
@@ -90,7 +90,7 @@
   Nij <- apply(Nijkl, c(1, 2), sum)
   Nijl <- apply(Nijkl, c(1, 2, 4), sum)
   
-  indexdiag <- seq(1, S * S, by = S + 1)
+  indexdiag <- seq(1, s * s, by = s + 1)
   Nij.temp <- as.vector(Nij)[-indexdiag]
   
   statesi <- row(Nij)[-indexdiag][which(Nij.temp == 0)]
@@ -116,8 +116,8 @@
   Nebik <- Nbik + Neik
   Nebk <- Nek + Nbk
   
-  Nstarti <- as.vector(count(seq = Nstart, wordsize = 1, alphabet = 1:S))
-  Nstartil <- sapply(Nstart, function(x) as.vector(count(seq = x, wordsize = 1, alphabet = 1:S)))
+  Nstarti <- as.vector(count(seq = Nstart, wordsize = 1, alphabet = 1:s))
+  Nstartil <- sapply(Nstart, function(x) as.vector(count(seq = x, wordsize = 1, alphabet = 1:s)))
   
   Ni <- apply(Nij, 1, sum)
   
@@ -178,10 +178,10 @@
 ## __________________________________________________________
 ## .count.Niujv: Gives the values of the counting processes for the couple (Y, U)
 ## __________________________________________________________
-.getCountingNiujv <- function(Ym, Um, S, Kmax) {
+.getCountingNiujv <- function(Ym, Um, s, kmax) {
   
   L <-  length(Ym)
-  Niujv <- array(0, c(S, Kmax, S, Kmax))
+  Niujv <- array(0, c(s, kmax, s, kmax))
   
   for (k in 1:L) {
     
@@ -205,13 +205,13 @@
 ## __________________________________________________________
 .computeKernelNonParamEndcensoring <- function(p) {
   
-  S <- dim(p)[1]
-  Kmax <- dim(p)[2]
-  q <- array(0, c(S, S, Kmax))
+  s <- dim(p)[1]
+  kmax <- dim(p)[2]
+  q <- array(0, c(s, s, kmax))
   
-  for (i in 1:S) {
-    for (j in 1:S) {
-      for (dk in 1:Kmax) {
+  for (i in 1:s) {
+    for (j in 1:s) {
+      for (dk in 1:kmax) {
         
         pi <- p[i, dk, j, 1]
         
@@ -251,11 +251,11 @@
 ## __________________________________________________________
 .limitDistribution <- function(q = q, ptrans = ptrans) {
   
-  Kmax <- dim(q)[3]
-  S <- dim(ptrans)[1]
+  kmax <- dim(q)[3]
+  s <- dim(ptrans)[1]
   
   fik <- apply(q, c(1, 3), sum)
-  mi <- apply(fik, 1, function(x) sum((1:Kmax) * x))
+  mi <- apply(fik, 1, function(x) sum((1:kmax) * x))
   
   statlaw <- .stationaryDistribution(ptrans)
   

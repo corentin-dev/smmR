@@ -4,15 +4,15 @@
 \alias{bic.smmnonparametric}
 \title{Bayesian Information Criterion (BIC)}
 \usage{
-\method{bic}{smmnonparametric}(x, seq, E)
+\method{bic}{smmnonparametric}(x, sequences, states)
 }
 \arguments{
 \item{x}{An object of class \link{smmnonparametric}.}
 
-\item{seq}{A list of vectors representing the sequences for which the
+\item{sequences}{A list of vectors representing the sequences for which the
 BIC criterion must be computed.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space (of length s).}
 }
 \value{
 A numeric value giving the value of the BIC.

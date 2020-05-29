@@ -18,8 +18,8 @@
 #' @export
 #'
 #' @examples 
-#' E <- c("a", "c", "g", "t")
-#' S <- length(E)
+#' states <- c("a", "c", "g", "t")
+#' s <- length(states)
 #' 
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
@@ -29,7 +29,7 @@
 #'                 0.2, 0, 0.3, 0.5, 
 #'                 0.3, 0.5, 0, 0.2, 
 #'                 0.4, 0.2, 0.4, 0), 
-#'               ncol = S, byrow = TRUE)
+#'               ncol = s, byrow = TRUE)
 #' 
 #' # Creation of the distribution matrix
 #' 
@@ -37,25 +37,25 @@
 #'                          "geom", NA, "pois", "dweibull",
 #'                          "pois", "pois", NA, "geom", 
 #'                          "pois", "geom", "geom", NA), 
-#'                        nrow = S, ncol = S, byrow = TRUE)
+#'                        nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' # Creation of an array containing the parameters
 #' param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
 #'                           0.7, NA, 5, 0.6, 
 #'                           2, 3, NA, 0.6, 
 #'                           4, 0.3, 0.4, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
-#' param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+#' param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 #' 
 #' # Specify the semi-Markov model
-#' smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+#' smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
 #'                       type.sojourn = "fij", distr = distr.matrix, 
 #'                       param = param.array)
 #' 
@@ -79,87 +79,87 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
     
     J <- c()
     T <- c()
-    J[1] <- sample(object$E, 1, prob = object$init)
+    J[1] <- sample(object$states, 1, prob = object$init)
     
     i <- 1
     t <- 1
     
     while (t <= nsim[m]) {
       
-      J[i + 1] <- sample(object$E, 1, prob = object$ptrans[which(object$E == J[i]), ])
+      J[i + 1] <- sample(object$states, 1, prob = object$ptrans[which(object$states == J[i]), ])
       
       if (object$type.sojourn == "fij") {
         
-        if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "unif") {
+        if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "unif") {
           
-          Kmax <- object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1]
-          k <- sample(1:Kmax, 1)
+          kmax <- object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]
+          k <- sample(1:kmax, 1)
           
-        } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "geom") {
+        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "geom") {
           
-          k <- rgeom(1, object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1]) + 1
+          k <- rgeom(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]) + 1
           
-        } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "pois") {
+        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "pois") {
           
-          k <- rpois(1, object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1]) + 1 # no sojourn time equal to zero so we shift the Poisson distribution
+          k <- rpois(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]) + 1 # no sojourn time equal to zero so we shift the Poisson distribution
           
-        } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "dweibull") {
+        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "dweibull") {
           
-          k <- rdweibull(1, object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2], zero = FALSE)
+          k <- rdweibull(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1], object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 2], zero = FALSE)
           
-        } else if (object$distr[which(J[i] == object$E), which(J[i + 1] == object$E)] == "nbinom") {
+        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 1], prob = object$param[which(J[i] == object$E), which(J[i + 1] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1], prob = object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 2]) + 1
           
         }
         
       } else if (object$type.sojourn == "fi") {
         
-        if (object$distr[which(J[i] == object$E)] == "unif") {
+        if (object$distr[which(J[i] == object$states)] == "unif") {
           
-          Kmax <- object$param[which(J[i] == object$E), 1]
-          k <- sample(1:Kmax, 1)
+          kmax <- object$param[which(J[i] == object$states), 1]
+          k <- sample(1:kmax, 1)
           
-        } else if (object$distr[which(J[i] == object$E)] == "geom") {
+        } else if (object$distr[which(J[i] == object$states)] == "geom") {
           
-          k <- rgeom(1, object$param[which(J[i] == object$E), 1]) + 1
+          k <- rgeom(1, object$param[which(J[i] == object$states), 1]) + 1
           
-        } else if (object$distr[which(J[i] == object$E)] == "pois") {
+        } else if (object$distr[which(J[i] == object$states)] == "pois") {
           
-          k <- rpois(1, object$param[which(J[i] == object$E), 1]) + 1
+          k <- rpois(1, object$param[which(J[i] == object$states), 1]) + 1
           
-        } else if (object$distr[which(J[i] == object$E)] == "dweibull") {
+        } else if (object$distr[which(J[i] == object$states)] == "dweibull") {
           
-          k <- rdweibull(1, object$param[which(J[i] == object$E), 1], object$param[which(J[i] == object$E), 2], zero = FALSE)
+          k <- rdweibull(1, object$param[which(J[i] == object$states), 1], object$param[which(J[i] == object$states), 2], zero = FALSE)
           
-        } else if (object$distr[which(J[i] == object$E)] == "nbinom") {
+        } else if (object$distr[which(J[i] == object$states)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$E), 1], prob = object$param[which(J[i] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$states), 1], prob = object$param[which(J[i] == object$states), 2]) + 1
           
         }
         
       } else if (object$type.sojourn == "fj") {
         
-        if (object$distr[which(J[i + 1] == object$E)] == "unif") {
+        if (object$distr[which(J[i + 1] == object$states)] == "unif") {
           
-          Kmax <- object$param[which(J[i + 1] == object$E), 1]
-          k <- sample(1:Kmax, 1)
+          kmax <- object$param[which(J[i + 1] == object$states), 1]
+          k <- sample(1:kmax, 1)
           
-        } else if (object$distr[which(J[i + 1] == object$E)] == "geom") {
+        } else if (object$distr[which(J[i + 1] == object$states)] == "geom") {
           
-          k <- rgeom(1, object$param[which(J[i + 1] == object$E), 1]) + 1
+          k <- rgeom(1, object$param[which(J[i + 1] == object$states), 1]) + 1
           
-        } else if (object$distr[which(J[i + 1] == object$E)] == "pois") {
+        } else if (object$distr[which(J[i + 1] == object$states)] == "pois") {
           
-          k <- rpois(1, object$param[which(J[i + 1] == object$E), 1]) + 1
+          k <- rpois(1, object$param[which(J[i + 1] == object$states), 1]) + 1
           
-        } else if (object$distr[which(J[i + 1] == object$E)] == "dweibull") {
+        } else if (object$distr[which(J[i + 1] == object$states)] == "dweibull") {
           
-          k <- rdweibull(1, object$param[which(J[i + 1] == object$E), 1], object$param[which(J[i + 1] == object$E), 2], zero = FALSE)
+          k <- rdweibull(1, object$param[which(J[i + 1] == object$states), 1], object$param[which(J[i + 1] == object$states), 2], zero = FALSE)
           
-        } else if (object$distr[which(J[i + 1] == object$E)] == "nbinom") {
+        } else if (object$distr[which(J[i + 1] == object$states)] == "nbinom") {
           
-          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$E), 1], prob = object$param[which(J[i + 1] == object$E), 2]) + 1
+          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$states), 1], prob = object$param[which(J[i + 1] == object$states), 2]) + 1
           
         }
         
@@ -167,8 +167,8 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
         
         if (object$distr == "unif") {
           
-          Kmax <- object$param[1]
-          k <- sample(1:Kmax, 1)
+          kmax <- object$param[1]
+          k <- sample(1:kmax, 1)
           
         } else if (object$distr == "geom") {
           

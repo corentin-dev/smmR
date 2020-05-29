@@ -1,17 +1,17 @@
 #' Akaike Information Criterion (AIC)
 #'
 #' @description Generic function computing the Akaike Information Criterion of 
-#'   the model `x`, with the list of sequences `seq`.
+#'   the model `x`, with the list of sequences `sequences`.
 #'
 #' @param x An object for which the logikelihood can be computed.
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space E (of length s).
 #' @return A numeric value giving the value of the AIC.
 #' 
 #' 
 #' @export
 #'
-aic <- function(x, seq, E) {
+aic <- function(x, sequences, states) {
   UseMethod("aic", x)
 }

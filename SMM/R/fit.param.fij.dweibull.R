@@ -1,16 +1,16 @@
-.fit.param.fij.dweibull <- function(res, i, j, Kmax, cens.beg) {
+.fit.param.fij.dweibull <- function(counting, i, j, kmax, cens.beg) {
   
   # Estimation of the parameters of the distribution (No censoring case)
-  theta0 <- suppressWarnings(estdweibull(x = unlist(sapply(1:Kmax, function(x) rep(x, res$Nijk[i, j, x]))), method = "ML", zero = FALSE))
+  theta0 <- suppressWarnings(estdweibull(x = unlist(sapply(1:kmax, function(x) rep(x, counting$Nijk[i, j, x]))), method = "ML", zero = FALSE))
   
   loglik <- function(par) {
     
-    mask <- res$Nijk[i, j, ] != 0
-    kmask <- (1:Kmax)[mask]
-    fk <- rep.int(x = 0, times = Kmax)
+    mask <- counting$Nijk[i, j, ] != 0
+    kmask <- (1:kmax)[mask]
+    fk <- rep.int(x = 0, times = kmax)
     fk[mask] <- log(ddweibull(x = kmask, q = par[1], beta = par[2], zero = FALSE))
     
-    return(-(sum(res$Nijk[i, j, ] * fk)))
+    return(-(sum(counting$Nijk[i, j, ] * fk)))
   }
   
   # Constraints about the values of the parameters:
@@ -23,40 +23,40 @@
   u1 <- matrix(data = c(-1, 0), nrow = 1, ncol = 2)
   c1 <- c(-1)
   
-  CO2 <- constrOptim(
+  mle <- constrOptim(
     theta = theta0,
     f = loglik,
     ui = rbind(u0, u1),
     ci = c(c0, c1),
     method = "Nelder-Mead"
   )
-  theta0 <- CO2$par
+  theta0 <- mle$par
   
   if (cens.beg) {# Censoring at the beginning
     
     loglik <- function(par) {
       
-      mask <- res$Nijk[i, j, ] != 0
-      kmask <- (1:Kmax)[mask]
-      fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nijk[i, j, ] != 0
+      kmask <- (1:kmax)[mask]
+      fk <- rep.int(x = 0, times = kmax)
       fk[mask] <- log(ddweibull(x = kmask, q = par[1], beta = par[2], zero = FALSE))
       
-      mask <- res$Nbijk[i, j, ] != 0
-      kmask <- (1:Kmax)[mask]
-      Fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nbijk[i, j, ] != 0
+      kmask <- (1:kmax)[mask]
+      Fk <- rep.int(x = 0, times = kmax)
       Fk[mask] <- log(1 - pdweibull(x = kmask, q = par[1], beta = par[2], zero = FALSE))
       
-      return(-(sum(res$Nijk[i, j, ] * fk) + sum(res$Nbijk[i, j, ] * Fk)))
+      return(-(sum(counting$Nijk[i, j, ] * fk) + sum(counting$Nbijk[i, j, ] * Fk)))
     }
     
-    CO2 <- constrOptim(
+    mle <- constrOptim(
       theta = theta0,
       f = loglik,
       ui = rbind(u0, u1),
       ci = c(c0, c1),
       method = "Nelder-Mead"
     )
-    theta <- CO2$par
+    theta <- mle$par
     
   } else {# No censoring
     

@@ -1,67 +1,67 @@
-.fit.param.f.pois <- function(res, Kmax, cens.beg, cens.end) {
+.fit.param.f.pois <- function(counting, kmax, cens.beg, cens.end) {
   
   # Estimation of the parameters of the distribution (No censoring case)
-  theta0 <- sum(0:(Kmax - 1) * res$Nk) / sum(res$Nk)
+  theta0 <- sum(0:(kmax - 1) * counting$Nk) / sum(counting$Nk)
   
   if (!cens.beg && cens.end) {# Censoring at the end
     
     loglik <- function(par) {
       
-      mask <- res$Nk != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nk != 0
+      kmask <- (0:(kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = kmax)
       fk[mask] <- dpois(x = kmask, lambda = par, log = TRUE)
       
-      mask <- res$Nek != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      Fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nek != 0
+      kmask <- (0:(kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = kmax)
       Fk[mask] <- ppois(q = kmask, lambda = par, lower.tail = FALSE, log.p = TRUE)
       
-      return(-(sum(res$Nk * fk) + sum(res$Nek * Fk)))
+      return(-(sum(counting$Nk * fk) + sum(counting$Nek * Fk)))
     }
     
-    CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = Kmax - 1)
-    theta <- CO2$par
+    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = kmax - 1)
+    theta <- mle$par
     
   } else if (cens.beg && !cens.end) {# Censoring at the beginning
     
     loglik <- function(par) {
       
-      mask <- res$Nk != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nk != 0
+      kmask <- (0:(kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = kmax)
       fk[mask] <- dpois(x = kmask, lambda = par, log = TRUE)
       
-      mask <- res$Nbk != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      Fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nbk != 0
+      kmask <- (0:(kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = kmax)
       Fk[mask] <- ppois(q = kmask, lambda = par, lower.tail = FALSE, log.p = TRUE)
       
-      return(-(sum(res$Nk * fk) + sum(res$Nbk * Fk)))
+      return(-(sum(counting$Nk * fk) + sum(counting$Nbk * Fk)))
     }
     
-    CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = Kmax - 1)
-    theta <- CO2$par
+    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = kmax - 1)
+    theta <- mle$par
     
   } else if (cens.beg && cens.end) {# Censoring at the beginning and at the end
     
     loglik <- function(par) {
       
-      mask <- res$Nk != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nk != 0
+      kmask <- (0:(kmax - 1))[mask]
+      fk <- rep.int(x = 0, times = kmax)
       fk[mask] <- dpois(x = kmask, lambda = par, log = TRUE)
       
-      mask <- res$Nebk != 0
-      kmask <- (0:(Kmax - 1))[mask]
-      Fk <- rep.int(x = 0, times = Kmax)
+      mask <- counting$Nebk != 0
+      kmask <- (0:(kmax - 1))[mask]
+      Fk <- rep.int(x = 0, times = kmax)
       Fk[mask] <- ppois(q = kmask, lambda = par, lower.tail = FALSE, log.p = TRUE)
       
-      return(-(sum(res$Nk * fk) + sum(res$Nebk * Fk)))
+      return(-(sum(counting$Nk * fk) + sum(counting$Nebk * Fk)))
     }
     
-    CO2 <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = Kmax - 1)
-    theta <- CO2$par
+    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = kmax - 1)
+    theta <- mle$par
     
   } else {# No censoring
     

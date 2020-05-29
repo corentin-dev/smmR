@@ -1,6 +1,6 @@
-.fit.param.fij.unif <- function(res, i, j, Kmax) {
+.fit.param.fij.unif <- function(counting, i, j, kmax) {
   
-  theta <- tail(which(res$Nijk[i, j, ] != 0), 1)
+  theta <- tail(which(counting$Nijk[i, j, ] != 0), 1)
   
   return(c(theta, NA))
   

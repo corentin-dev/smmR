@@ -4,20 +4,20 @@
 \alias{aic}
 \title{Akaike Information Criterion (AIC)}
 \usage{
-aic(x, seq, E)
+aic(x, sequences, states)
 }
 \arguments{
 \item{x}{An object for which the logikelihood can be computed.}
 
-\item{seq}{A list of vectors representing the sequences for which the
+\item{sequences}{A list of vectors representing the sequences for which the
 AIC criterion must be computed.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space E (of length s).}
 }
 \value{
 A numeric value giving the value of the AIC.
 }
 \description{
 Generic function computing the Akaike Information Criterion of
-the model \code{x}, with the list of sequences \code{seq}.
+the model \code{x}, with the list of sequences \code{sequences}.
 }

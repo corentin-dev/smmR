@@ -4,15 +4,15 @@
 \alias{loglik.smmparametric}
 \title{Loglikelihood}
 \usage{
-\method{loglik}{smmparametric}(x, seq, E)
+\method{loglik}{smmparametric}(x, sequences, states)
 }
 \arguments{
 \item{x}{An object of class \link{smmparametric}.}
 
-\item{seq}{A list of vectors representing the sequences for which the
+\item{sequences}{A list of vectors representing the sequences for which the
 log-likelihood must be computed.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space (of length s).}
 }
 \value{
 A vector giving the value of the loglikelihood for each sequence.

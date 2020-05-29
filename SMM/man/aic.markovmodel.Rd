@@ -4,15 +4,15 @@
 \alias{aic.markovmodel}
 \title{Akaike Information Criterion (AIC)}
 \usage{
-\method{aic}{markovmodel}(x, seq, E)
+\method{aic}{markovmodel}(x, sequences, states)
 }
 \arguments{
 \item{x}{An object of class \link{markovmodel}.}
 
-\item{seq}{A list of vectors representing the sequences for which the
+\item{sequences}{A list of vectors representing the sequences for which the
 AIC criterion must be computed.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space (of length s).}
 }
 \value{
 A numeric value giving the value of the AIC.

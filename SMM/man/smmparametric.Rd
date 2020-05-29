@@ -5,7 +5,7 @@
 \title{Parametric semi-Markov model specification}
 \usage{
 smmparametric(
-  E,
+  states,
   init,
   ptrans,
   type.sojourn = c("fij", "fi", "fj", "f"),
@@ -16,18 +16,18 @@ smmparametric(
 )
 }
 \arguments{
-\item{E}{Vector of state space of length S.}
+\item{states}{Vector of state space of length s.}
 
-\item{init}{Vector of initial distribution of length S.}
+\item{init}{Vector of initial distribution of length s.}
 
 \item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
-\eqn{J=(J_m)_{m}} of size SxS.}
+\eqn{J=(J_m)_{m}} of size sxs.}
 
 \item{type.sojourn}{Type of sojourn time (for more explanations, see Details).}
 
 \item{distr}{\itemize{
-\item Matrix of distributions of size SxS if \code{type.sojourn = "fij"};
-\item Vector of distributions of size S if \code{type.sojourn = "fi"} or \verb{"fj};
+\item Matrix of distributions of size sxs if \code{type.sojourn = "fij"};
+\item Vector of distributions of size s if \code{type.sojourn = "fi"} or \verb{"fj};
 \item A distribution if \code{type.sojourn = "f"}.
 }
 where the distributions to be used can be one of \code{unif}, \code{geom}, \code{pois}, \code{dweibull} or \code{nbinom}.}
@@ -81,9 +81,9 @@ probability of success, \eqn{0 < p < 1};
 We define :
 \itemize{
 \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
-\item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in E} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
-\item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, S};
-\item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in E,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
+\item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
+\item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
+\item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
 }
 
 In this package we can choose differents types of sojourn time.
@@ -95,7 +95,7 @@ Four options are available for the sojourn times:
 \item depending neither on the current, nor on the next state (\eqn{f}).
 }
 
-If  \code{type.sojourn = "fij"}, \code{distr} is a matrix of size SxS (e.g., if the
+If  \code{type.sojourn = "fij"}, \code{distr} is a matrix of size sxs (e.g., if the
 row 1 of the 2nd column is \code{"pois"}, that is to say we go from the first
 state to the second state following a Poisson distribution).
 If \code{type.sojourn = "fi"} or \code{"fj"}, \code{distr} must be a vector (e.g., if the
@@ -113,8 +113,8 @@ must be equal to \code{TRUE} and \code{cens.end} must be equal to \code{TRUE} to
 All the sequences must be censored in the same way.
 }
 \examples{
-E <- c("a", "c", "g", "t")
-S <- length(E)
+states <- c("a", "c", "g", "t")
+s <- length(states)
 
 # Creation of the initial distribution
 vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
@@ -124,7 +124,7 @@ pij <- matrix(c(0, 0.2, 0.5, 0.3,
                 0.2, 0, 0.3, 0.5, 
                 0.3, 0.5, 0, 0.2, 
                 0.4, 0.2, 0.4, 0), 
-              ncol = S, byrow = TRUE)
+              ncol = s, byrow = TRUE)
 
 # Creation of the distribution matrix
 
@@ -132,25 +132,25 @@ distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom",
                          "geom", NA, "pois", "dweibull",
                          "pois", "pois", NA, "geom", 
                          "pois", "geom", "geom", NA), 
-                       nrow = S, ncol = S, byrow = TRUE)
+                       nrow = s, ncol = s, byrow = TRUE)
 
 # Creation of an array containing the parameters
 param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
                           0.7, NA, 5, 0.6, 
                           2, 3, NA, 0.6, 
                           4, 0.3, 0.4, NA), 
-                        nrow = S, ncol = S, byrow = TRUE)
+                        nrow = s, ncol = s, byrow = TRUE)
 
 param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
                           NA, NA, NA, 0.8, 
                           NA, NA, NA, NA, 
                           NA, NA, NA, NA), 
-                        nrow = S, ncol = S, byrow = TRUE)
+                        nrow = s, ncol = s, byrow = TRUE)
 
-param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 
 # Specify the semi-Markov model
-smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
                       type.sojourn = "fij", distr = distr.matrix, 
                       param = param.array)
 smm1

@@ -35,10 +35,10 @@
 #' We define :
 #'  \itemize{
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
-#'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in E} of the 
+#'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the 
 #'      embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
-#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, S};
-#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in E,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
+#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
+#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
 #'      f is specified by the argument `param` in the parametric case and by 
 #'      `laws` in the non-parametric case.
 #'  }
@@ -47,7 +47,7 @@
 #' \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}.
 #'
 #' The estimation of the initial law is the limit law if the number of sequences 
-#' is less than 10xS, with S the length of the state space, else the estimation 
+#' is less than 10xS, with s the length of the state space, else the estimation 
 #' of the inital law is \eqn{\widehat{\mu_i} = \frac{N_i^l}{N^l}}, where 
 #' \eqn{N_i^l} is the number of times the state i appears in all the sequences 
 #' and \eqn{N^l} is the size of sequences.
@@ -71,7 +71,7 @@
 #'   \item depending neither on the current, nor on the next state (`f`).
 #' }
 #' 
-#' If  `type.sojourn = "fij"`, `distr` is a matrix of size SxS (e.g., if the 
+#' If  `type.sojourn = "fij"`, `distr` is a matrix of size sxs (e.g., if the 
 #' row 1 of the 2nd column is `"pois"`, that is to say we go from the first 
 #' state to the second state following a Poisson distribution).
 #' If `type.sojourn = "fi"` or `"fj"`, `distr` must be a vector (e.g., if the 
@@ -88,16 +88,16 @@
 #' must be equal to `TRUE` and `cens.end` must be equal to `TRUE` too. 
 #' All the sequences must be censored in the same way.
 #'
-#' @param seq A list of vectors representing the sequences.
-#' @param E Vector of state space (of length S).
+#' @param sequences A list of vectors representing the sequences.
+#' @param states Vector of state space (of length s).
 #' @param type.sojourn Type of sojourn time (for more explanations, see Details).
 #' @param distr By default `"nonparametric"` for the non-parametric estimation 
 #'   case.
 #'   
 #'   If the parametric estimation case is desired, `distr` should be:
 #'   \itemize{
-#'     \item A matrix of distributions of size SxS if `type.sojourn = "fij"`;
-#'     \item A vector of distributions of size S if `type.sojourn = "fi"` or `"fj"`;
+#'     \item A matrix of distributions of size sxs if `type.sojourn = "fij"`;
+#'     \item A vector of distributions of size s if `type.sojourn = "fi"` or `"fj"`;
 #'     \item A distribution if `type.sojourn = "f"`.
 #'   }
 #'   
@@ -116,8 +116,8 @@
 #' @export
 #'
 #' @examples 
-#' E <- c("a", "c", "g", "t")
-#' S <- length(E)
+#' states <- c("a", "c", "g", "t")
+#' s <- length(states)
 #' 
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
@@ -127,7 +127,7 @@
 #'                 0.2, 0, 0.3, 0.5, 
 #'                 0.3, 0.5, 0, 0.2, 
 #'                 0.4, 0.2, 0.4, 0), 
-#'               ncol = S, byrow = TRUE)
+#'               ncol = s, byrow = TRUE)
 #' 
 #' # Creation of the distribution matrix
 #' 
@@ -135,48 +135,48 @@
 #'                          "geom", NA, "pois", "dweibull",
 #'                          "pois", "pois", NA, "geom", 
 #'                          "pois", "geom", "geom", NA), 
-#'                        nrow = S, ncol = S, byrow = TRUE)
+#'                        nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' # Creation of an array containing the parameters
 #' param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
 #'                           0.7, NA, 5, 0.6, 
 #'                           2, 3, NA, 0.6, 
 #'                           4, 0.3, 0.4, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
-#' param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+#' param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 #' 
 #' # Specify the semi-Markov model
-#' smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+#' smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
 #'                       type.sojourn = "fij", distr = distr.matrix, 
 #'                       param = param.array)
 #' 
 #' seq1 <- simulate(object = smm1, nsim = c(1000, 10000, 2000), seed = 100)
 #' 
 #' # Estimation of simulated sequences
-#' est1 <- fitsemimarkovmodel(seq = seq1, E = E, type.sojourn = "fij", 
+#' est1 <- fitsemimarkovmodel(sequences = seq1, states = states, type.sojourn = "fij", 
 #'                            distr = distr.matrix)
 #' est1
 #' 
-fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
+fitsemimarkovmodel <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"),
                    distr = "nonparametric", cens.beg = FALSE, cens.end = FALSE) {
 
   #############################
-  # Checking parameters seq and E
+  # Checking parameters sequences and states
   #############################
 
-  if (!is.list(seq)) {
-    stop("The parameter seq should be a list")
+  if (!is.list(sequences)) {
+    stop("The parameter sequences should be a list")
   }
 
-  if (!all(unique(unlist(seq)) %in% E)) {
-    stop("Some states in the list of observed sequences seq are not in the state space E")
+  if (!all(unique(unlist(sequences)) %in% states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space states")
   }
 
   #############################
@@ -189,16 +189,16 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
   # Checking parameters distr
   #############################
   
-  S <- length(E) # State space size
+  s <- length(states) # State space size
   
   if (!(length(distr) == 1 && all(distr == "nonparametric"))) {
 
     if (type.sojourn == "fij" && !(is.matrix(distr))) {
-      stop("distr must be a matrix of size SxS since type.sojourn == \"fij\"")
+      stop("distr must be a matrix of size sxs since type.sojourn == \"fij\"")
     }
 
     if ((type.sojourn == "fi" || type.sojourn == "fj") && !is.vector(distr)) {
-      stop("distr must be a vector of length S since type.sojourn == \"fi\" or \"fj\"")
+      stop("distr must be a vector of length s since type.sojourn == \"fi\" or \"fj\"")
     }
 
     if (type.sojourn == "f" && !(length(distr) == 1)) {
@@ -206,12 +206,12 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
     }
 
 
-    if (type.sojourn == "fij" && !(dim(distr)[1] == S && dim(distr)[2] == S)) {
-      stop("distr must be a matrix of size SxS since type.sojourn == \"fij\"")
+    if (type.sojourn == "fij" && !(dim(distr)[1] == s && dim(distr)[2] == s)) {
+      stop("distr must be a matrix of size sxs since type.sojourn == \"fij\"")
     }
 
-    if ((type.sojourn == "fi" || type.sojourn == "fj") && !(length(distr) == S)) {
-      stop("distr must be a vector of length S since type.sojourn == \"fi\" or \"fj\"")
+    if ((type.sojourn == "fi" || type.sojourn == "fj") && !(length(distr) == s)) {
+      stop("distr must be a vector of length s since type.sojourn == \"fi\" or \"fj\"")
     }
 
     distrib.vec <- c("unif", "geom", "pois", "dweibull", "nbinom", NA)
@@ -228,19 +228,19 @@ fitsemimarkovmodel <- function(seq, E, type.sojourn = c("fij", "fi", "fj", "f"),
     
   }
 
-  seq <- sequences(seq = seq, E = E)
+  sequences <- processes(sequences = sequences, states = states)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     if (!cens.beg && !cens.end) {
-      .fit.nonparam.nocensoring(seq = seq, type.sojourn = type.sojourn, cens.beg = cens.beg)
+      .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, cens.beg = cens.beg)
     } else if (cens.beg && !cens.end) {
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = FALSE")
     } else if (!cens.beg && cens.end) {
-      .fit.nonparam.endcensoring(seq = seq, E = E, type.sojourn = type.sojourn, cens.beg = cens.beg)
+      .fit.nonparam.endcensoring(processes = sequences, states = states, type.sojourn = type.sojourn, cens.beg = cens.beg)
     } else {
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = TRUE")
     }
   } else {
-    .fit.param(seq = seq, E = E, type.sojourn = type.sojourn, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
+    .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
   }
 }

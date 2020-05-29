@@ -4,20 +4,20 @@
 \alias{loglik}
 \title{Loglikelihood}
 \usage{
-loglik(x, seq, E)
+loglik(x, sequences, states)
 }
 \arguments{
 \item{x}{An object for which the logikelihood can be computed.}
 
-\item{seq}{A list of vectors representing the sequences for which the
+\item{sequences}{A list of vectors representing the sequences for which the
 log-likelihood must be computed.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space (of length s).}
 }
 \value{
 A vector giving the value of the loglikelihood for each sequence.
 }
 \description{
 Generic function computing the loglikelihood of the model \code{x},
-with the list of sequences \code{seq}.
+with the list of sequences \code{sequences}.
 }

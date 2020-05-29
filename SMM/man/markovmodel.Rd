@@ -4,15 +4,15 @@
 \alias{markovmodel}
 \title{Markov model specification}
 \usage{
-markovmodel(E, init, ptrans, k = 1)
+markovmodel(states, init, ptrans, k = 1)
 }
 \arguments{
-\item{E}{Vector of state space of length S.}
+\item{states}{Vector of state space of length s.}
 
-\item{init}{Vector of initial distribution of length S.}
+\item{init}{Vector of initial distribution of length s.}
 
 \item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
-\eqn{J=(J_m)_{m}} of size SxS.}
+\eqn{J=(J_m)_{m}} of size sxs.}
 
 \item{k}{Order of the Markov chain.}
 }

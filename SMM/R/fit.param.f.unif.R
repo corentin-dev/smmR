@@ -1,6 +1,6 @@
-.fit.param.f.unif <- function(res, Kmax) {
+.fit.param.f.unif <- function(counting, kmax) {
   
-  theta <- Kmax
+  theta <- kmax
   
   return(c(theta, NA))
   

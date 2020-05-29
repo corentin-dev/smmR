@@ -26,9 +26,9 @@
 #' We define :
 #'  \itemize{
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
-#'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in E} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
-#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, S};
-#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in E,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
+#'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
+#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
+#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
 #'  }
 #'
 #' In this package we can choose differents types of sojourn time. 
@@ -40,7 +40,7 @@
 #'   \item depending neither on the current, nor on the next state (\eqn{f}).
 #' }
 #' 
-#' If  `type.sojourn = "fij"`, `distr` is a matrix of size SxS (e.g., if the 
+#' If  `type.sojourn = "fij"`, `distr` is a matrix of size sxs (e.g., if the 
 #' row 1 of the 2nd column is `"pois"`, that is to say we go from the first 
 #' state to the second state following a Poisson distribution).
 #' If `type.sojourn = "fi"` or `"fj"`, `distr` must be a vector (e.g., if the 
@@ -57,15 +57,15 @@
 #' must be equal to `TRUE` and `cens.end` must be equal to `TRUE` too. 
 #' All the sequences must be censored in the same way.
 #'
-#' @param E Vector of state space of length S.
-#' @param init Vector of initial distribution of length S.
+#' @param states Vector of state space of length s.
+#' @param init Vector of initial distribution of length s.
 #' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
-#'   \eqn{J=(J_m)_{m}} of size SxS.
+#'   \eqn{J=(J_m)_{m}} of size sxs.
 #' @param type.sojourn Type of sojourn time (for more explanations, see Details).
 #' @param distr
 #'   \itemize{
-#'     \item Matrix of distributions of size SxS if `type.sojourn = "fij"`;
-#'     \item Vector of distributions of size S if `type.sojourn = "fi"` or `"fj`;
+#'     \item Matrix of distributions of size sxs if `type.sojourn = "fij"`;
+#'     \item Vector of distributions of size s if `type.sojourn = "fi"` or `"fj`;
 #'     \item A distribution if `type.sojourn = "f"`.
 #'   }
 #'   where the distributions to be used can be one of `unif`, `geom`, `pois`, `dweibull` or `nbinom`.
@@ -91,8 +91,8 @@
 #' @export
 #'
 #' @examples 
-#' E <- c("a", "c", "g", "t")
-#' S <- length(E)
+#' states <- c("a", "c", "g", "t")
+#' s <- length(states)
 #' 
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
@@ -102,7 +102,7 @@
 #'                 0.2, 0, 0.3, 0.5, 
 #'                 0.3, 0.5, 0, 0.2, 
 #'                 0.4, 0.2, 0.4, 0), 
-#'               ncol = S, byrow = TRUE)
+#'               ncol = s, byrow = TRUE)
 #' 
 #' # Creation of the distribution matrix
 #' 
@@ -110,48 +110,48 @@
 #'                          "geom", NA, "pois", "dweibull",
 #'                          "pois", "pois", NA, "geom", 
 #'                          "pois", "geom", "geom", NA), 
-#'                        nrow = S, ncol = S, byrow = TRUE)
+#'                        nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' # Creation of an array containing the parameters
 #' param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
 #'                           0.7, NA, 5, 0.6, 
 #'                           2, 3, NA, 0.6, 
 #'                           4, 0.3, 0.4, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
 #'                           NA, NA, NA, 0.8, 
 #'                           NA, NA, NA, NA, 
 #'                           NA, NA, NA, NA), 
-#'                         nrow = S, ncol = S, byrow = TRUE)
+#'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
-#' param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+#' param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 #' 
 #' # Specify the semi-Markov model
-#' smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+#' smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
 #'                       type.sojourn = "fij", distr = distr.matrix, 
 #'                       param = param.array)
 #' smm1
 #' 
-smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
+smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                           distr, param, cens.beg = FALSE, cens.end = FALSE) {
   
   #############################
-  # Checking parameter E
+  # Checking parameter states
   #############################
   
-  S <- length(E)
+  s <- length(states)
   
-  if (!(is.vector(E) && (length(unique(E)) == S))) {
-    stop("The state space E is not a vector of unique elements")
+  if (!(is.vector(states) && (length(unique(states)) == s))) {
+    stop("The state space states is not a vector of unique elements")
   }
   
   #############################
   # Checking parameter init
   #############################
   
-  if (!(is.vector(init) && (length(init) == S))) {
-    stop("init is not a vector of length S")
+  if (!(is.vector(init) && (length(init) == s))) {
+    stop("init is not a vector of length s")
   }
   
   if (!(all(init >= 0) && all(init <= 1))) {
@@ -174,8 +174,8 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
     stop("Probabilities in ptrans must be between [0, 1]")
   }
   
-  if (!((dim(ptrans)[1] == S) && (dim(ptrans)[2] == S))) {
-    stop("The size of the matrix ptrans must be equal to SxS")
+  if (!((dim(ptrans)[1] == s) && (dim(ptrans)[2] == s))) {
+    stop("The size of the matrix ptrans must be equal to sxs")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
@@ -197,11 +197,11 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   #############################
   
   if (type.sojourn == "fij" && !(is.matrix(distr) && (is.array(param) && !is.matrix(param)))) {
-    stop("distr must be a matrix of size SxS and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
+    stop("distr must be a matrix of size sxs and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(is.vector(distr) && is.matrix(param))) {
-    stop("distr must be a vector of length S and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
+    stop("distr must be a vector of length s and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
   }
   
   if (type.sojourn == "f" && !((length(distr) == 1) && is.vector(param))) {
@@ -209,12 +209,12 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   }
   
   
-  if (type.sojourn == "fij" && !((dim(distr)[1] == S && dim(distr)[2] == S) && (dim(param)[1] == S && dim(param)[2] == S))) {
-    stop("distr must be a matrix of size SxS and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
+  if (type.sojourn == "fij" && !((dim(distr)[1] == s && dim(distr)[2] == s) && (dim(param)[1] == s && dim(param)[2] == s))) {
+    stop("distr must be a matrix of size sxs and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
   }
   
-  if ((type.sojourn == "fi" | type.sojourn == "fj") && !((length(distr) == S) && (dim(param)[1] == S && dim(param)[2] == 2))) {
-    stop("distr must be a vector of length S and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
+  if ((type.sojourn == "fi" | type.sojourn == "fj") && !((length(distr) == s) && (dim(param)[1] == s && dim(param)[2] == 2))) {
+    stop("distr must be a vector of length s and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
   }
   
   
@@ -250,8 +250,8 @@ smmparametric <- function(E, init, ptrans, type.sojourn = c("fij", "fi", "fj", "
   
   ans <-
     list(
-      E = E,
-      S = S,
+      states = states,
+      s = s,
       init = init,
       type.sojourn = type.sojourn,
       ptrans = ptrans,
@@ -272,74 +272,74 @@ is.smmparametric <- function(x) {
 }
 
 # Method used to compute the semi-Markov kernel q (see method .get.q.smmparametric)
-.get.fijk.smmparametric <- function(x, Kmax) {
+.get.fijk.smmparametric <- function(x, kmax) {
   
-  S <- x$S
+  s <- x$s
 
   if (x$type.sojourn == "fij") {
     param1 <- x$param[, , 1]
     param2 <- x$param[, , 2]
-    f <- matrix(0, nrow = S * S, ncol = Kmax)
+    f <- matrix(0, nrow = s * s, ncol = kmax)
   } else if (x$type.sojourn == "fj") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
+    f <- matrix(0, nrow = s, ncol = kmax)
   } else if (x$type.sojourn == "fi") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
+    f <- matrix(0, nrow = s, ncol = kmax)
   } else {
     param1 <- x$param[1]
     param2 <- x$param[2]
-    f <- matrix(0, nrow = 1, ncol = Kmax)
+    f <- matrix(0, nrow = 1, ncol = kmax)
   }
 
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
-      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param2[j], zero = FALSE)
+      f[j, ] <- ddweibull(1:kmax, q = param1[j], beta = param2[j], zero = FALSE)
     }
   }
   if ("geom" %in% x$distr) {
     indices <- which(x$distr == "geom")
     for (j in indices) {
-      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
+      f[j, ] <- dgeom(0:(kmax - 1), prob = param1[j])
     }
   }
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], prob = param2[j])
+      f[j, ] <- dnbinom(0:(kmax - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {
     indices <- which(x$distr == "pois")
     for (j in indices) {
-      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
+      f[j, ] <- dpois(0:(kmax - 1), lambda = param1[j])
     }
   }
   if ("unif" %in% x$distr) {
     indices <- which(x$distr == "unif")
     for (j in indices) {
-      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+      f[j, ] <- sapply(1:kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
     }
   }
 
   if (x$type.sojourn == "fij") {
-    fijk <- array(f, c(S, S, Kmax))
+    fijk <- array(f, c(s, s, kmax))
   } else if (x$type.sojourn == "fi") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    f <- rep(as.vector(t(f)), each = s)
+    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(s, s, kmax))
     fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
   } else if (x$type.sojourn == "fj") {
-    f <- rep(as.vector(t(f)), each = S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    f <- rep(as.vector(t(f)), each = s)
+    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(s, s, kmax))
   } else {
-    f <- rep(f, each = S * S)
-    fmat <- matrix(f, nrow = Kmax, ncol = S * S, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(S, S, Kmax))
+    f <- rep(f, each = s * s)
+    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(s, s, kmax))
   }
 
   return(fijk)
@@ -347,61 +347,61 @@ is.smmparametric <- function(x) {
 }
 
 # Method to get the sojourn time distribution f
-.get.f.smmparametric <- function(x, Kmax) {
+.get.f.smmparametric <- function(x, kmax) {
   
-  S <- x$S
+  s <- x$s
   
   if (x$type.sojourn == "fij") {
     param1 <- x$param[, , 1]
     param2 <- x$param[, , 2]
-    f <- matrix(0, nrow = S * S, ncol = Kmax)
+    f <- matrix(0, nrow = s * s, ncol = kmax)
   } else if (x$type.sojourn == "fj") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
+    f <- matrix(0, nrow = s, ncol = kmax)
   } else if (x$type.sojourn == "fi") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = S, ncol = Kmax)
+    f <- matrix(0, nrow = s, ncol = kmax)
   } else {
     param1 <- x$param[1]
     param2 <- x$param[2]
-    f <- matrix(0, nrow = 1, ncol = Kmax)
+    f <- matrix(0, nrow = 1, ncol = kmax)
   }
   
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
-      f[j, ] <- ddweibull(1:Kmax, q = param1[j], beta = param2[j], zero = FALSE)
+      f[j, ] <- ddweibull(1:kmax, q = param1[j], beta = param2[j], zero = FALSE)
     }
   }
   if ("geom" %in% x$distr) {
     indices <- which(x$distr == "geom")
     for (j in indices) {
-      f[j, ] <- dgeom(0:(Kmax - 1), prob = param1[j])
+      f[j, ] <- dgeom(0:(kmax - 1), prob = param1[j])
     }
   }
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(Kmax - 1), size = param1[j], prob = param2[j])
+      f[j, ] <- dnbinom(0:(kmax - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {
     indices <- which(x$distr == "pois")
     for (j in indices) {
-      f[j, ] <- dpois(0:(Kmax - 1), lambda = param1[j])
+      f[j, ] <- dpois(0:(kmax - 1), lambda = param1[j])
     }
   }
   if ("unif" %in% x$distr) {
     indices <- which(x$distr == "unif")
     for (j in indices) {
-      f[j, ] <- sapply(1:Kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+      f[j, ] <- sapply(1:kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
     }
   }
   
   if (x$type.sojourn == "fij") {
-    f <- array(f, c(S, S, Kmax))
+    f <- array(f, c(s, s, kmax))
   }
   
   return(f)
@@ -410,9 +410,9 @@ is.smmparametric <- function(x) {
 
 # Method to get the survival/reliability function Fbar
 # (useful to compute the contribution to the likelihood when censoring)
-.get.Fbar.smmparametric <- function(x, Kmax) {
+.get.Fbar.smmparametric <- function(x, kmax) {
   
-  f <- .get.f.smmparametric(x, Kmax)
+  f <- .get.f.smmparametric(x, kmax)
   
   if (x$type.sojourn == "fij") {
     Fbar <- 1 - apply(X = f, MARGIN = c(1, 2), cumsum)
@@ -426,12 +426,12 @@ is.smmparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q.smmparametric <- function(x, Kmax) {
+.get.q.smmparametric <- function(x, kmax) {
   
-  S <- x$S
+  s <- x$s
   
-  fijk <- .get.fijk.smmparametric(x, Kmax)
-  q <- array(x$ptrans, c(S, S, Kmax)) * fijk
+  fijk <- .get.fijk.smmparametric(x, kmax)
+  q <- array(x$ptrans, c(s, s, kmax)) * fijk
   
   return(q)
   
@@ -442,49 +442,49 @@ is.smmparametric <- function(x) {
 #' @description Computation of the loglikelihood for a semi-Markov model
 #'
 #' @param x An object of class [smmparametric][smmparametric].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A vector giving the value of the loglikelihood for each sequence.
 #' 
 #' 
 #' @export
 #'
-loglik.smmparametric <- function(x, seq, E) {
+loglik.smmparametric <- function(x, sequences, states) {
   
   #############################
-  # Checking parameters seq and E
+  # Checking parameters sequences and states
   #############################
   
-  if (!is.list(seq)) {
-    stop("The parameter seq should be a list")
+  if (!is.list(sequences)) {
+    stop("The parameter sequences should be a list")
   }
   
-  if (!all(unique(unlist(seq)) %in% E)) {
-    stop("Some states in the list of observed sequences seq are not in the state space E")
+  if (!all(unique(unlist(sequences)) %in% states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space states")
   }
   
-  S <- length(E)
+  s <- length(states)
   
   #############################
   # Checking smm parameter
   #############################
   
-  if ((x$S != S)) {
-    stop("The size of the matrix ptrans must be equal to SxS with S = length(E)")
+  if ((x$s != s)) {
+    stop("The size of the matrix ptrans must be equal to sxs with s = length(states)")
   }
   
-  if (!all.equal(E, x$E)) {
-    stop("The state space of the estimated SMM smm is different from the given state E")
+  if (!all.equal(states, x$states)) {
+    stop("The state space of the estimated SMM smm is different from the given state states")
   }
   
   
-  seq <- sequences(seq = seq, E = E)
-  Kmax <- seq$Kmax
+  sequences <- processes(sequences = sequences, states = states)
+  kmax <- sequences$kmax
   
-  if (!(is.null(x$Kmax))) {
-    if (!(Kmax == x$Kmax)) {
-      stop("Kmax of the given sequences is different from the Kmax of the estimated SMM model")  
+  if (!(is.null(x$kmax))) {
+    if (!(kmax == x$kmax)) {
+      stop("kmax of the given sequences is different from the kmax of the estimated SMM model")  
     }
   }
   
@@ -497,19 +497,19 @@ loglik.smmparametric <- function(x, seq, E) {
   #############################
   
   init <- x$init # Initial distributiob
-  Nstarti <- seq$counting$Nstarti
+  Nstarti <- sequences$counting$Nstarti
   maskNstarti <- Nstarti != 0 & init != 0
   
   pij <- x$ptrans # Transition matrix
-  Nij <- seq$counting$Nij
+  Nij <- sequences$counting$Nij
   maskNij <- Nij != 0 & pij != 0
   
-  f <- .get.f(x, Kmax = Kmax) # Compute the sojourn time distribution
+  f <- .get.f(x, kmax = kmax) # Compute the sojourn time distribution
   
   
   if (type.sojourn == "fij") {
     
-    Nijk <- seq$counting$Nijk
+    Nijk <- sequences$counting$Nijk
     maskNijk <- Nijk != 0 & f != 0
     
     # Uncensored log-likelihood
@@ -520,15 +520,15 @@ loglik.smmparametric <- function(x, seq, E) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      Fbar <- .get.Fbar.smmparametric(x, kmax)
       
-      Nbijk <- seq$counting$Nbijk
+      Nbijk <- sequences$counting$Nbijk
       maskNbijk <- Nbijk != 0 & Fbar != 0
       
       # Contribution of the last right censored time to the loglikelihood
-      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x, Kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x, kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
       
-      Neik <- seq$counting$Neik
+      Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbarj != 0
       
       loglik <- loglik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
@@ -538,7 +538,7 @@ loglik.smmparametric <- function(x, seq, E) {
     
   } else if (type.sojourn == "fi") {
     
-    Nik <- seq$counting$Nik
+    Nik <- sequences$counting$Nik
     maskNik <- Nik != 0 & f != 0
     
     # Uncensored log-likelihood
@@ -549,12 +549,12 @@ loglik.smmparametric <- function(x, seq, E) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      Fbar <- .get.Fbar.smmparametric(x, kmax)
       
-      Nbik <- seq$counting$Nbik
+      Nbik <- sequences$counting$Nbik
       maskNbik <- Nbik != 0 & Fbar != 0
       
-      Neik <- seq$counting$Neik
+      Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbar != 0
       
       loglik <- loglik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
@@ -564,7 +564,7 @@ loglik.smmparametric <- function(x, seq, E) {
     
   } else if (type.sojourn == "fj") {
     
-    Njk <- seq$counting$Njk
+    Njk <- sequences$counting$Njk
     maskNjk <- Njk != 0 & f != 0
     
     # Uncensored log-likelihood
@@ -575,15 +575,15 @@ loglik.smmparametric <- function(x, seq, E) {
     if (cens.beg || cens.end) {
       
       # Contribution of the first right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      Fbar <- .get.Fbar.smmparametric(x, kmax)
       
-      Nbjk <- seq$counting$Nbjk
+      Nbjk <- sequences$counting$Nbjk
       maskNbjk <- Nbjk != 0 & Fbar != 0
       
       # Contribution of the last right censored time to the loglikelihood
       Fbarj <- pij %*% Fbar
       
-      Neik <- seq$counting$Neik
+      Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbar != 0
       
       loglik <- loglik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
@@ -593,7 +593,7 @@ loglik.smmparametric <- function(x, seq, E) {
     
   } else {
     
-    Nk <- seq$counting$Nk
+    Nk <- sequences$counting$Nk
     maskNk <- Nk != 0 & f != 0
     
     # Uncensored log-likelihood
@@ -604,12 +604,12 @@ loglik.smmparametric <- function(x, seq, E) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, Kmax)
+      Fbar <- .get.Fbar.smmparametric(x, kmax)
       
-      Nbk <- seq$counting$Nbk
+      Nbk <- sequences$counting$Nbk
       maskNbk <- Nbk != 0 & Fbar != 0
       
-      Nek <- seq$counting$Nek
+      Nek <- sequences$counting$Nek
       maskNek <- Nek != 0 & Fbar != 0
       
       loglik <- loglik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
@@ -634,9 +634,9 @@ loglik.smmparametric <- function(x, seq, E) {
   nbPois <- length(which(distr == "pois"))
   nbUnif <- length(which(distr == "unif"))
   
-  Kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
+  kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
   
-  return(Kpar)
+  return(kpar)
 }
 
 #' Akaike Information Criterion (AIC)
@@ -644,25 +644,25 @@ loglik.smmparametric <- function(x, seq, E) {
 #' @description Computation of the Akaike Information Criterion.
 #'
 #' @param x An object of class [smmparametric][smmparametric].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A numeric value giving the value of the AIC.
 #' 
 #' 
 #' @export
 #'
-aic.smmparametric <- function(x, seq, E) {
+aic.smmparametric <- function(x, sequences, states) {
   
-  loglik <- loglik(x, seq, E)
-  seq <- sequences(seq = seq, E = E)
+  loglik <- loglik(x, sequences, states)
+  sequences <- processes(sequences = sequences, states = states)
   
-  S <- x$S
-  Kmax <- seq$Kmax
+  s <- x$s
+  kmax <- sequences$kmax
   
-  Kpar <- .getKpar(x)
+  kpar <- .getKpar(x)
   
-  aic <- -2 * loglik + 2 * Kpar
+  aic <- -2 * loglik + 2 * kpar
   
   return(aic)
   
@@ -673,27 +673,27 @@ aic.smmparametric <- function(x, seq, E) {
 #' @description Computation of the Bayesian Information Criterion.
 #'
 #' @param x An object of class [smmparametric][smmparametric].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A numeric value giving the value of the BIC.
 #' 
 #' 
 #' @export
 #'
-bic.smmparametric <- function(x, seq, E) {
+bic.smmparametric <- function(x, sequences, states) {
   
-  loglik <- loglik(x, seq, E)
-  seq <- sequences(seq = seq, E = E)
+  loglik <- loglik(x, sequences, states)
+  sequences <- processes(sequences = sequences, states = states)
   
-  S <- x$S
-  Kmax <- seq$Kmax
+  s <- x$s
+  kmax <- sequences$kmax
   
-  Kpar <- .getKpar(x)
+  kpar <- .getKpar(x)
   
-  n <- sum(sapply(seq$Ym, length))
+  n <- sum(sapply(sequences$Ym, length))
   
-  bic <- -2 * loglik + log(n) * Kpar
+  bic <- -2 * loglik + log(n) * kpar
   
   return(bic)
   

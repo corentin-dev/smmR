@@ -2,35 +2,35 @@
 #'
 #' @description Creates a model specification of a Markov model.
 #'
-#' @param E Vector of state space of length S.
+#' @param states Vector of state space of length s.
 #' @param k Order of the Markov chain.
-#' @param init Vector of initial distribution of length S.
+#' @param init Vector of initial distribution of length s.
 #' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
-#'   \eqn{J=(J_m)_{m}} of size SxS.
+#'   \eqn{J=(J_m)_{m}} of size sxs.
 #' @return An object of class [markovmodel][markovmodel].
 #' 
 #' 
 #' @seealso [simulate], [fitmarkovmodel], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
 #' @export
 #'
-markovmodel <- function(E, init, ptrans, k = 1) {
+markovmodel <- function(states, init, ptrans, k = 1) {
 
   #############################
-  # Checking parameter E
+  # Checking parameter states
   #############################
 
-  S <- length(E)
+  s <- length(states)
   
-  if (!(is.vector(E) && (length(unique(E)) == S))) {
-    stop("The state space E is not a vector of unique elements")
+  if (!(is.vector(states) && (length(unique(states)) == s))) {
+    stop("The state space states is not a vector of unique elements")
   }
 
   #############################
   # Checking parameter init
   #############################
 
-  if (!(is.vector(init) && (length(init) == S))) {
-    stop("init is not a vector of length S")
+  if (!(is.vector(init) && (length(init) == s))) {
+    stop("init is not a vector of length s")
   }
   
   if (!(all(init >= 0) && all(init <= 1))) {
@@ -61,8 +61,8 @@ markovmodel <- function(E, init, ptrans, k = 1) {
     stop("Probabilities in ptrans must be between [0, 1]")
   }
   
-  if (!((dim(ptrans)[1] == S ^ k) && (dim(ptrans)[2] == S))) {
-    stop("The size of the matrix ptrans must be equal to SxS")
+  if (!((dim(ptrans)[1] == s ^ k) && (dim(ptrans)[2] == s))) {
+    stop("The size of the matrix ptrans must be equal to sxs")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
@@ -70,7 +70,7 @@ markovmodel <- function(E, init, ptrans, k = 1) {
   }
 
 
-  ans <- list(E = E, k = k, init = init, ptrans = ptrans)
+  ans <- list(states = states, k = k, init = init, ptrans = ptrans)
   
   class(ans) <- "markovmodel"
   
@@ -100,57 +100,57 @@ is.markovmodel <- function(x) {
 #' @description Computation of the loglikelihood for a semi-Markov model
 #'
 #' @param x An object of class [markovmodel][markovmodel].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A vector giving the value of the loglikelihood for each sequence.
 #' 
 #' 
 #' @export
 #'
-loglik.markovmodel <- function(x, seq, E) {
+loglik.markovmodel <- function(x, sequences, states) {
   
   #############################
-  # Checking parameters seq and E
+  # Checking parameters sequences and states
   #############################
   
-  if (!is.list(seq)) {
-    stop("The parameter seq should be a list")
+  if (!is.list(sequences)) {
+    stop("The parameter sequences should be a list")
   }
   
-  if (!all(unique(unlist(seq)) %in% E)) {
-    stop("Some states in the list of observed sequences seq are not in the state space E")
+  if (!all(unique(unlist(sequences)) %in% states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space states")
   }
   
-  S <- length(E)
+  s <- length(states)
   
   #############################
   # Checking markovmodel parameter
   #############################
   
-  if ((x$S != S)) {
-    stop("The size of the matrix ptrans must be equal to SxS with S = length(E)")
+  if ((x$s != s)) {
+    stop("The size of the matrix ptrans must be equal to sxs with s = length(states)")
   }
   
-  if (!all.equal(E, x$E)) {
-    stop("The state space of the estimated Markov model is different from the given state E")
+  if (!all.equal(states, x$states)) {
+    stop("The state space of the estimated Markov model is different from the given state states")
   }
   
   
-  nbseq <- length(seq) # Number of sequences
-  vect.seq <- c()
+  nbseq <- length(sequences) # Number of sequences
+  vect.sequences <- c()
   
   # Count the number of transitions from i to j in k steps
-  Nijl <- array(0, c(S ^ x$k, S, nbseq))
+  Nijl <- array(0, c(s ^ x$k, s, nbseq))
   contrInit <- rep.int(x = 0, times = nbseq)
   
   for (i in 1:nbseq) {
     
-    Nijl[, , i] <- matrix(count(seq = seq[[i]], wordsize = x$k + 1, alphabet = x$E), byrow = TRUE, ncol = x$S)
+    Nijl[, , i] <- matrix(count(seq = sequences[[i]], wordsize = x$k + 1, alphabet = x$states), byrow = TRUE, ncol = x$s)
     
     for (j in 1:x$k) {# Warning to initial law
-      if (x$init[which(x$E == seq[[i]][j])] != 0) {
-        contrInit[i] <- contrInit[i] + log(x$init[which(x$E == seq[[i]][j])])  
+      if (x$init[which(x$states == sequences[[i]][j])] != 0) {
+        contrInit[i] <- contrInit[i] + log(x$init[which(x$states == sequences[[i]][j])])  
       }
     }
     
@@ -168,9 +168,9 @@ loglik.markovmodel <- function(x, seq, E) {
 # (useful for the computation of criteria such as AIC and BIC)
 .getKpar.markovmodel <- function(x) {
   
-  Kpar <- (x$S - 1) * x$S ^ x$k
+  kpar <- (x$s - 1) * x$s ^ x$k
   
-  return(Kpar)
+  return(kpar)
 }
 
 #' Akaike Information Criterion (AIC)
@@ -178,21 +178,21 @@ loglik.markovmodel <- function(x, seq, E) {
 #' @description Computation of the Akaike Information Criterion.
 #'
 #' @param x An object of class [markovmodel][markovmodel].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A numeric value giving the value of the AIC.
 #' 
 #' 
 #' @export
 #'
-aic.markovmodel <- function(x, seq, E) {
+aic.markovmodel <- function(x, sequences, states) {
   
-  loglik <- loglik(x, seq, E)
+  loglik <- loglik(x, sequences, states)
   
-  Kpar <- .getKpar(x)
+  kpar <- .getKpar(x)
   
-  aic <- -2 * loglik + 2 * Kpar
+  aic <- -2 * loglik + 2 * kpar
   
   return(aic)
   
@@ -203,22 +203,22 @@ aic.markovmodel <- function(x, seq, E) {
 #' @description Computation of the Bayesian Information Criterion.
 #'
 #' @param x An object of class [markovmodel][markovmodel].
-#' @param seq A list of vectors representing the sequences for which the 
+#' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
-#' @param E Vector of state space (of length S).
+#' @param states Vector of state space (of length s).
 #' @return A numeric value giving the value of the BIC.
 #' 
 #' 
 #' @export
 #'
-bic.markovmodel <- function(x, seq, E) {
+bic.markovmodel <- function(x, sequences, states) {
   
-  loglik <- loglik(x, seq, E)
+  loglik <- loglik(x, sequences, states)
   
-  Kpar <- .getKpar(x)
+  kpar <- .getKpar(x)
   
-  n <- sum(unlist(lapply(seq, length)))
-  bic <- -2 * loglik + log(n) * Kpar
+  n <- sum(unlist(lapply(sequences, length)))
+  bic <- -2 * loglik + log(n) * kpar
   
   return(bic)
 }

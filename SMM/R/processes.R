@@ -2,34 +2,34 @@
 #'
 #' @description Compute processes such as Y, T, U... and counting processes.
 #' 
-#' @param seq A list of vectors representing the sequences.
-#' @param E Vector of state space (of length S).
-#' @return An object of S3 class sequences.
+#' @param sequences A list of vectors representing the sequences.
+#' @param states Vector of state space (of length s).
+#' @return An object of S3 class processes.
 #'
 #' @noRd
 #' 
-sequences <- function(seq, E) {
+processes <- function(sequences, states) {
   
   #############################
   # Checking parameters
   #############################
   
-  if (!is.list(seq)) {
-    stop("The parameter seq should be a list")
+  if (!is.list(sequences)) {
+    stop("The parameter sequences should be a list")
   }
   
-  if (!all(unique(unlist(seq)) %in% E)) {
-    stop("Some states in the list of observed sequences seq are not in the state space E")
+  if (!all(unique(unlist(sequences)) %in% states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space states")
   }
   
-  S <- length(E) # State space size
-  L <- length(seq) # Number of sequences
+  s <- length(states) # State space size
+  L <- length(sequences) # Number of sequences
   
   #############################
   # Get the processes
   #############################
   
-  Kmax <- 0 # max(max_l(n_l))
+  kmax <- 0 # max(max_l(n_l))
   
   Ym <- list() # Semi-Markov chain
   Jm <- list() # Successively visited states (coded with numbers)
@@ -39,7 +39,7 @@ sequences <- function(seq, E) {
   
   for (l in 1:L) {
     
-    processes <- .getProcesses(seq[[l]], E) # Compute the processes
+    processes <- .getProcesses(sequences[[l]], states) # Compute the processes
     
     # Allocate the processes
     Ym[[l]] <- processes$Ym
@@ -47,14 +47,14 @@ sequences <- function(seq, E) {
     Tm[[l]] <- processes$Tm
     Lm[[l]] <- processes$Lm
     Um[[l]] <- processes$Um
-    Kmax <- max(Kmax, max(Lm[[l]]))
+    kmax <- max(kmax, max(Lm[[l]]))
   }
   
   #############################
   # Get the counting processes
   #############################
   
-  counting <- .getCountingProcesses(Jm, Lm, S, Kmax)
+  counting <- .getCountingProcesses(Jm, Lm, s, kmax)
   
   
   #############################
@@ -63,24 +63,24 @@ sequences <- function(seq, E) {
   
   ans <-
     list(
-      E = E,
-      S = S,
+      states = states,
+      s = s,
       L = L,
       Ym = Ym,
       Jm = Jm,
       Tm = Tm,
       Lm = Lm,
       Um = Um,
-      Kmax = Kmax,
+      kmax = kmax,
       counting = counting
     )
   
-  class(ans) <- "sequences"
+  class(ans) <- "processes"
   
   return(ans)
 }
 
-# Function to check if an object is of class sequences
-is.sequences <- function(x) {
-  inherits(x, "sequences")
+# Function to check if an object is of class processes
+is.processes <- function(x) {
+  inherits(x, "processes")
 }

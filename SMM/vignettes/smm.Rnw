@@ -564,12 +564,12 @@ In this part, we will consider parametric specification that is based on classic
 \paragraph{Parameters:} This specification is carried out by the constructor function {\tt smmparametric}. The different parameters of the function are:
 %
 \begin{itemize}
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
   
-  \item {\tt init}: Vector of initial distribution of length $S$.
+  \item {\tt init}: Vector of initial distribution of length $s$.
   
   \item {\tt ptrans}:  Matrix of transition probabilities of the embedded Markov 
-    chain $J=(J_m)_{m}$ of size  $S\times S$.
+    chain $J=(J_m)_{m}$ of size  $s\times s$.
     
   \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
     {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
@@ -577,8 +577,8 @@ In this part, we will consider parametric specification that is based on classic
   \item {\tt distr}: Sojourn time distributions:
     {
     \begin{itemize}
-      \item  Matrix of distributions of size $S\times S$ if {\tt type.sojourn = "fij"};
-      \item Vector of distributions of size $S$ if  {\tt type.sojourn = "fi"} or 
+      \item  Matrix of distributions of size $s\times s$ if {\tt type.sojourn = "fij"};
+      \item Vector of distributions of size $s$ if  {\tt type.sojourn = "fi"} or 
         {\tt type.sojourn = "fj"};
       \item A distribution if {\tt type.sojourn = "f"}.
     \end{itemize}
@@ -589,9 +589,9 @@ In this part, we will consider parametric specification that is based on classic
   \item {\tt param}: Parameters of sojourn time distributions: 
     {
     \begin{itemize}
-      \item  An array of parameters of size $S\times S \times 2$ if 
+      \item  An array of parameters of size $s\times s \times 2$ if 
         {\tt type.sojourn = "fij"};
-      \item A matrix of parameters of size $S \times 2$ if {\tt type.sojourn = "fi"}
+      \item A matrix of parameters of size $s \times 2$ if {\tt type.sojourn = "fi"}
         or {\tt type.sojourn = "fj"};
       \item A vector of parameters of length $2$ if {\tt type.sojourn = "f"}.
     \end{itemize}
@@ -618,8 +618,8 @@ the next state ($f_{ij}$).
 
 \begin{lstlisting}
   > # State space
-  > E <- c("a", "c", "g", "t")
-  > S <- length(E)
+  > states <- c("a", "c", "g", "t")
+  > s <- length(states)
   > # Creation of the initial distribution
   > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
   > # Creation of transition matrix
@@ -627,27 +627,27 @@ the next state ($f_{ij}$).
   +                 0.2, 0, 0.3, 0.5, 
   +                 0.3, 0.5, 0, 0.2, 
   +                 0.4, 0.2, 0.4, 0), 
-  +               ncol = S, byrow = TRUE)
+  +               ncol = s, byrow = TRUE)
   > # Creation of the distribution matrix
   > distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
   +                          "geom", NA, "pois", "dweibull",
   +                          "pois", "pois", NA, "geom", 
   +                          "pois", "geom", "geom", NA), 
-  +                        nrow = S, ncol = S, byrow = TRUE)
+  +                        nrow = s, ncol = s, byrow = TRUE)
   > # Creation of an array containing the parameters
   > param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
   +                           0.7, NA, 5, 0.6, 
   +                           2, 3, NA, 0.6, 
   +                           4, 0.3, 0.4, NA), 
-  +                         nrow = S, ncol = S, byrow = TRUE)
+  +                         nrow = s, ncol = s, byrow = TRUE)
   > param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
   +                           NA, NA, NA, 0.8, 
   +                           NA, NA, NA, NA, 
   +                           NA, NA, NA, NA), 
-  +                         nrow = S, ncol = S, byrow = TRUE)
-  > param.array <- array(c(param1.matrix, param2.matrix), c(S, S, 2))
+  +                         nrow = s, ncol = s, byrow = TRUE)
+  > param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
   > # Specify the semi-Markov model
-  > smm1 <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+  > smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
   +                       type.sojourn = "fij", distr = distr.matrix, 
   +                       param = param.array)
 \end{lstlisting}
@@ -672,10 +672,10 @@ class {\tt smmparametric} contains various methods such as {\tt simulate}.
 
 \begin{lstlisting}
   > smm1
-  $E
+  $states
   [1] "a" "c" "g" "t"
   
-  $S
+  $s
   [1] 4
   
   $init
@@ -737,25 +737,25 @@ by the user).
 
 \begin{itemize}
 
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
   
-  \item {\tt init}: Vector of initial distribution of length $S$.
+  \item {\tt init}: Vector of initial distribution of length $s$.
   
   \item {\tt ptrans}:  Matrix of transition probabilities of the embedded Markov 
-    chain $J=(J_m)_{m}$ of size  $S\times S$.
+    chain $J=(J_m)_{m}$ of size  $s\times s$.
   
   \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
     {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
   
-  \item {\tt laws}: Sojourn time distributions introduced by the user: 
+  \item {\tt distr}: Sojourn time distributions introduced by the user: 
     {
     \begin{itemize}
-      \item  An array of size $S\times S \times Kmax$ if {\tt type.sojourn = "fij"};
-      \item A matrix of size $S \times Kmax$ if {\tt type.sojourn = "fi"} or 
+      \item  An array of size $s\times s \times kmax$ if {\tt type.sojourn = "fij"};
+      \item A matrix of size $s \times kmax$ if {\tt type.sojourn = "fi"} or 
         {\tt type.sojourn = "fj"};
-      \item A vector of length $Kmax$ if {\tt type.sojourn = "f"}.
+      \item A vector of length $kmax$ if {\tt type.sojourn = "f"}.
     \end{itemize}
-    where $Kmax$ is the maximum length for the sojourn times.
+    where $kmax$ is the maximum length for the sojourn times.
     }
     
   \item {\tt cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
@@ -775,8 +775,8 @@ state and on the next state ($f_{j}$).
 
 \begin{lstlisting}
   > # State space
-  > E <- c("a", "c", "g", "t")
-  > S <- length(E)
+  > states <- c("a", "c", "g", "t")
+  > s <- length(states)
   > # Creation of the initial distribution
   > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
   > # Creation of transition matrix
@@ -784,19 +784,19 @@ state and on the next state ($f_{j}$).
   +                 0.2, 0, 0.3, 0.5, 
   +                 0.3, 0.5, 0, 0.2, 
   +                 0.4, 0.2, 0.4, 0), 
-  +               ncol = S, byrow = TRUE)
+  +               ncol = s, byrow = TRUE)
   > # Creation of a matrix corresponding to the 
   > # conditional sojourn time distributions
-  > Kmax <- 6
+  > kmax <- 6
   > nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
   +                           0.2, 0, 0.4, 0.2, 
   +                           0.1, 0, 0.2, 0.1, 
   +                           0.5, 0.3, 0.15, 0.05, 
   +                           0, 0, 0.3, 0.2, 
   +                           0.1, 0.2, 0.2, 0), 
-  +                         nrow = S, ncol = Kmax, byrow = TRUE)
-  > smm2 <- smmnonparametric(E = E, init = vect.init, ptrans = pij, 
-  +                  type.sojourn = "fj", laws = nparam.matrix)
+  +                         nrow = s, ncol = kmax, byrow = TRUE)
+  > smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
+  +                  type.sojourn = "fj", distr = nparam.matrix)
 \end{lstlisting}
 
 \paragraph{Values:}
@@ -805,13 +805,13 @@ The S3 class {\tt smmnonparametric} contains various methods such as {\tt simula
 
 \begin{lstlisting}
   > smm2
-  $E
+  $states
   [1] "a" "c" "g" "t"
   
-  $S
+  $s
   [1] 4
   
-  $Kmax
+  $kmax
   [1] 6
   
   $init
@@ -827,7 +827,7 @@ The S3 class {\tt smmnonparametric} contains various methods such as {\tt simula
   [3,]  0.3  0.5  0.0  0.2
   [4,]  0.4  0.2  0.4  0.0
   
-  $laws
+  $distr
        [,1] [,2] [,3] [,4] [,5] [,6]
   [1,]  0.2  0.1 0.30 0.20  0.2  0.0
   [2,]  0.4  0.2 0.10 0.00  0.2  0.1
@@ -959,9 +959,9 @@ parameters of the function are:
 
 \begin{itemize}
 
-  \item {\tt seq}: A List of vectors representing the sequence(s) from which to estimate.
+  \item {\tt sequences}: A List of vectors representing the sequence(s) from which to estimate.
 
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
   
   \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
     {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
@@ -970,8 +970,8 @@ parameters of the function are:
     case. If the parametric estimation case is desired, {\tt distr} should be:
     {
     \begin{itemize}
-      \item  Matrix of distributions of size $S\times S$ if {\tt type.sojourn = "fij"};
-      \item Vector of distributions of size $S$ if  {\tt type.sojourn = "fi"} or 
+      \item  Matrix of distributions of size $s\times s$ if {\tt type.sojourn = "fij"};
+      \item Vector of distributions of size $s$ if  {\tt type.sojourn = "fi"} or 
         {\tt type.sojourn = "fj"};
       \item A distribution if {\tt type.sojourn = "f"}.
     \end{itemize}
@@ -990,15 +990,15 @@ parameters of the function are:
 
 \begin{lstlisting}
   > # State space
-  > E <- c("a", "c", "g", "t")
+  > states <- c("a", "c", "g", "t")
   > # Creation of the distribution matrix
   > distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
   +                          "geom", NA, "pois", "dweibull", 
   +                          "pois", "pois", NA, "geom", 
   +                          "pois", "geom", "geom", NA), 
-  +                        nrow = S, ncol = S, byrow = TRUE)
+  +                        nrow = s, ncol = s, byrow = TRUE)
   > # Estimation of simulated sequences
-  > est1 <- fitsemimarkovmodel(seq = seq1, E = E, type.sojourn = "fij", 
+  > est1 <- fitsemimarkovmodel(sequences = seq1, states = states, type.sojourn = "fij", 
   +                            distr = distr.matrix)
 \end{lstlisting}
 
@@ -1023,7 +1023,7 @@ The values of the estimated parameters are:
 
 \begin{itemize}
 
-  \item Attribute {\tt init}: Vector of size $S$ with the estimated initial 
+  \item Attribute {\tt init}: Vector of size $s$ with the estimated initial 
     probabilities of the semi-Markov chain
     
     \begin{lstlisting}
@@ -1031,7 +1031,7 @@ The values of the estimated parameters are:
       [1] 0.2056339 0.2527220 0.2715249 0.2701192
     \end{lstlisting}
   
-  \item Attribute {\tt ptrans}: Matrix of size  $S\times S$ with the estimated 
+  \item Attribute {\tt ptrans}: Matrix of size  $s\times s$ with the estimated 
     transition probabilities of the embedded Markov chain $J=(J_m)_{m}$
 
     \begin{lstlisting}
@@ -1155,9 +1155,9 @@ The estimation is carried out by the function {\tt fitsemimarkomodel} and severa
 
 \begin{itemize}
 
-  \item {\tt seq}: A List of vectors representing the sequence(s) from which to estimate.
+  \item {\tt sequences}: A List of vectors representing the sequence(s) from which to estimate.
 
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
   
   \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
     {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
@@ -1175,7 +1175,7 @@ The estimation is carried out by the function {\tt fitsemimarkomodel} and severa
 
 \begin{lstlisting}
   > # Estimation of simulated sequences
-  > est2 <- fitsemimarkovmodel(seq = seq2, E = E, type.sojourn = "fj")
+  > est2 <- fitsemimarkovmodel(sequences = seq2, states = states, type.sojourn = "fj")
 \end{lstlisting}
 
 Here, we estimate simulated sequences with no censoring.
@@ -1195,7 +1195,7 @@ The values of the estimated parameters are:
 
 \begin{itemize}
 
-  \item Attribute {\tt init}: Vector of size $S$ with the estimated initial 
+  \item Attribute {\tt init}: Vector of size $s$ with the estimated initial 
     probabilities of the semi-Markov chain
     
     \begin{lstlisting}
@@ -1203,7 +1203,7 @@ The values of the estimated parameters are:
       [1] 0.2078682 0.2409731 0.3101855 0.2409731
     \end{lstlisting}
   
-  \item Attribute {\tt ptrans}: Matrix of size  $S\times S$ with the estimated 
+  \item Attribute {\tt ptrans}: Matrix of size  $s\times s$ with the estimated 
     transition probabilities of the embedded Markov chain $J=(J_m)_{m}$
 
     \begin{lstlisting}
@@ -1215,10 +1215,10 @@ The values of the estimated parameters are:
       [4,] 0.3840186 0.2024825 0.4134988 0.0000000
     \end{lstlisting}
     
-\item Attribute {\tt laws}: Array of size $S \times S \times Kmax$ with estimated 
+\item Attribute {\tt distr}: Array of size $s \times s \times kmax$ with estimated 
   values of the sojourn time distributions
   \begin{lstlisting}
-    > est2$laws
+    > est2$distr
               [,1]       [,2]       [,3]       [,4]      [,5]       [,6]
     [1,] 0.2132416 0.08856406 0.28890800 0.21582115 0.1934652 0.00000000
     [2,] 0.4107143 0.19480519 0.09821429 0.00000000 0.1980519 0.09821429
@@ -1245,16 +1245,16 @@ log-likelihood of a semi-Markov model and the AIC and BIC of a semi-Markov model
   \item {\tt x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt seq}: A list of vectors representing the sequences for which the 
+  \item {\tt sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
 \end{itemize}
 
 \begin{lstlisting}
   > # State space
-  > E <- c("a", "c", "g", "t")
-  > S <- length(E)
+  > states <- c("a", "c", "g", "t")
+  > s <- length(states)
   > # Creation of the initial distribution
   > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
   > # Creation of transition matrix
@@ -1264,15 +1264,15 @@ log-likelihood of a semi-Markov model and the AIC and BIC of a semi-Markov model
   +                 0.4, 0.2, 0.4, 0), 
   +               ncol = 4, byrow = TRUE)
   > # Model specification
-  > smmspec <- smmparametric(E = E, init = vect.init, ptrans = pij, 
+  > smmspec <- smmparametric(states = states, init = vect.init, ptrans = pij, 
   +                          type.sojourn = "f", distr = "pois", param = 2)
   > # Simulation of a squence of length 5000
   > seq5000 <- simulate(object = smmspec, nsim = 5000, seed = 150)
   > # Estimation of the semi-Markov model
-  > est <- fitsemimarkovmodel(seq = seq5000, E = E, 
+  > est <- fitsemimarkovmodel(sequences = seq5000, states = states, 
   +                           type.sojourn = "f", distr = "pois")
   > # Computation of  the log-likelihood
-  > loglik(x = est, seq = seq5000, E = E)
+  > loglik(x = est, sequences = seq5000, states = states)
   [1] -4594.97
 \end{lstlisting}
 
@@ -1300,14 +1300,14 @@ in the model.
   \item {\tt x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt seq}: A list of vectors representing the sequences for which the 
+  \item {\tt sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
 \end{itemize}
 
 \begin{lstlisting}
-  > aic(x = est, seq = seq5000, E = E)
+  > aic(x = est, sequences = seq5000, states = states)
   [1] 9191.939
 \end{lstlisting}
 
@@ -1329,14 +1329,14 @@ where $\cal L$ is the log-likelihood, $M$ is the number of parameters involved i
   \item {\tt x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt seq}: A list of vectors representing the sequences for which the 
+  \item {\tt sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
 \end{itemize}
 
 \begin{lstlisting}
-  > bic(x = est, seq = seq5000, E = E)
+  > bic(x = est, sequences = seq5000, states = states)
   [1] 9198.457
 \end{lstlisting}
 
@@ -1359,13 +1359,13 @@ log-likelihood and also the AIC and BIC of a Markov model.
 
 \begin{lstlisting}
   > # State space 
-  > E <- c("a", "c", "g", "t")
-  > S <- length(E)
+  > states <- c("a", "c", "g", "t")
+  > s <- length(states)
   > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
   > k <- 2
-  > p <- matrix(0.25, nrow = S ^ k, ncol = S)
+  > p <- matrix(0.25, nrow = s ^ k, ncol = s)
   > # Specify the Markov model
-  > markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+  > markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
 \end{lstlisting}
 
 \paragraph{Values:}
@@ -1374,7 +1374,7 @@ class {\tt markovmodel} contains various methods such as {\tt simulate}.
 
 \begin{lstlisting}
   > markov1
-  $E
+  $states
   [1] "a" "c" "g" "t"
   
   $k
@@ -1425,8 +1425,8 @@ $2000$.
 
 \begin{lstlisting}
   > # State space
-  > E <- c("a", "c", "g", "t")
-  > est <- fitmarkovmodel(seq = seq1, E = E, k = 2)
+  > states <- c("a", "c", "g", "t")
+  > est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 \end{lstlisting}
 
 \paragraph{Values:}
@@ -1448,15 +1448,15 @@ The function {\tt fitmarkovmodel} returns an object of class {\tt markovmodel}:
 
   \item {\tt x}: An object of the class {\tt markovmodel}.
     
-  \item {\tt seq}: A list of vectors representing the sequences for which the 
+  \item {\tt sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
 \end{itemize}
 
 \begin{lstlisting}
   > # Computation of  the log-likelihood
-  > loglik(x = est, seq = seq1, E = E)
+  > loglik(x = est, sequences = seq1, states = states)
   [1] -17986.76
 \end{lstlisting}
 
@@ -1475,15 +1475,15 @@ for each sequence.
 
   \item {\tt x}: An object of class {\tt markovmodel}.
     
-  \item {\tt seq}: A list of vectors representing the sequences for which the 
+  \item {\tt sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt E}: Vector of state space of length $S$.
+  \item {\tt states}: Vector of state space of length $s$.
 \end{itemize}
 
 \begin{lstlisting}
   > # Computation of the AIC
-  > aic(x = est, seq = seq1, E = E)
+  > aic(x = est, sequences = seq1, states = states)
   [1] 36069.53
 \end{lstlisting}
 

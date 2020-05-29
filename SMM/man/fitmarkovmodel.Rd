@@ -4,12 +4,12 @@
 \alias{fitmarkovmodel}
 \title{Estimation of a k-th order Markov chain}
 \usage{
-fitmarkovmodel(seq, E, k = 1)
+fitmarkovmodel(sequences, states, k = 1)
 }
 \arguments{
-\item{seq}{A list of vectors representing the sequences.}
+\item{sequences}{A list of vectors representing the sequences.}
 
-\item{E}{Vector of state space (of length S).}
+\item{states}{Vector of state space (of length s).}
 
 \item{k}{Order of the Markov chain.}
 }
@@ -38,18 +38,18 @@ of state \eqn{i} in the sequences and \eqn{N} is the sum of the sequence
 lengths.
 }
 \examples{
-E <- c("a", "c", "g", "t")
-S <- length(E)
+states <- c("a", "c", "g", "t")
+s <- length(states)
 vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 k <- 2
-p <- matrix(0.25, nrow = S ^ k, ncol = S)
+p <- matrix(0.25, nrow = s ^ k, ncol = s)
 
 # Specify the Markov model
-markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
 
 seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
 
-est <- fitmarkovmodel(seq = seq1, E = E, k = 2)
+est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 
 }
 \seealso{

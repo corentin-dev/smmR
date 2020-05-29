@@ -28,14 +28,14 @@ produced. If \code{nsim} is a vector of integers, then \code{length(nsim)}
 sequences are generated with respective lengths.
 }
 \examples{
-E <- c("a", "c", "g", "t")
-S <- length(E)
+states <- c("a", "c", "g", "t")
+s <- length(states)
 vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 k <- 2
-p <- matrix(0.25, nrow = S ^ k, ncol = S)
+p <- matrix(0.25, nrow = s ^ k, ncol = s)
 
 # Specify the Markov model
-markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
 
 seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
 seq1[[1]][1:15]

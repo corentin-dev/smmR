@@ -19,8 +19,8 @@
 #'  of state \eqn{i} in the sequences and \eqn{N} is the sum of the sequence 
 #'  lengths.
 #'
-#' @param seq A list of vectors representing the sequences.
-#' @param E Vector of state space (of length S).
+#' @param sequences A list of vectors representing the sequences.
+#' @param states Vector of state space (of length s).
 #' @param k Order of the Markov chain.
 #' @return An object of class [markovmodel][markovmodel].
 #' 
@@ -29,31 +29,31 @@
 #' @export
 #'
 #' @examples 
-#' E <- c("a", "c", "g", "t")
-#' S <- length(E)
+#' states <- c("a", "c", "g", "t")
+#' s <- length(states)
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' k <- 2
-#' p <- matrix(0.25, nrow = S ^ k, ncol = S)
+#' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
 #' # Specify the Markov model
-#' markov1 <- markovmodel(E = E, init = vect.init, ptrans = p, k = k)
+#' markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
 #' 
 #' seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
 #' 
-#' est <- fitmarkovmodel(seq = seq1, E = E, k = 2)
+#' est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 #' 
-fitmarkovmodel <- function(seq, E, k = 1) {
+fitmarkovmodel <- function(sequences, states, k = 1) {
   
   #############################
-  # Checking parameters seq and E
+  # Checking parameters sequences and states
   #############################
   
-  if (!(is.list(seq))) {
-    stop("The parameter seq should be a list")
+  if (!(is.list(sequences))) {
+    stop("The parameter sequences should be a list")
   }
   
-  if (!all(unique(unlist(seq)) %in% E)) {
-    stop("Some states in the list of observed sequences seq are not in the state space E")
+  if (!all(unique(unlist(sequences)) %in% states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space states")
   }
   
   #############################
@@ -65,26 +65,38 @@ fitmarkovmodel <- function(seq, E, k = 1) {
   }
   
   
-  S <- length(E) # State space size
-  nbseq <- length(seq) # Number of sequences
-  vect.seq <- c()
+  s <- length(states) # State space size
+  nbseq <- length(sequences) # Number of sequences
+  sequence <- c()
   
   # Count the number of transitions from i to j in k steps
-  Nijl <- array(0, c(S ^ k, S, nbseq))
+  Nijl <- array(0, c(s ^ k, s, nbseq))
   
   for (i in 1:nbseq) {
     
-    vect.seq <- seq[[i]]
-    Nijl[, , i] <- matrix(count(seq = vect.seq, wordsize = k + 1, alphabet = E), byrow = TRUE, ncol = S)
+    sequence <- sequences[[i]]
+    Nijl[, , i] <- matrix(count(seq = sequence, wordsize = k + 1, alphabet = states), byrow = TRUE, ncol = s)
     
   }
   
   Nij <- apply(Nijl, c(1, 2), sum)
   Ni <- apply(Nijl, 1, sum)
   
+  indexdiag <- seq(1, s * s, by = s + 1)
+  Nij.temp <- as.vector(Nij)[-indexdiag]
+  
+  statesi <- row(Nij)[-indexdiag][which(Nij.temp == 0)]
+  statesj <- col(Nij)[-indexdiag][which(Nij.temp == 0)]
+  
   # Verify the existence of all transitions
-  if (length(which(Nij == 0)) > 0) {
-    warning("Missing transitions")
+  if ((length(statesi) != 0) | (length(statesj) != 0)) {
+    warning(
+      "Some transitions from state i to state j are not observed.
+            The following are ",
+      paste0(sapply(1:length(statesi), function(x)
+        paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", "),
+      "."
+    )
   }
   
   # Verify the existence of all states
@@ -93,17 +105,17 @@ fitmarkovmodel <- function(seq, E, k = 1) {
   }
   
   # Compute the transition matrix
-  ptrans <- Nij / tcrossprod(Ni, rep.int(1, S))
+  ptrans <- Nij / tcrossprod(Ni, rep.int(1, s))
   ptrans[which(is.na(ptrans))] <- 0
   
   if (k == 1) {
     init <- .stationaryDistribution(ptrans)
   } else {
-    Nstart <- as.vector(count(seq = unlist(seq), wordsize = 1, alphabet = E)) ## initial law for k > 1 ???
+    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states)) ## initial law for k > 1 ???
     init <- Nstart / sum(Nstart)
   }
   
-  estimate <- list(E = E, S = S, init = init, ptrans = ptrans, k = k)
+  estimate <- list(states = states, s = s, init = init, ptrans = ptrans, k = k)
   class(estimate) <- "markovmodel"
   
   return(estimate)

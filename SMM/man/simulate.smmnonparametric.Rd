@@ -28,8 +28,8 @@ produced. If \code{nsim} is a vector of integers, then \code{length(nsim)}
 sequences are generated with respective lengths.
 }
 \examples{
-E <- c("a", "c", "g", "t")
-S <- length(E)
+states <- c("a", "c", "g", "t")
+s <- length(states)
 
 # Creation of the initial distribution
 vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
@@ -39,7 +39,7 @@ pij <- matrix(c(0, 0.2, 0.5, 0.3,
                 0.2, 0, 0.3, 0.5, 
                 0.3, 0.5, 0, 0.2, 
                 0.4, 0.2, 0.4, 0), 
-              ncol = S, byrow = TRUE)
+              ncol = s, byrow = TRUE)
 
 # Creation of a matrix corresponding to the 
 # conditional sojourn time distributions
@@ -50,10 +50,10 @@ nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2,
                           0.5, 0.3, 0.15, 0.05, 
                           0, 0, 0.3, 0.2, 
                           0.1, 0.2, 0.2, 0), 
-                        nrow = S, ncol = Kmax, byrow = TRUE)
+                        nrow = s, ncol = Kmax, byrow = TRUE)
 
-smm2 <- smmnonparametric(E = E, init = vect.init, ptrans = pij, 
-                         type.sojourn = "fj", laws = nparam.matrix)
+smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
+                         type.sojourn = "fj", distr = nparam.matrix)
 
 seq2 <- simulate(object = smm2, nsim = c(1000, 10000, 2000), seed = 100)
 seq2[[1]][1:15]
