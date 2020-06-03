@@ -1,174 +1,89 @@
 %\VignetteIndexEntry{SMM Vignette}
 \documentclass[article,nojss]{jss}
 
+%% -- LaTeX packages and custom commands ---------------------------------------
 
+%% recommended packages
+\usepackage{thumbpdf,lmodern}
 
-%~ \usepackage[english,francais]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-%\usepackage[pdftex]{graphicx}
-\usepackage{graphicx}
-\usepackage{geometry}
-\usepackage{caption}
-\usepackage{setspace}
-\usepackage{hyperref}
-\usepackage{multicol}
-\usepackage{setspace}
-\usepackage[english]{varioref}
-\usepackage{mathrsfs} %\mathscr{ABC} 
-\usepackage{amsmath}
-\usepackage{enumitem}
-\usepackage{diagbox}
-\usepackage{xcolor}
-\usepackage{float}
-\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
-\setlength\abovecaptionskip{0.25ex} % Espace entre les images et le texte\setlength{\parskip}{1ex} % Espace entre les paragraphes
-\geometry{hmargin=2.5cm,vmargin=2cm}% Marge
+%% another package (only for this article)
+\usepackage{amsmath,amsfonts,amssymb}
 
-\usepackage{amsmath,amssymb,amsfonts}
+%% new custom commands
+\newcommand{\class}[1]{`\code{#1}'}
+\newcommand{\fct}[1]{\code{#1()}}
 
-\usepackage{natbib}         % Bibliography
-\usepackage[english]{babel}
-\usepackage{amsfonts}
-\usepackage{bbm}              % lettres avec double barre (comme les ensembles)
-%\usepackage[usenames]{color}
-%\usepackage{fancybox}
-%\usepackage{pstcol} 
-%\usepackage{geometry} \geometry{ hmargin=2cm, vmargin=2.5cm }
-%\usepackage{latexsym}
-%\usepackage{indentfirst}
-%\usepackage{graphicx}
-%\usepackage{textcomp} 
-%\usepackage{stmaryrd} 
-%\usepackage{enumerate} 
-%\usepackage{wasysym}   
-%\usepackage[usenames, dvipsnames]{xcolor}
-%\usepackage{tikz}%dessin
-
-\newcommand{\p}{\mathbb{P}}          % Probability
-%\newcommand{\E}{\mathbb{E}}          % Expectation
-\newcommand{\V}{\mathbbm{V}}         % Variance
-\newcommand{\1}{1\hspace{-2.5mm}{1}} % Indicator function
-\newcommand{\N}{\mathbb{N}}          % Set of positive integer numbers 
-\newcommand{\Z}{\mathbb{Z}}          % Set of integer numbers
-\newcommand{\Zr}{\mathcal{Z}}
-\newcommand{\A}{\mathcal{A}} 
-\newcommand{\n}{\mathcal{N}} 
-\newcommand{\Cov}{\mathbbm{C}\mathrm{ov}}  % Covariance
-\newcommand{\g}{\left}
-\newcommand{\e}{\right}
-
-\newcommand{\mi}{\mathbbm{1}}% L'un ou l'autre pour l'indicatrice
-%\usepackage{dsfont}
-%\newcommand{\one}{\ensuremath{\mathds{1}}}% L'un ou l'autre pour l'indicatrice
-
-\newcommand{\qed}{\hfill $\Box$}
-
+\newcommand{\p}{\mathbb{P}} % probability
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 
-\newtheorem{thm}{Th\'eor\`eme}
-\newtheorem{cor}{Corollaire}
-\newtheorem{lem}{Lemme}
-\newtheorem{prop}{Proposition}
-\newtheorem{defn}{D\'efinition}
-\newtheorem{exmp}{Exemple}
-\newtheorem{rem}{Remarque}
+\usepackage{dsfont}
+\newcommand{\one}{\ensuremath{\mathds{1}}} % L'un ou l'autre pour l'indicatrice
 
-\newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
-\newtheorem{lemma}{Lemma}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
-\newtheorem{remark}{Remark}
+
+%% For Sweave-based articles about R packages:
+%% need no \usepackage{Sweave}
+\SweaveOpts{engine=R, eps=FALSE, keep.source = TRUE}
+<<preliminaries, echo=FALSE, results=hide>>=
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE)
+library("MASS")
+@
 
 
-\newenvironment{proof}{\textbf{Proof.}}{\qed}
-\newenvironment{pf*}[1]{{\textbf{#1}}}{\qed}
+%% -- Article metainformation (author, title, ...) -----------------------------
 
-%\usepackage{color}%couleurs
-% D\'efinition des couleurs utilis\'ees dans le document (Titres + Listings) %
-\definecolor{rouge}{rgb}{0.5,0,0.05}
-\definecolor{bleu}{rgb}{0,0.46,0.65}
-\definecolor{vert}{rgb}{0,0.42,0.47}
-\definecolor{grey}{rgb}{0.95,0.95,0.95}
-\definecolor{silver}{rgb}{0.85,0.85,0.85}
-
-%%Listings : miss en form du code
-\usepackage{listings}
-\lstloadlanguages{R} 
-\lstset{language=R,extendedchars=true,   
-  basicstyle=\footnotesize\ttfamily, 
-  commentstyle=\textsl, 
-  keywordstyle=\mdseries, 
-  showstringspaces=false, 
-  backgroundcolor=\color{grey},
-  tabsize=4,
-  %numbers=left,
-  %stepnumber=2,
-  %numberstyle=\scriptsize,
-  frame=shadowbox, rulesepcolor=\color{silver},
-  showspaces=false,
-  showstringspaces=false,
-  showtabs=false}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \author{
-% Vlad Stefan Barbu \And Caroline B\'erard \And Dominique Cellier \And Florian Lecocq \And  Corentin Lothod\'e \And Mathilde Sautreuil \AND Nicolas Vergne \\ Universit\'e de Rouen--Normandie
-% }
-
+%% - \author{} with primary affiliation
+%% - \Plainauthor{} without affiliations
+%% - Separate authors by \And or \AND (in \author) or by comma (in \Plainauthor).
+%% - \AND starts a new line, \And does not.
 \author{
-Vlad Stefan Barbu \And Caroline B\'erard \And Dominique Cellier
-\AND Florian Lecocq \And Corentin Lothod\'e \And Mathilde Sautreuil\\
-\AND Nicolas Vergne \\ Universit\'e de Rouen--Normandie
+Vlad Stefan Barbu\\University of Rouen \And Caroline B\'erard\\University of Rouen \And Dominique Cellier\\University of Rouen
+\AND Florian Lecocq\\University of Rouen \And Corentin Lothod\'e\\University of Rouen \And Mathilde Sautreuil\\University of Rouen \\
+\AND Nicolas Vergne\\University of Rouen
 }
-
-
-%% almost as usual
-%\author{Achim Zeileis\\Universit\"at Innsbruck \And  Second Author\\Plus Affiliation}
-\title{\pkg{SMM}: An \proglang{R} Package for Estimation and Simulation of Discrete-time semi-Markov Models}%{\tt R}
-
-%% for pretty printing and a nice hypersummary also set:
-% \Plainauthor{Vlad Stefan Barbu, Caroline B\'erard, Dominique Cellier, Florian Lecocq, \\ Corentin Lothod\'e, Mathilde Sautreuil, Nicolas Vergne} %% comma-separated
 \Plainauthor{V. S. Barbu, C. B\'erard, D. Cellier, F. Lecocq, C. Lothod\'e, M. Sautreuil, N. Vergne} %% comma-separated
-\Plaintitle{SMM: An R package for estimation and simulation of discrete-time semi-Markov models} %% without formatting
-\Shorttitle{\pkg{SMM}: Estimation and simulation of semi-Markov models} %% a short title (if necessary)
 
-%% an abstract and keywords
+%% - \title{} in title case
+%% - \Plaintitle{} without LaTeX markup (if any)
+%% - \Shorttitle{} with LaTeX markup (if any), used as running title
+\title{\pkg{SMM}: An \proglang{R} Package for Estimation and Simulation of Discrete-time Semi-Markov Models}%{\tt R}
+\Plaintitle{SMM: An R Package for Estimation and Simulation of Discrete-time Semi-Markov Models} %% without formatting
+\Shorttitle{SMM: Estimation and Simulation of Semi-Markov Models}
+
+%% - \Abstract{} almost as usual
 \Abstract{
-Semi-Markov models, independently introduced by \citet{Lev54}, \citet{Smi55} and 
-\citet{Tak54}, are a generalization of the well-known Markov models. 
-For semi-Markov models, sojourn times can be arbitrarily distributed, while sojourn 
-times of Markov models are constrained to be exponentially distributed (in continuous 
-time) or geometrically distributed (in discrete time). The aim of this paper is to 
-present the \proglang{R} package \pkg{SMM}, devoted to the simulation and estimation 
-of discrete-time multi-state semi-Markov and Markov models. 
-For the semi-Markov case we have considered: parametric and non-parametric estimation;
-with and without censoring at the beginning and/or at the end of sample paths; one or
-several independent sample paths. Several discrete-time distributions are considered 
-for the parametric estimation of sojourn time distributions of semi-Markov chains: 
-uniform, geometric, poisson, discrete weibull and negative binomial.
+  Semi-Markov models, independently introduced by \citet{Lev54}, \citet{Smi55} and 
+  \citet{Tak54}, are a generalization of the well-known Markov models. 
+  For semi-Markov models, sojourn times can be arbitrarily distributed, while sojourn 
+  times of Markov models are constrained to be exponentially distributed (in continuous 
+  time) or geometrically distributed (in discrete time). The aim of this paper is to 
+  present the \proglang{R} package \pkg{SMM}, devoted to the simulation and estimation 
+  of discrete-time multi-state semi-Markov and Markov models. For the semi-Markov 
+  case we have considered: parametric and non-parametric estimation; with and without
+  censoring at the beginning and/or at the end of sample paths; one or several independent
+  sample paths. Several discrete-time distributions are considered for the parametric
+  estimation of sojourn time distributions of semi-Markov chains: uniform, geometric,
+  poisson, discrete weibull and negative binomial.
 }
-\Keywords{Markov models, semi-Markov models, discrete time, censoring, \proglang{R} package, parametric and non-parametric estimation, AIC, BIC}
-\Plainkeywords{Markov models, semi-Markov models, discrete time, censoring, R package, parametric and non-parametric estimation, AIC, BIC} %% without formatting
-%% at least one keyword must be supplied
 
-%% publication information
-%% NOTE: Typically, this can be left commented and will be filled out by the technical editor
-%% \Volume{50}
-%% \Issue{9}
-%% \Month{June}
-%% \Year{2012}
-%% \Submitdate{2012-06-04}
-%% \Acceptdate{2012-06-04}
+%% - \Keywords{} with LaTeX markup, at least one required
+%% - \Plainkeywords{} without LaTeX markup (if necessary)
+%% - Should be comma-separated and in sentence case.
+\Keywords{Markov models, semi-Markov models, discrete time, censoring, parametric estimation, non-parametric estimation, AIC, BIC}
 
-%% The address of (at least) one author should be given
-%% in the following format:
+% \Volume{}
+% \Issue{}
+% \Month{}
+% \Year{}
+% \Submitdate{}
+% \Acceptdate{}
+
+%% - \Address{} of at least one author
+%% - May contain multiple affiliations for each author
+%%   (in extra lines, separated by \emph{and}\\).
+%% - May contain multiple authors for the same affiliation
+%%   (in the same first line, separated by comma).
 \Address{
   Vlad Stefan Barbu \\
   Universit\'e de Rouen-Normandie \\
@@ -177,10 +92,10 @@ uniform, geometric, poisson, discrete weibull and negative binomial.
   Avenue de l'Universit\'e, BP. 12\\
   76801 Saint-\'Etienne-du-Rouvray, France\\
   E-mail: \email{barbu@univ-rouen.fr}\\
-  URL: \url{http://lmrs.univ-rouen.fr/Persopage/Barbu/index.html} \\
+  URL: \url{http://lmrs.univ-rouen.fr/Persopage/Barbu/index.html}\\
 
   Caroline B\'erard\\
-  Universit\'e de Rouen-Normandie \\
+  Universit\'e de Rouen-Normandie\\
   LITIS EA 4108\\
   %UFR des Sciences et Techniques\\
   %Avenue de l'Universit\'e, BP. 12\\
@@ -204,7 +119,7 @@ uniform, geometric, poisson, discrete weibull and negative binomial.
   Avenue de l'Universit\'e, BP. 12\\
   76801 Saint-\'Etienne-du-Rouvray, France\\
   E-mail: \email{mathilde.sautreuil@etu.univ-rouen.fr}\\
-  URL: \url{http://lmrs.univ-rouen.fr/Persopage/Sautreuil/index.html} \\
+  URL: \url{http://lmrs.univ-rouen.fr/Persopage/Sautreuil/index.html}\\
 
   Florian Lecocq\\
   Universit\'e de Rouen-Normandie \\
@@ -221,7 +136,7 @@ uniform, geometric, poisson, discrete weibull and negative binomial.
   Avenue de l'Universit\'e, BP. 12\\
   76801 Saint-\'Etienne-du-Rouvray, France\\
   E-mail: \email{corentin.lothode@univ-rouen.fr}\\
-  URL: \url{https://lmrs.univ-rouen.fr/fr/persopage/corentin-lothode} \\
+  URL: \url{https://lmrs.univ-rouen.fr/fr/persopage/corentin-lothode}\\
 
   Nicolas Vergne\\
   Universit\'e de Rouen-Normandie \\
@@ -232,188 +147,301 @@ uniform, geometric, poisson, discrete weibull and negative binomial.
   E-mail: \email{nicolas.vergne@univ-rouen.fr}\\
   URL: \url{http://lmrs.univ-rouen.fr/Persopage/Vergne/index.html}
 }
-%% It is also possible to add a telephone and fax number
-%% before the e-mail in the following format:
-%% Telephone: +43/512/507-7103
-%% Fax: +43/512/507-2851
-
-%% for those who use Sweave please include the following line (with % symbols):
-%% need no \usepackage{Sweave.sty}
-
-%% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \begin{document}
+
+
+%% -- Introduction -------------------------------------------------------------
+
+%% - In principle "as usual".
+%% - But should typically have some discussion of both _software_ and _methods_.
+%% - Use \proglang{}, \pkg{}, and \code{} markup throughout the manuscript.
+%% - If such markup is in (sub)section titles, a plain text version has to be
+%%   added as well.
+%% - All software mentioned should be properly \cite-d.
+%% - All abbreviations should be introduced.
+%% - Unless the expansions of abbreviations are proper names (like "Journal
+%%   of Statistical Software" above) they should be in sentence case (like
+%%   "generalized linear models" below).
 
 %% include your article here, just as usual
 %% Note that you should use the \pkg{}, \proglang{} and \code{} commands.
 
-\section[Introduction]{Introduction}
-Semi-Markov models, independently introduced by \citet{Lev54}, \citet{Smi55} and \citet{Tak54}, are a generalization of the well-known Markov models. For semi-Markov models, sojourn times can be arbitrarily distributed, while sojourn times of Markov models are constrained to be exponentially distributed (in continuous time) or geometrically distributed (in discrete time).  For this reason, semi-Markov processes are more general and more adapted for applications than the Markov processes. 
+\section{Introduction}
 
-Semi-Markov processes have become important tools in probability and statistical modelling with applications in various domains like survival analysis, biology, reliability, DNA analysis, insurance and finance, earthquake modelling, meteorology studies,  etc.; see, e.g., \citet{SaTh01}, \citet{HeHu02}, \citet{ouli2}, \citet{Marg06}, \citet{JaMa06}, \citet{Bull06}, \citet{Votsi2012}, \citet{ENV:ENV2215}, \citet{ Votsi}, \citet{Gu2016}, \citet{Barbu2016}, \citet{Gu2016b}.
+Semi-Markov models, independently introduced by \citet{Lev54}, \citet{Smi55} 
+and \citet{Tak54}, are a generalization of the well-known Markov models. For 
+semi-Markov models, sojourn times can be arbitrarily distributed, while sojourn
+times of Markov models are constrained to be exponentially distributed (in 
+continuous time) or geometrically distributed (in discrete time). For this 
+reason, semi-Markov processes are more general and more adapted for 
+applications than the Markov processes.
 
-Note that the semi-Markov theory is developed mainly in a continuous-time setting, while much less works address the discrete-time case. We refer the reader to \citet{limnios1} for continuous-time framework and to \citet{Limnios_semi-markov_2008} and references therein for discrete-time framework. The  \proglang{R} \citep{Rmanual} package \pkg{SMM}
-that we present in this paper is developed in discrete time. Note that undertaking works also in discrete time (modelling stochastic tools, associated estimation procedures, corresponding software, etc.) is an important matter for several reasons. In our opinion, the most relevant of these reasons is that the time scale is intrinsically discrete in several applications. For instance, in DNA studies, when modelling a nucleotide or protein sequence by means of a stochastic process, the ``time'' of that process is in fact the position along the sequence, so it is discrete. Other examples are encountered in some reliability/survival analysis applications where the time represents the number of cycles of a system or the counting of days/hours/etc. We can argue further for the importance of developing  works also in discrete time (in parallel to their analogous developed in continuous time), by mentioning the simplicity of computations in discrete time, the fact that a discrete-time stochastic process does not explode, the potential use of discrete processes after the discretization of continuous ones, etc. 
+Semi-Markov processes have become important tools in probability and 
+statistical modelling with applications in various domains like survival 
+analysis, biology, reliability, DNA analysis, insurance and finance, earthquake
+modelling, meteorology studies, etc.; see, e.g., \citet{SaTh01}, 
+\citet{HeHu02}, \citet{ouli2}, \citet{Marg06}, \citet{JaMa06}, \citet{Bull06}, 
+\citet{Votsi2012}, \citet{ENV:ENV2215}, \citet{ Votsi}, \citet{Gu2016}, 
+\citet{Barbu2016}, \citet{Gu2016b}.
 
+Note that the semi-Markov theory is developed mainly in a continuous-time 
+setting, while much less works address the discrete-time case. We refer the 
+reader to \citet{limnios1} for continuous-time framework and to 
+\citet{Limnios_semi-markov_2008} and references therein for discrete-time 
+framework. The  \proglang{R} \citep{Rmanual} package \pkg{SMM} that we present 
+in this paper is developed in discrete time. Note that undertaking works also 
+in discrete time (modelling stochastic tools, associated estimation procedures,
+corresponding software, etc.) is an important matter for several reasons. 
+In our opinion, the most relevant of these reasons is that the time scale is 
+intrinsically discrete in several applications. For instance, in DNA studies, 
+when modelling a nucleotide or protein sequence by means of a stochastic 
+process, the ``time'' of that process is in fact the position along the 
+sequence, so it is discrete. Other examples are encountered in some 
+reliability/survival analysis applications where the time represents the number
+of cycles of a system or the counting of days/hours/etc. We can argue further 
+for the importance of developing  works also in discrete time (in parallel to 
+their analogous developed in continuous time), by mentioning the simplicity of 
+computations in discrete time, the fact that a discrete-time stochastic process
+does not explode, the potential use of discrete processes after the 
+discretization of continuous ones, etc.
 
+% Note that the discrete time is important at least for three reasons. First, 
+% note that in several applications the time scale is intrinsically discrete. 
+% Second, the computations in discrete time could be much more simpler and exact 
+% than in continuous time.
 
-% Note that the discrete time is important at least for three reasons. First, note that in several applications the time scale is intrinsically discrete. Second, the computations in discrete time could be much more simpler and exact than in continuous time.  
+Few \proglang{R} packages have been developed to handle semi-Markov models or 
+hidden semi-Markov models. For semi-Markov models we have the recent 
+\pkg{semiMarkov} \proglang{R} package \citep{krol_semimarkov_2015} that 
+performs maximum likelihood estimation for parametric continuous-time 
+semi-Markov processes, where the distribution can be chosen between 
+Exponential, Weibull or exponentiated Weibull. That package computes associated
+hazard rates; covariates can also be taken into account through the Cox 
+proportional hazard model.
+Two \proglang{R} packages are also dedicated to hidden semi-Markov models, 
+implementing estimation and prediction methods: the \pkg{hsmm} \proglang{R} 
+package \citep{bulla_hsmm_2010} and  the \pkg{mhsmm} \proglang{R} package 
+\citep{oconnell_hidden_2011}.
 
-
-Few \proglang{R} packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent \pkg{semiMarkov}  \proglang{R} package \citep{krol_semimarkov_2015} that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. 
-Two  \proglang{R} packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods: the \pkg{hsmm} \proglang{R} package \citep{bulla_hsmm_2010} and  the \pkg{mhsmm}  \proglang{R} package \citep{oconnell_hidden_2011}. 
-
-Note that there is no \proglang{R} package  developed for discrete-time multi-state semi-Markov models. Thus the purpose of this paper is to present an {\tt R} package that we have developed, called \pkg{SMM}, which performs parametric and non-parametric estimation and simulation for multi-state discrete-time semi-Markov processes. For the parametric estimation, several discrete distributions are considered for the sojourn times: uniform, geometric, poisson, discrete weibull and negative binomial. The non-parametric estimation concerns the sojourn time distributions, where no assumptions are done on the shape of distributions. Moreover, the estimation can be done on the basis of one or several trajectories, with or without censoring. The aim of this paper is to describe the different possibilities of this package. To summarize, the package \pkg{SMM} that we present deals with different problems:
+Note that there is no \proglang{R} package  developed for discrete-time 
+multi-state semi-Markov models. Thus the purpose of this paper is to present 
+an \proglang{R} package that we have developed, called \pkg{SMM}, which performs 
+parametric and non-parametric estimation and simulation for multi-state 
+discrete-time semi-Markov processes. For the parametric estimation, several 
+discrete distributions are considered for the sojourn times: uniform, 
+geometric, poisson, discrete weibull and negative binomial. The non-parametric 
+estimation concerns the sojourn time distributions, where no assumptions are 
+done on the shape of distributions. Moreover, the estimation can be done on the
+basis of one or several trajectories, with or without censoring. The aim of 
+this paper is to describe the different possibilities of this package. 
+To summarize, the package \pkg{SMM} that we present deals with different 
+problems:
 \begin{itemize}
-\item Parametric estimation for sojourn time distributions (uniform, geometric, poisson, discrete weibull and negative binomial) or non-parametric estimation;
-\item One or several sample paths;
-\item Four different types of sojourn times: a general one depending on the current state and on the next state to be visited, 
-  one depending only on the next state, one depending only on the current state, and one depending
-  neither on the current state nor on the next state;
-\item Four different types of censoring: censoring at the beginning of sample paths, censoring at the end of sample paths, censoring at the beginning and at the end or no censoring at all.
+  \item Parametric estimation for sojourn time distributions (uniform, 
+    geometric, poisson, discrete weibull and negative binomial) or 
+    non-parametric estimation;
+  \item One or several sample paths;
+  \item Four different types of sojourn times: a general one depending on the 
+    current state and on the next state to be visited, one depending only on 
+    the next state, one depending only on the current state, and one depending 
+    neither on the current state nor on the next state;
+  \item Four different types of censoring: censoring at the beginning of sample
+    paths, censoring at the end of sample paths, censoring at the beginning and
+    at the end or no censoring at all.
 \end{itemize}
 
-Several remarks need to be done here. 
+Several remarks need to be done here.
 
-First, concerning the censoring, the simplest situation is the one when all the sojourn times are completely observed (non censored).  A more complicated and realistic framework is when the last sojourn time is not completely observed, thus being right censored; in most practical situations this case occurs. An analogous situation is when the first sojourn time is not completely observed, thus being also right censored. In practice, this case occurs when one does not know the beginning of a phenomenon modelled by a semi-Markov chain. The most complete framework is when both the first and the last sojourn times are right censored. Details on parametric estimation of semi-Markov chains can be found in \citet{BaBeCeSaVe}. 
+First, concerning the censoring, the simplest situation is the one when all the
+sojourn times are completely observed (non censored).  A more complicated and 
+realistic framework is when the last sojourn time is not completely observed, 
+thus being right censored; in most practical situations this case occurs. An 
+analogous situation is when the first sojourn time is not completely observed, 
+thus being also right censored. In practice, this case occurs when one does not
+know the beginning of a phenomenon modelled by a semi-Markov chain. The most 
+complete framework is when both the first and the last sojourn times are right 
+censored. Details on parametric estimation of semi-Markov chains can be found 
+in \citet{BaBeCeSaVe}.
 
-Second,  when considering estimation starting from several independent sample paths of a semi-Markov chain, it is assumed that all the trajectories are censored in the same way;  note that this is not a real constraint, but we imposed this condition only in order to avoid useless technical notations that would make the comprehension more difficult.
+Second,  when considering estimation starting from several independent sample 
+paths of a semi-Markov chain, it is assumed that all the trajectories are 
+censored in the same way;  note that this is not a real constraint, but we 
+imposed this condition only in order to avoid useless technical notations that 
+would make the comprehension more difficult.
 
 
-Third, note that it is important for the four types of models (of sojourn times) to be considered separately because: (i) in practical situations, one model could be more adapted than some other; (ii) different models will yield specific parameter estimators, so it is important to study them separately.
+Third, note that it is important for the four types of models (of sojourn 
+times) to be considered separately because: (i) in practical situations, one 
+model could be more adapted than some other; (ii) different models will yield 
+specific parameter estimators, so it is important to study them separately.
 
 
-The paper is organized as follows. Section~\ref{semi-Markov_models} %mettre ref section 
-describes the semi-Markov models used in this package. Section~\ref{SMM_package} illustrates the different functions of the \pkg{SMM} package. We end the paper by presenting some concluding remarks on this \proglang{R} package in Section~\ref{concluding}.
+The paper is organized as follows. Section~\ref{semi-Markov_models} describes 
+the semi-Markov models used in this package. Section~\ref{SMM_package} 
+illustrates the different functions of the \pkg{SMM} package. We end the paper 
+by presenting some concluding remarks on this \proglang{R} package in 
+Section~\ref{concluding}.
 
-The \pkg{SMM} package is available from the Comprehensive \proglang{R} Archive Network (CRAN) at\\ \url{https://cran.r-project.org/web/packages/SMM/}.
+The \pkg{SMM} package is available from the Comprehensive \proglang{R} Archive 
+Network (CRAN) at\\ \url{https://cran.r-project.org/web/packages/SMM/}.
+
 
 \section{Semi-Markov models}
 \label{semi-Markov_models}
 
-
-Let us consider a random system with finite state space $E=\{1,\ldots, s\}$, $s < \infty.$  Let $(\Omega,\mathcal{A},\mathbb{P})$ be a probability space and assume that the time evolution of the system is governed by a stochastic process $Y=(Y_k)_{k\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$ with values in $E;$ that is to say that $Y_k$ gives the state of the system at time $k.$ Let $T=(T_m)_{m\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$ with values in $\mathbb N$, be the successive time points when state changes in $(Y_k)_{k\in \mathbb N^*}$ occur (the jump times) and let also $J=(J_m)_{m\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$ with values in $E$, be the successively visited states at these time points.  The relation between the process $Y$ and the process $J$ of the successively visited states is given by $Y_k =J_{N(k)},$ or, equivalently, $J_m =Y_{T_m},  m, k \in \mathbb N,$ where $N(k):=\max \{m \in \mathbb N \mid T_m \leq k \}$ is the discrete-time counting process of the number of jumps in $[1,k] \subset \mathbb N$.\\ 
-
-
-
+Let us consider a random system with finite state space $E=\{1,\ldots, s\}$, 
+$s < \infty.$  Let $(\Omega,\mathcal{A},\mathbb{P})$ be a probability space 
+and assume that the time evolution of the system is governed by a stochastic 
+process $Y=(Y_k)_{k\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$ 
+with values in $E;$ that is to say that $Y_k$ gives the state of the system at 
+time $k.$ Let $T=(T_m)_{m\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$
+with values in $\mathbb N$, be the successive time points when state changes in 
+$(Y_k)_{k\in \mathbb N^*}$ occur (the jump times) and let also $J=(J_m)_{m\in \mathbb N^*},$ defined on $(\Omega,\mathcal{A},\mathbb{P})$ with values in $E$, be the 
+successively visited states at these time points. The relation between the 
+process $Y$ and the process $J$ of the successively visited states is given by 
+$Y_k =J_{N(k)},$ or, equivalently, $J_m =Y_{T_m},  m, k \in \mathbb N,$ where 
+$N(k):=\max \{m \in \mathbb N \mid T_m \leq k \}$ is the discrete-time counting
+process of the number of jumps in $[1,k] \subset \mathbb N$.\\
 
 %Set also $X=(X_m)_{m\in \mathbb N^*}$ for the successive sojourn times in the visited states.Thus, $X_{m+1}=T_{m+1}-T_{m},$ $m \in \mathbb N^*,$ and, by convention, we set $X_1=T_1=0.$ 
 
+In this paper we consider four different semi-Markov models corresponding to 
+the following four types of sojourn times.
 
-In this paper we consider four different semi-Markov models corresponding to the following four types of
-sojourn times.
 \begin{itemize}
-\item Sojourn times depending on the current state and on the next state:
- $$f_{ij}(k)= \p(T_{m+1} - T_m = k  |J_{m} =i, J_{m+1} =j);$$ 
-\item Sojourn times depending only on the current state: 
- $$f_{i\bullet}(k)= \p(T_{m+1} - T_m = k  |J_{m} =i);$$ 
-\item Sojourn times depending only on the next state to be visited: 
- $$f_{\bullet j}(k)= \p( T_{m+1} - T_m = k  | J_{m+1} =j) ;$$ 
-\item Sojourn times  depending neither on the current state nor on the next state: 
- $$f(k)= \p( T_{m+1} - T_m = k).$$ 
+  \item Sojourn times depending on the current state and on the next state:
+    $$f_{ij}(k) = \p(T_{m+1} - T_m = k  |J_{m} =i, J_{m+1} =j);$$ 
+  \item Sojourn times depending only on the current state: 
+    $$f_{i\bullet}(k) = \p(T_{m+1} - T_m = k  |J_{m} =i);$$ 
+  \item Sojourn times depending only on the next state to be visited: 
+    $$f_{\bullet j}(k) = \p( T_{m+1} - T_m = k  | J_{m+1} =j) ;$$ 
+  \item Sojourn times  depending neither on the current state nor on the next state: 
+    $$f(k) = \p( T_{m+1} - T_m = k).$$ 
 \end{itemize}
 
-Note that the sojourn times of the type $f_{i \bullet}(\cdot),$ $f_{\bullet j}(\cdot)$ or $f(\cdot)$ are particular cases of the general type $f_{ij}(\cdot).$ Nonetheless, in some specific applications, particular cases can be important because adapted to the phenomenon under study; that is the reason why we investigate these cases separately.
+Note that the sojourn times of the type $f_{i \bullet}(\cdot),$ 
+$f_{\bullet j}(\cdot)$ or $f(\cdot)$ are particular cases of the general 
+type $f_{ij}(\cdot).$ Nonetheless, in some specific applications, particular 
+cases can be important because adapted to the phenomenon under study; that is 
+the reason why we investigate these cases separately.
 
 
 \newpage 
-%\subsection{General case: sojourn times of the type $f_{ij}(\cdot)$}
+
+
 \subsection{General case: sojourn times of the type $f_{ij}(.)$}
 
 \begin{definition}[semi-Markov chain SMC and Markov renewal chain MRC]
-If we have
-\begin{eqnarray}
-&&\nonumber \p(J_{m+1} = j , T_{m+1} - T_m =k | J_m =i, J_{m-1}, \ldots, J_1, T_m, \ldots, T_1)\\ 
-&=& \label{propr_mark_ren}
-\p(J_{m+1} = j , T_{m+1} - T_m =k | J_m =i),
-\end{eqnarray}
-then $Y=(Y_k)_k$ is called a \emph{semi-Markov chain} (SMC) and $(J, T) = (J_m,T_m)_m$ is called a \emph{Markov renewal chain} (MRC).
+  If we have
+  \begin{eqnarray}
+    &&\nonumber \p(J_{m+1} = j , T_{m+1} - T_m =k | J_m =i, J_{m-1}, \ldots, J_1, T_m, \ldots, T_1)\\ 
+    &=& \label{propr_mark_ren}
+    \p(J_{m+1} = j , T_{m+1} - T_m =k | J_m =i),
+  \end{eqnarray}
+  then $Y=(Y_k)_k$ is called a \emph{semi-Markov chain} (SMC) and 
+  $(J, T) = (J_m,T_m)_m$ is called a \emph{Markov renewal chain} (MRC).
 \end{definition}
 
+All along this paper we assume that the MRC or SMC are homogeneous with respect
+to the time in the sense that Equation (\ref{propr_mark_ren}) is independent of 
+$m$.
 
-All along this paper we assume that the MRC or SMC are homogeneous with respect to the time in the sense that Equation (\ref{propr_mark_ren}) is independent of $m.$ 
-
-Note that if $(J, T)$ is a MRC, then it can be proved that  $J=(J_m)_{m\in \mathbb N^*}$ is a Markov chain with state space $E,$ called the {\em embedded Markov chain} of the MRC $(J, T)$ (or of the SMC $Y$).
+Note that if $(J, T)$ is a MRC, then it can be proved that  $J=(J_m)_{m\in \mathbb N^*}$
+is a Markov chain with state space $E,$ called the {\em embedded Markov chain} 
+of the MRC $(J, T)$ (or of the SMC $Y$).
 
 \begin{definition}
-For a semi-Markov chain we define:
-%
-\begin{itemize}
-\item the \emph{semi-Markov kernel} $(q_{ij}(k))_{i,j \in E, k \in \mathbb N},$ 
-%
-$$q_{ij}(k) = \p(J_{m+1} = j , T_{m+1} - T_m =k | J_m = i);$$
-%
-\item the \emph{initial distribution} $(\mu_{i})_{i \in E},$ 
-%
-$$\mu_i =\p(J_1 = i) = \p(Y_1 =i);$$
-\item the \emph{transition matrix} $(p_{ij})_{i,j \in E}$ of the embedded Markov chain $J=(J_m)_{m},$  
-%
-$$p_{ij} = \p(J_{m+1} =j | J_m =i);$$
-%
-\item the \emph{conditional sojourn time distributions} $(f_{ij}(k))_{i,j \in E, k \in \mathbb N},$ 
-%
-$$f_{ij}(k)= \p(T_{m+1}-T_m = k |J_{m} =i, J_{m+1} =j).$$
-\end{itemize}
-%
+  For a semi-Markov chain we define:
+  %
+  \begin{itemize}
+    \item the \emph{semi-Markov kernel} $(q_{ij}(k))_{i,j \in E, k \in \mathbb N},$ 
+    %
+    $$q_{ij}(k) = \p(J_{m+1} = j , T_{m+1} - T_m =k | J_m = i);$$
+    %
+    \item the \emph{initial distribution} $(\mu_{i})_{i \in E},$ 
+    %
+    $$\mu_i =\p(J_1 = i) = \p(Y_1 =i);$$
+    \item the \emph{transition matrix} $(p_{ij})_{i,j \in E}$ of the embedded Markov chain $J=(J_m)_{m},$  
+    %
+    $$p_{ij} = \p(J_{m+1} =j | J_m =i);$$
+    %
+    \item the \emph{conditional sojourn time distributions} $(f_{ij}(k))_{i,j \in E, k \in \mathbb N},$ 
+    %
+    $$f_{ij}(k)= \p(T_{m+1}-T_m = k |J_{m} =i, J_{m+1} =j).$$
+  \end{itemize}
+  %
 \end{definition}
 Note that 
 
 \begin{equation} \label{eq_kernel_fij}
-q_{ij}(k)=p_{ij}f_{ij}(k). 
+  q_{ij}(k)=p_{ij}f_{ij}(k).
 \end{equation}
 
-Clearly, a semi-Markov chain is uniquely determined a.s. by an initial distribution $(\mu_{i})_{i \in E}$ and a semi-Markov kernel  $(q_{ij}(k))_{i,j \in E, k \in \mathbb N}$ or, equivalently, by an initial distribution $(\mu_{i})_{i \in E},$ a Markov transition matrix $(p_{ij})_{i,j \in E}$ and conditional sojourn time distributions $(f_{ij}(k))_{i,j \in E, k \in \mathbb N}.$
+Clearly, a semi-Markov chain is uniquely determined a.s. by an initial 
+distribution $(\mu_{i})_{i \in E}$ and a semi-Markov kernel 
+$(q_{ij}(k))_{i,j \in E, k \in \mathbb N}$ or, equivalently, by an initial 
+distribution $(\mu_{i})_{i \in E},$ a Markov transition matrix $(p_{ij})_{i,j \in E}$ 
+and conditional sojourn time distributions $(f_{ij}(k))_{i,j \in E, k \in \mathbb N}.$
 
+Another assumptions we do are: (i) We do not allow transitions to the same 
+state, i.e., $p_{ii} = 0$ for all	$i \in E,$ or equivalently $ q_{ii}(k)=0 $, 
+for all $i\in E,\ k\in \mathbb{N};$ (ii) We assume that there are not 
+instantaneous transitions, that is $q_{ij}(0) \equiv 0$ or equivalently 
+$f_{ij}(0) \equiv 0$ for all	$i, j \in E;$ note that this implies that $T$ is a
+strictly increasing sequence.
 
-Another assumptions we do are: (i) We do not allow transitions to the same state, i.e., $p_{ii} = 0$ for all	$i \in E,$ or equivalently $ q_{ii}(k)=0 $, for all $i\in E,\ k\in \mathbb{N};$ (ii) We assume that there are not instantaneous transitions, that is $q_{ij}(0) \equiv 0$ or equivalently $f_{ij}(0) \equiv 0$ for all	$i, j \in E;$ note that this implies that $T$ is a strictly increasing sequence.  
-
-
-For the conditional sojourn time distributions, one can consider the associated cumulative distribution function defined by 
+For the conditional sojourn time distributions, one can consider the associated
+cumulative distribution function defined by 
 %
 \begin{eqnarray*}
- F_{ij}(k) &:=& \label{eq_Fij} \p( T_{m+1}-T_m \leq k|J_{m} = i , J_{m+1} =j) = \sum_{t=1}^{k} f_{ij}(t).
+  F_{ij}(k) &:=& \label{eq_Fij} \p( T_{m+1}-T_m \leq k|J_{m} = i , J_{m+1} =j) = \sum_{t=1}^{k} f_{ij}(t).
 \end{eqnarray*}
 %
-For any distribution function $F(\cdot)$ we can consider the associated survival/reliability function defined by 
+For any distribution function $F(\cdot)$ we can consider the associated 
+survival/reliability function defined by 
 %
 \begin{eqnarray*}
- \overline{F}(k) &:=& \label{eq_Surv} 1 - F(t).
+  \overline{F}(k) &:=& \label{eq_Surv} 1 - F(t).
 \end{eqnarray*}
 %
 Consequently we have 
 %
 \begin{eqnarray*}
- \overline{F}_{ij}(k) &:=& \label{eq_Surv_fij} \p(T_{m+1} - T_m > k|J_{m} =i, J_{m+1} =j) = 1 - \sum_{t=1}^{k} f_{ij}(t) = \sum_{t=k + 1}^{\infty} f_{ij} (t).
+  \overline{F}_{ij}(k) &:=& \label{eq_Surv_fij} \p(T_{m+1} - T_m > k|J_{m} =i, J_{m+1} =j) = 1 - \sum_{t=1}^{k} f_{ij}(t) = \sum_{t=k + 1}^{\infty} f_{ij} (t).
 \end{eqnarray*}
 
 
-%\subsection{Particular cases: sojourn times of the type $f_{i\bullet}(\cdot)$, $f_{\bullet j}(\cdot)$ and $f(\cdot)$}
 \subsection{Particular cases: sojourn times of the type $f_{i.}(.)$, $f_{.j}(.)$ and $f(.)$}
 
-We have considered up to here general semi-Markov models with the semi-kernel of the type given in  (\ref{eq_kernel_fij}). Particular types of this semi-Markov model can be taken into account, by considering particular cases of holding time distributions $f_{ij}(k),$ where this distributions depend only on the current state $i,$ or only on the next state $j,$ or neither on $i$ nor on $j.$ For each case, let us define the semi-Markov kernel and the distribution function associated to the
-sojourn time distribution.
+We have considered up to here general semi-Markov models with the semi-kernel 
+of the type given in  (\ref{eq_kernel_fij}). Particular types of this 
+semi-Markov model can be taken into account, by considering particular cases 
+of holding time distributions $f_{ij}(k),$ where this distributions depend 
+only on the current state $i,$ or only on the next state $j,$ or neither on 
+$i$ nor on $j.$ For each case, let us define the semi-Markov kernel and the 
+distribution function associated to the sojourn time distribution.
 \begin{itemize}
-\item Sojourn times depending only on the current state: 
-\begin{eqnarray}
-q_{ij}(k) &:=& p_{ij}f_{i \bullet}(k), \label{eq_kernel_fi} \textrm{ where}  \\
-f_{i \bullet}(k) &=& \p(T_{m+1}-T_m = k |J_{m} =i) =  \sum_{v \in E} p_{i v} f_{i v}(k), \nonumber \label{eq_fi} \\ 
- F_{i \bullet}(k) &:=& \label{eq_Fi} \p(T_{m+1}-T_m \leq k|J_{m} = i) = \sum_{t=1}^{k} f_{i
-   \bullet}(t) = \sum_{t=1}^{k} \sum_{v \in E} p_{i v} f_{i v}(t). \nonumber
-\end{eqnarray}
-\item Sojourn times depending only on the next state: 
-\begin{eqnarray}
-q_{ij}(k) &:=& p_{ij}f_{\bullet j}(k), \label{eq_kernel_fj} \textrm{ where} \\
-f_{\bullet j}(k) &=& \p(T_{m+1}-T_m = k |J_{m+1} =j), \nonumber \label{eq_fj}\\
- F_{\bullet j}(k) &:=& \label{eq_Fj} \p(T_{m+1}-T_m \leq k|J_{m+1} = j) = \sum_{t=1}^{k} f_{\bullet
-   j}(t). \nonumber 
-\end{eqnarray}
- \item Sojourn times depending neither on the current state nor on the next state: 
-\begin{eqnarray}
-q_{ij}(k) &:=& p_{ij}f(k) \label{eq_kernel_f},  \textrm{ where} \\
-f(k) &=& \p(T_{m+1}-T_m = k). \nonumber \label{eq_f}  \\
- F(k) &:=& \label{eq_F} \p(T_{m+1}-T_m \leq k) = \sum_{t=1}^{k} f(t). \nonumber
-\end{eqnarray}
+  \item Sojourn times depending only on the current state: 
+  \begin{eqnarray}
+  q_{ij}(k) &:=& p_{ij}f_{i \bullet}(k), \label{eq_kernel_fi} \textrm{ where}  \\
+  f_{i \bullet}(k) &=& \p(T_{m+1}-T_m = k |J_{m} =i) =  \sum_{v \in E} p_{i v} f_{i v}(k), \nonumber \label{eq_fi} \\ 
+   F_{i \bullet}(k) &:=& \label{eq_Fi} \p(T_{m+1}-T_m \leq k|J_{m} = i) = \sum_{t=1}^{k} f_{i
+     \bullet}(t) = \sum_{t=1}^{k} \sum_{v \in E} p_{i v} f_{i v}(t). \nonumber
+  \end{eqnarray}
+  \item Sojourn times depending only on the next state: 
+  \begin{eqnarray}
+  q_{ij}(k) &:=& p_{ij}f_{\bullet j}(k), \label{eq_kernel_fj} \textrm{ where} \\
+  f_{\bullet j}(k) &=& \p(T_{m+1}-T_m = k |J_{m+1} =j), \nonumber \label{eq_fj}\\
+   F_{\bullet j}(k) &:=& \label{eq_Fj} \p(T_{m+1}-T_m \leq k|J_{m+1} = j) = \sum_{t=1}^{k} f_{\bullet
+     j}(t). \nonumber 
+  \end{eqnarray}
+   \item Sojourn times depending neither on the current state nor on the next state: 
+  \begin{eqnarray}
+  q_{ij}(k) &:=& p_{ij}f(k) \label{eq_kernel_f},  \textrm{ where} \\
+  f(k) &=& \p(T_{m+1}-T_m = k). \nonumber \label{eq_f}  \\
+   F(k) &:=& \label{eq_F} \p(T_{m+1}-T_m \leq k) = \sum_{t=1}^{k} f(t). \nonumber
+  \end{eqnarray}
 \end{itemize} 
 % Note that one can introduce the distribution functions associated to the particular sojourn distributions $f_{i \bullet}(k),$ $f_{\bullet j}(k)$ or $f(k),$ defined respectively by 
 % \begin{eqnarray*}
@@ -422,7 +450,8 @@ f(k) &=& \p(T_{m+1}-T_m = k). \nonumber \label{eq_f}  \\
 %  F(k) &:=& \label{eq_F} \p(T_{m+1}-T_m \leq k) = \sum_{t=1}^{k} f(t),
 % \end{eqnarray*}
 % %
-We also denote the associated survival/reliability functions respectively by $\overline{F}_{i \bullet}(k),$ $\overline{F}_{\bullet j}(k),$ $\overline{F}(k).$ 
+We also denote the associated survival/reliability functions respectively by 
+$\overline{F}_{i \bullet}(k),$ $\overline{F}_{\bullet j}(k),$ $\overline{F}(k).$
 
 %
 %%
@@ -434,111 +463,70 @@ We also denote the associated survival/reliability functions respectively by $\o
 
 
 
-\section{The SMM package} \label{SMM_package} %\pkg{SMM}
+\section{The SMM package}
+\label{SMM_package}
 
-% The \pkg{SMM} \proglang{R} package is principally devoted to the simulation and estimation of discrete-time semi-Markov models in different cases by the two following functions:
-% 
-% \begin{itemize}
-% \item[$\blacksquare$] \texttt{simulSM()} for the simulation of sequences from a semi-Markov model
-%   (Section~\ref{sec_SimulSM}):
-% {
-% \begin{itemize}
-% \item One or several trajectories
-% \item According to classical distributions for the sojourn times (Uniform, Geometric, Poisson, Discrete Weibull
-%   and Negative Binomial) or according to distributions given by the user 
-% \item Four different types of censoring mechanisms: censoring at the beginning of sample paths, censoring at the end, censoring at the beginning and at the end, no censoring
-% \item Four different types of sojourn times: depending on the current state and on the next state, depending only on the current state, depending only on the next state, depending
-%   neither on the current state nor on the next state
-% \end{itemize}
-% }
-% \item[$\blacksquare$] \texttt{estimSM()} for the estimation of model parameters (Section~\ref{estSM});
-% {
-% \begin{itemize}
-% \item One or several trajectories
-% \item Parametric (Uniform, Geometric, Poisson, Discrete Weibull and Negative Binomial) or non-parametric distributions for the sojourn times
-% \item Four different types of censoring mechanisms: censoring at the beginning of sample paths, censoring at the end, censoring at the beginning and at the end, no censoring
-% \item Four different types of sojourn times: depending on the current state and on the next state, depending only on the current state, depending only on the next state, depending
-%   neither on the current state nor on the next state
-% \end{itemize}
-% }
-% 
-% \end{itemize}
-% The \pkg{SMM} \proglang{R} package is also devoted to the simulation and estimation of discrete-time Markov models  by
-% the two following functions:
-% \begin{itemize}
-% \item[$\blacksquare$] \texttt{simulMk()} for the simulation of sequences from a $k$th order Markov model;
-% \item[$\blacksquare$] \texttt{estimMk()} for the estimation of the parameters of the model.
-% \end{itemize}
-% 
-% 
-% All the different possibilities of the package are illustrated in Figure \ref{fig}.
-% 
-% %~ \textbf{METTRE ICI LA FIGURE DU PACKAGE}
-% 
-% \begin{figure}[htbp]
-% \centering
-% \includegraphics[width=0.9\textwidth]{smm_packageBW.pdf}%\includegraphics[width=0.9\textwidth]{smm_packageBW.pdf}
-% 
-% \caption{Schema of the \pkg{SMM} package. } \label{fig}
-% \end{figure}
-
-The \pkg{SMM} \proglang{R} package is principally devoted to the simulation and estimation of discrete-time semi-Markov models in different cases by the following functions:
+The \pkg{SMM} \proglang{R} package is principally devoted to the simulation and
+estimation of discrete-time semi-Markov models in different cases by the 
+following functions:
 
 \begin{itemize}
-\item[$\blacksquare$] \texttt{smmparametric} : A constructor for the creation of 
-  a parametric Semi-Markov model specification (object of class S3);
+  \item[$\blacksquare$] \fct{smmparametric} : A constructor for the creation of 
+    a parametric Semi-Markov model specification (object of class S3);
+    
+  \item[$\blacksquare$] \fct{smmnonparametric} : A constructor for the creation of a 
+    non-parametric Semi-Markov model specification (object of class S3);
+    
+  \item[$\blacksquare$] \fct{simulate.smmparametric} and 
+    \fct{simulate.smmnonparametric} : Methods of S3 classes \class{smmparametric} 
+      and \class{smmnonparametric} for the simulation of sequences from a parametric 
+      and non-parametric semi-Markov model specification respectively
+      (Section~\ref{sec_SimulSM}):
+    {
+    \begin{itemize}
+      \item One or several trajectories;
+      \item According to classical distributions for the sojourn times 
+        (uniform, geometric, poisson, discrete weibull and negative binomial) or 
+        according to distributions given by the user;
+      \item Four different types of censoring mechanisms: censoring at the beginning of
+        sample paths, censoring at the end, censoring at the beginning and at the end, 
+        no censoring;
+      \item Four different types of sojourn times: depending on the current state and 
+        on the next state, depending only on the current state, depending only on the next
+        state, depending neither on the current state nor on the next state.
+    \end{itemize}
+    }
+    
+  \item[$\blacksquare$] \fct{fitsemimarkovmodel} for the estimation of model parameters
+    (Section~\ref{estSM}):
+    {
+    \begin{itemize}
+      \item One or several trajectories;
+      \item Parametric (uniform, geometric, poisson, discrete weibull and 
+        negative binomial) or non-parametric distributions for the sojourn times;
+      \item Four different types of censoring mechanisms: censoring at the beginning of
+        sample paths, censoring at the end, censoring at the beginning and at the end, no
+        censoring;
+      \item Four different types of sojourn times: depending on the current state and on 
+        the next state, depending only on the current state, depending only on the next
+        state, depending neither on the current state nor on the next state.
+    \end{itemize}
+    }
   
-\item[$\blacksquare$] \texttt{smmnonparametric} : A constructor for the creation of a 
-  non-parametric Semi-Markov model specification (object of class S3);
-  
-\item[$\blacksquare$] \texttt{simulate.smmparametric} and 
-  \texttt{simulate.smmnonparametric} : Methods of S3 classes \texttt{smmparametric} 
-    and \texttt{smmnonparametric} for the simulation of sequences from a parametric 
-    and non-parametric semi-Markov model specification respectively
-    (Section~\ref{sec_SimulSM}):
-  {
-  \begin{itemize}
-    \item One or several trajectories;
-    \item According to classical distributions for the sojourn times 
-      (uniform, geometric, poisson, discrete weibull and negative binomial) or 
-      according to distributions given by the user;
-    \item Four different types of censoring mechanisms: censoring at the beginning of
-      sample paths, censoring at the end, censoring at the beginning and at the end, 
-      no censoring;
-    \item Four different types of sojourn times: depending on the current state and 
-      on the next state, depending only on the current state, depending only on the next
-      state, depending neither on the current state nor on the next state.
-  \end{itemize}
-  }
-  
-\item[$\blacksquare$] \texttt{fitsemimarkovmodel} for the estimation of model parameters
-  (Section~\ref{estSM}):
-  {
-  \begin{itemize}
-    \item One or several trajectories;
-    \item Parametric (uniform, geometric, poisson, discrete weibull and negative binomial)
-      or non-parametric distributions for the sojourn times;
-    \item Four different types of censoring mechanisms: censoring at the beginning of
-      sample paths, censoring at the end, censoring at the beginning and at the end, no
-      censoring;
-    \item Four different types of sojourn times: depending on the current state and on 
-      the next state, depending only on the current state, depending only on the next
-      state, depending neither on the current state nor on the next state.
-  \end{itemize}
-  }
-
 \end{itemize}
 
-The \pkg{SMM} \proglang{R} package is also devoted to the simulation and estimation of discrete-time Markov models by the following functions:
+The \pkg{SMM} \proglang{R} package is also devoted to the simulation and 
+estimation of discrete-time Markov models by the following functions:
 \begin{itemize}
-  \item[$\blacksquare$] \texttt{markovmodel} for the specification of a $k$th order 
-    Markov model specification (object of class S3);
+  \item[$\blacksquare$] \fct{markovmodel} for the specification of a $k$th 
+    order Markov model specification (object of class S3);
     
-  \item[$\blacksquare$] \texttt{simulate.markovmodel} A method of S3 class 
-    \texttt{markovmodel} for the simulation of sequences from a $k$th order Markov model;
+  \item[$\blacksquare$] \fct{simulate.markovmodel} A method of S3 class 
+    \texttt{markovmodel} for the simulation of sequences from a $k$th order 
+    Markov model;
     
-  \item[$\blacksquare$] \texttt{fitmarkovmodel} for the estimation of the parameters 
-  of a Markov model.
+  \item[$\blacksquare$] \fct{fitmarkovmodel} for the estimation of the 
+    parameters of a Markov model.
 \end{itemize}
 
 The main structure of the package is illustrated in Figure \ref{fig}.
@@ -547,359 +535,292 @@ The main structure of the package is illustrated in Figure \ref{fig}.
   \centering
   \includegraphics[width=1.1\textwidth]{SMM_package.png}
   \caption{Main structure of \pkg{SMM} package.}
-  \label{fig}
+  \label{fig:smm:package:structure}
 \end{figure}
 
 \newpage
 
 
 
-\subsection{Semi-Markov Model specifications} \label{sec_SpecSM}
+\subsection{Semi-Markov Model specifications}
+\label{sec_SpecSM}
 
-\paragraph{3.1.1 Specification according to classical distributions - smmparametric}
+\paragraph[3.1.1 Specification according to classical distributions - smmparametric]{3.1.1 Specification according to classical distributions - \class{smmparametric}}
 \ \\
 
-In this part, we will consider parametric specification that is based on classical distributions.
+In this part, we will consider parametric specification that is based on 
+classical distributions.
 
-\paragraph{Parameters:} This specification is carried out by the constructor function {\tt smmparametric}. The different parameters of the function are:
+\paragraph{Parameters:} This specification is carried out by the constructor 
+function \fct{smmparametric}. The different parameters of the function are:
 %
 \begin{itemize}
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
   
-  \item {\tt init}: Vector of initial distribution of length $s$.
+  \item \code{init}: Vector of initial distribution of length $s$.
   
-  \item {\tt ptrans}:  Matrix of transition probabilities of the embedded Markov 
+  \item \code{ptrans}:  Matrix of transition probabilities of the embedded Markov 
     chain $J=(J_m)_{m}$ of size  $s\times s$.
     
-  \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
-    {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
+  \item \code{type.sojourn}: Type of sojourn time; it can be \code{"fij"}, 
+    \code{"fi"}, \code{"fj"} or \code{"f"} according to the four cases 
+    previously discussed.
 
-  \item {\tt distr}: Sojourn time distributions:
+  \item \code{distr}: Sojourn time distributions:
     {
     \begin{itemize}
-      \item  Matrix of distributions of size $s\times s$ if {\tt type.sojourn = "fij"};
-      \item Vector of distributions of size $s$ if  {\tt type.sojourn = "fi"} or 
-        {\tt type.sojourn = "fj"};
-      \item A distribution if {\tt type.sojourn = "f"}.
+      \item  Matrix of distributions of size $s\times s$ if \code{type.sojourn = "fij"};
+      \item Vector of distributions of size $s$ if  \code{type.sojourn = "fi"} or 
+        \code{type.sojourn = "fj"};
+      \item A distribution if \code{type.sojourn = "f"}.
     \end{itemize}
     }
-    where the distributions to be used can be one of {\tt "unif"}, {\tt "geom"}, 
-    {\tt "pois"}, {\tt "dweibull"} or {\tt "nbinom"}.
+    where the distributions to be used can be one of \code{"unif"}, \code{"geom"}, 
+    \code{"pois"}, \code{"dweibull"} or \code{"nbinom"}.
 
-  \item {\tt param}: Parameters of sojourn time distributions: 
+  \item \code{param}: Parameters of sojourn time distributions: 
     {
     \begin{itemize}
       \item  An array of parameters of size $s\times s \times 2$ if 
-        {\tt type.sojourn = "fij"};
-      \item A matrix of parameters of size $s \times 2$ if {\tt type.sojourn = "fi"}
-        or {\tt type.sojourn = "fj"};
-      \item A vector of parameters of length $2$ if {\tt type.sojourn = "f"}.
+        \code{type.sojourn = "fij"};
+      \item A matrix of parameters of size $s \times 2$ if \code{type.sojourn = "fi"}
+        or \code{type.sojourn = "fj"};
+      \item A vector of parameters of length $2$ if \code{type.sojourn = "f"}.
     \end{itemize}
     }
     When parameters/values are not necessary (e.g. the Poisson distribution has 
-    only one parameter that is $\lambda$, leave the value {\tt NA} for the 
+    only one parameter that is $\lambda$, leave the value \code{NA} for the 
     second parameter in the argument {\tt param}).
 
-  \item {\tt cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
-    {\tt TRUE} (if the first sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
+    \code{TRUE} (if the first sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 
-  \item {\tt cens.end}: Optional. Type of censoring at the end of sample paths; 
-    {\tt TRUE} (if the last sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.end}: Optional. Type of censoring at the end of sample paths; 
+    \code{TRUE} (if the last sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 
 \end{itemize}
 
 
-The \proglang{R} commands below creates a parametric semi-Markov model specification 
-(i.e. an object of class {\tt smmparametric}) with the finite state space 
-$E = \{a, c, g, t\}$, where the sojourn times depend on the current state and on 
-the next state ($f_{ij}$).
+The \proglang{R} commands below creates a parametric semi-Markov model 
+specification (i.e. an object of class \class{smmparametric}) with the finite 
+state space $E = \{a, c, g, t\}$, where the sojourn times depend on the 
+current state and on the next state ($f_{ij}$).
 
-\begin{lstlisting}
-  > # State space
-  > states <- c("a", "c", "g", "t")
-  > s <- length(states)
-  > # Creation of the initial distribution
-  > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-  > # Creation of transition matrix
-  > pij <- matrix(c(0, 0.2, 0.5, 0.3, 
-  +                 0.2, 0, 0.3, 0.5, 
-  +                 0.3, 0.5, 0, 0.2, 
-  +                 0.4, 0.2, 0.4, 0), 
-  +               ncol = s, byrow = TRUE)
-  > # Creation of the distribution matrix
-  > distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
-  +                          "geom", NA, "pois", "dweibull",
-  +                          "pois", "pois", NA, "geom", 
-  +                          "pois", "geom", "geom", NA), 
-  +                        nrow = s, ncol = s, byrow = TRUE)
-  > # Creation of an array containing the parameters
-  > param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
-  +                           0.7, NA, 5, 0.6, 
-  +                           2, 3, NA, 0.6, 
-  +                           4, 0.3, 0.4, NA), 
-  +                         nrow = s, ncol = s, byrow = TRUE)
-  > param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
-  +                           NA, NA, NA, 0.8, 
-  +                           NA, NA, NA, NA, 
-  +                           NA, NA, NA, NA), 
-  +                         nrow = s, ncol = s, byrow = TRUE)
-  > param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
-  > # Specify the semi-Markov model
-  > smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-  +                       type.sojourn = "fij", distr = distr.matrix, 
-  +                       param = param.array)
-\end{lstlisting}
-%
-First, note that in this simulation, the parameters {\tt cens.beg} and {\tt cens.end} 
-are equal to {\tt FALSE}, that is to say assumption is made that there is no censoring,
-at the beginning and at the end.
+<<loadandattachpackage, echo=FALSE, results=hide>>=
+library("SMM")
+@
 
-Second, note also that the parameters of the distributions are given in the following way:
-for example, $f_{13}(\cdot)$ is a geometric distribution with parameter $p = 0.4$, while
-$f_{14}(\cdot)$ is a negative binomial with parameters $\mu = 4$ and $p = 0.6$. 
+<<smmparametric>>=
+# State space
+states <- c("a", "c", "g", "t")
+s <- length(states)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = s, byrow = TRUE)
+
+# Creation of the distribution matrix
+distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
+                         "geom", NA, "pois", "dweibull",
+                         "pois", "pois", NA, "geom", 
+                         "pois", "geom", "geom", NA), 
+                       nrow = s, ncol = s, byrow = TRUE)
+
+# Creation of an array containing the parameters
+param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
+                          0.7, NA, 5, 0.6, 
+                          2, 3, NA, 0.6, 
+                          4, 0.3, 0.4, NA), 
+                        nrow = s, ncol = s, byrow = TRUE)
+
+param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
+                          NA, NA, NA, 0.8, 
+                          NA, NA, NA, NA, 
+                          NA, NA, NA, NA), 
+                        nrow = s, ncol = s, byrow = TRUE)
+
+param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
+
+# Specify the semi-Markov model
+smmparam <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+                          type.sojourn = "fij", distr = distr.matrix, 
+                          param = param.array)
+@
+
+First, note that in this simulation, the parameters \code{cens.beg} and 
+\code{cens.end} are equal to \code{FALSE}, that is to say assumption is made 
+that there is no censoring, at the beginning and at the end.
+
+Second, note also that the parameters of the distributions are given in the 
+following way: for example, $f_{13}(\cdot)$ is a geometric distribution with 
+parameter $p = 0.4$, while $f_{14}(\cdot)$ is a negative binomial with 
+parameters $\mu = 4$ and $p = 0.6$. 
 In other words, the parameters of $f_{13}(\cdot)$ are given in the vector 
-{\tt param.array[1, 3, ]} that is equal to {\tt (0.4, NA)} and the parameters of 
-$f_{14}(\cdot)$ are given in the vector {\tt param.array[1, 4, ]} that is equal to 
-{\tt (4, 2)}; that means that if a distribution has only $1$ parameter, the 
-corresponding vector of parameters will have {\tt NA} on the second position.
+\code{param.array[1, 3, ]} that is equal to \code{(0.4, NA)} and the parameters 
+of $f_{14}(\cdot)$ are given in the vector \code{param.array[1, 4, ]} that is 
+equal to \code{(4, 2)}; that means that if a distribution has only $1$ 
+parameter, the corresponding vector of parameters will have \code{NA} on the 
+second position.
 
 \paragraph{Values:}
 
-The function {\tt smmparametric} returns an object of class {\tt smmparametric}. The S3 
-class {\tt smmparametric} contains various methods such as {\tt simulate}.
+The function \fct{smmparametric} returns an object of class \class{smmparametric}.
+The S3 class \class{smmparametric} contains various methods such as \fct{simulate}.
 
-\begin{lstlisting}
-  > smm1
-  $states
-  [1] "a" "c" "g" "t"
-  
-  $s
-  [1] 4
-  
-  $init
-  [1] 0.25 0.25 0.25 0.25
-  
-  $type.sojourn
-  [1] "fij"
-  
-  $ptrans
-       [,1] [,2] [,3] [,4]
-  [1,]  0.0  0.2  0.5  0.3
-  [2,]  0.2  0.0  0.3  0.5
-  [3,]  0.3  0.5  0.0  0.2
-  [4,]  0.4  0.2  0.4  0.0
-  
-  $distr
-       [,1]   [,2]   [,3]   [,4]      
-  [1,] NA     "pois" "geom" "nbinom"  
-  [2,] "geom" NA     "pois" "dweibull"
-  [3,] "pois" "pois" NA     "geom"    
-  [4,] "pois" "geom" "geom" NA        
-  
-  $param
-  , , 1
-  
-       [,1] [,2] [,3] [,4]
-  [1,]   NA  2.0  0.4  4.0
-  [2,]  0.7   NA  5.0  0.6
-  [3,]  2.0  3.0   NA  0.6
-  [4,]  4.0  0.3  0.4   NA
-  
-  , , 2
-  
-       [,1] [,2] [,3] [,4]
-  [1,]   NA   NA   NA  0.6
-  [2,]   NA   NA   NA  0.8
-  [3,]   NA   NA   NA   NA
-  [4,]   NA   NA   NA   NA
-  
-  
-  $cens.beg
-  [1] FALSE
-  
-  $cens.end
-  [1] FALSE
-  
-  attr(,"class")
-  [1] "smm"           "smmparametric"
-\end{lstlisting}
+<<smmparam>>=
+smmparam
+@
 
-\paragraph{3.1.2 Specification according to distributions given by the user - smmnonparametric}
+\paragraph[3.1.2 Specification according to distributions given by the user - smmnonparametric]{3.1.2 Specification according to distributions given by the user - \class{smmnonparametric}}
 \ \\ 
 
-Now we will specify a non-parametric semi-Markov model (i.e. the distributions are given 
-by the user).
+Now we will specify a non-parametric semi-Markov model (i.e. the distributions 
+are given by the user).
 
 \paragraph{Parameters:} Specifying the model is done by the function 
-{\tt smmnonparametric}. The different parameters of the function are:
+\fct{smmnonparametric}. The different parameters of the function are:
 
 \begin{itemize}
 
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
   
-  \item {\tt init}: Vector of initial distribution of length $s$.
+  \item \code{init}: Vector of initial distribution of length $s$.
   
-  \item {\tt ptrans}:  Matrix of transition probabilities of the embedded Markov 
+  \item \code{ptrans}:  Matrix of transition probabilities of the embedded Markov 
     chain $J=(J_m)_{m}$ of size  $s\times s$.
   
-  \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
-    {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
+  \item \code{type.sojourn}: Type of sojourn time; it can be \code{"fij"}, 
+    \code{"fi"}, \code{"fj"} or \code{"f"} according to the four cases previously 
+    discussed.
   
-  \item {\tt distr}: Sojourn time distributions introduced by the user: 
+  \item \code{distr}: Sojourn time distributions introduced by the user: 
     {
     \begin{itemize}
-      \item  An array of size $s\times s \times kmax$ if {\tt type.sojourn = "fij"};
-      \item A matrix of size $s \times kmax$ if {\tt type.sojourn = "fi"} or 
-        {\tt type.sojourn = "fj"};
-      \item A vector of length $kmax$ if {\tt type.sojourn = "f"}.
+      \item  An array of size $s\times s \times kmax$ if \code{type.sojourn = "fij"};
+      \item A matrix of size $s \times kmax$ if \code{type.sojourn = "fi"} or 
+        \code{type.sojourn = "fj"};
+      \item A vector of length $kmax$ if \code{type.sojourn = "f"}.
     \end{itemize}
     where $kmax$ is the maximum length for the sojourn times.
     }
     
-  \item {\tt cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
-    {\tt TRUE} (if the first sojourn time is censored) or {\tt FALSE} (if not). 
-    All the sequences must be censored in the same way.
+  \item \code{cens.beg}: Optional. Type of censoring at the beginning of sample 
+    paths; \code{TRUE} (if the first sojourn time is censored) or \code{FALSE} 
+    (if not). All the sequences must be censored in the same way.
 
-  \item {\tt cens.end}: Optional. Type of censoring at the end of sample paths; 
-    {\tt TRUE} (if the last sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.end}: Optional. Type of censoring at the end of sample paths;
+    \code{TRUE} (if the last sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 
 \end{itemize}
 
 The \proglang{R} commands below creates a non-parametric semi-Markov model 
-specification (i.e. an object of class {\tt smmnonparametric}) with the finite 
+specification (i.e. an object of class \class{smmnonparametric}) with the finite 
 state space $E = \{a, c, g, t\},$ where the sojourn times depend on the current 
 state and on the next state ($f_{j}$).
 
-\begin{lstlisting}
-  > # State space
-  > states <- c("a", "c", "g", "t")
-  > s <- length(states)
-  > # Creation of the initial distribution
-  > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-  > # Creation of transition matrix
-  > pij <- matrix(c(0, 0.2, 0.5, 0.3, 
-  +                 0.2, 0, 0.3, 0.5, 
-  +                 0.3, 0.5, 0, 0.2, 
-  +                 0.4, 0.2, 0.4, 0), 
-  +               ncol = s, byrow = TRUE)
-  > # Creation of a matrix corresponding to the 
-  > # conditional sojourn time distributions
-  > kmax <- 6
-  > nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
-  +                           0.2, 0, 0.4, 0.2, 
-  +                           0.1, 0, 0.2, 0.1, 
-  +                           0.5, 0.3, 0.15, 0.05, 
-  +                           0, 0, 0.3, 0.2, 
-  +                           0.1, 0.2, 0.2, 0), 
-  +                         nrow = s, ncol = kmax, byrow = TRUE)
-  > smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
-  +                  type.sojourn = "fj", distr = nparam.matrix)
-\end{lstlisting}
+<<smmnonparametric>>=
+# State space
+states <- c("a", "c", "g", "t")
+s <- length(states)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = s, byrow = TRUE)
+
+# Creation of a matrix corresponding to the 
+# conditional sojourn time distributions
+kmax <- 6
+nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2, 
+                          0.2, 0, 0.4, 0.2, 
+                          0.1, 0, 0.2, 0.1, 
+                          0.5, 0.3, 0.15, 0.05, 
+                          0, 0, 0.3, 0.2, 
+                          0.1, 0.2, 0.2, 0), 
+                        nrow = s, ncol = kmax, byrow = TRUE)
+
+smmnonparam <- smmnonparametric(states = states, init = vect.init, 
+                                ptrans = pij, type.sojourn = "fj", 
+                                distr = nparam.matrix)
+@
 
 \paragraph{Values:}
-The function {\tt smmnonparametric} returns an object of class {\tt smmnonparametric}. 
-The S3 class {\tt smmnonparametric} contains various methods such as {\tt simulate}.
+The function \fct{smmnonparametric} returns an object of class \class{smmnonparametric}. 
+The S3 class \class{smmnonparametric} contains various methods such as \fct{simulate}.
 
-\begin{lstlisting}
-  > smm2
-  $states
-  [1] "a" "c" "g" "t"
-  
-  $s
-  [1] 4
-  
-  $kmax
-  [1] 6
-  
-  $init
-  [1] 0.25 0.25 0.25 0.25
-  
-  $type.sojourn
-  [1] "fj"
-  
-  $ptrans
-       [,1] [,2] [,3] [,4]
-  [1,]  0.0  0.2  0.5  0.3
-  [2,]  0.2  0.0  0.3  0.5
-  [3,]  0.3  0.5  0.0  0.2
-  [4,]  0.4  0.2  0.4  0.0
-  
-  $distr
-       [,1] [,2] [,3] [,4] [,5] [,6]
-  [1,]  0.2  0.1 0.30 0.20  0.2  0.0
-  [2,]  0.4  0.2 0.10 0.00  0.2  0.1
-  [3,]  0.5  0.3 0.15 0.05  0.0  0.0
-  [4,]  0.3  0.2 0.10 0.20  0.2  0.0
-  
-  $cens.beg
-  [1] FALSE
-  
-  $cens.end
-  [1] FALSE
-  
-  attr(,"class")
-  [1] "smm"              "smmnonparametric"
-\end{lstlisting}
+<<smmnonparam>>=
+smmnonparam
+@
 
 
 
-\subsection{Simulation of semi-Markov models} \label{sec_SimulSM}
+\subsection{Simulation of semi-Markov models}
+\label{sec_SimulSM}
 
-To simulate some sequences based from a semi-Markov model, the method {\tt simulate}
+To simulate some sequences based from a semi-Markov model, the method \fct{simulate}
 has been implemented.
 
-\paragraph{3.2.1 Simulation according to classical distributions - smmparametric}\ \\
+\paragraph[3.2.1 Simulation according to classical distributions - smmparametric]{3.2.1 Simulation according to classical distributions - \class{smmparametric}}\ \\
 
-Let's use the object {\tt smm1} to simulate $3$ sequences of size $1,000$, $10,000$ 
-and $2,000$ respectively with the finite state space $E = \{a, c, g, t\}$:
+Let's use the object \code{smmparam} to simulate $3$ sequences of size $1,000$, 
+$10,000$ and $2,000$ respectively with the finite state space $E = \{a, c, g, t\}$:
 
-\begin{lstlisting}
-  > seq1 <- simulate(object = smm1, nsim = c(1000, 10000, 2000), seed = 100)
-  > seq1[[1]][1:15]
-   [1] "g" "g" "g" "g" "c" "c" "t" "g" "g" "a" "a" "a" "a" "t" "g"
-\end{lstlisting}
+<<seqparam>>=
+seqparam <- simulate(object = smmparam, nsim = c(1000, 10000, 2000), seed = 100)
+seqparam[[1]][1:15]
+@
 
-\paragraph{3.2.2 Simulation according to a distribution given by the user - smmnonparametric}\ \\
+\paragraph[3.2.2 Simulation according to a distribution given by the user - smmnonparametric]{3.2.2 Simulation according to a distribution given by the user - \class{smmnonparametric}}\ \\
 
-Let's use the object {\tt smm2} to simulate $3$ sequences of size $1,000$, $10,000$ 
-and $2,000$ respectively with the finite state space $E = \{a, c, g, t\}$:
+Let's use the object \code{smm2} to simulate $3$ sequences of size $1,000$, 
+$10,000$ and $2,000$ respectively with the finite state space $E = \{a, c, g, t\}$:
 
-\begin{lstlisting}
-  > seq2 <- simulate(object = smm2, nsim = c(1000, 10000, 2000), seed = 100)
-  > seq2[[1]][1:15]
-   [1] "g" "g" "g" "g" "g" "c" "c" "t" "t" "t" "g" "g" "g" "g" "g"
-\end{lstlisting}
+<<seqnonparam>>=
+seqnonparam <- simulate(object = smmnonparam, nsim = c(1000, 10000, 2000), seed = 100)
+seqnonparam[[1]][1:15]
+@
 
 
 
 \subsection{Estimation of semi-Markov models}
 \label{estSM}
 
-In this subsection we explain and illustrate the estimation of a semi-Markov model 
-in the parametric case and non-parametric case.
+In this subsection we explain and illustrate the estimation of a semi-Markov 
+model in the parametric case and non-parametric case.
 
 \paragraph{3.3.1 Parametric estimation of semi-Markov models}
 \ \\
 
-We will consider the distributions $f_{ij}(k) = f_{ij}(k; \theta_{ij})$ depending on
-unknown parameters $\theta_{ij} \in \mathbb R^{m_{ij}},$ where the dimension of 
-parameters set $m_{ij}$ is known; no assumptions is done on $\left(p_{ij}\right)_{ij}$.
-From data, we want to estimate $p_{ij}$ et $\theta_{ij},$ $i,j \in E$.
+We will consider the distributions $f_{ij}(k) = f_{ij}(k; \theta_{ij})$ 
+depending on unknown parameters $\theta_{ij} \in \mathbb R^{m_{ij}},$ where 
+the dimension of parameters set $m_{ij}$ is known; no assumptions is done 
+on $\left(p_{ij}\right)_{ij}$. From data, we want to estimate $p_{ij}$ and 
+$\theta_{ij},$ $i,j \in E$.
 
-Let us assume that we have at our disposal several independent sample paths of a 
-semi-Markov chain, say $L$, each of them of length $n_l$, $l=1, \ldots, L$, censored 
-at the beginning and at the end of the trajectory,  i.e.,
-$$ y_1^l, y_2^l, \ldots, y_{n_l}^l,$$
-or, equivalently,
+Let us assume that we have at our disposal several independent sample paths of 
+a semi-Markov chain, say $L$, each of them of length $n_l$, $l=1, \ldots, L$, 
+censored at the beginning and at the end of the trajectory,  i.e., 
+$$ y_1^l, y_2^l, \ldots, y_{n_l}^l,$$ or, equivalently,
 $$ j_0^l, k_0^l, j_1^l, k_1^l, j_2^l, k_2^l, \ldots, j_{t^l}^l, k_{t^l}^l, j_{t^l+1}^l, k_{t^l +1}^l $$
-with  $\sum_{i=0}^{t^l+1} k_i^l = n_l,$ where $j_0^l, \ldots, j_{t^l+1}^l$ are the
-successive distinct visited states, $ k_{0}^l $ is the first sojourn time, assumed 
-to be right censored, $ k_{t^l +1}^l $ is the last sojourn time, assumed also to be 
-right censored, while $k_1^l, \ldots, k_{t^l}^l$ are the other successive sojourn times,
-assumed to be complete (observed, non censored).
+with  $\sum_{i=0}^{t^l+1} k_i^l = n_l,$ where $j_0^l, \ldots, j_{t^l+1}^l$ are 
+the successive distinct visited states, $ k_{0}^l $ is the first sojourn time, 
+assumed to be right censored, $ k_{t^l +1}^l $ is the last sojourn time, 
+assumed also to be right censored, while $k_1^l, \ldots, k_{t^l}^l$ are the 
+other successive sojourn times, assumed to be complete (observed, non censored).
 
 To estimate the parameters of model, we use the maximum likelihood estimation 
 (cf. \cite{BaBeCeSaVe}): 
@@ -910,14 +831,14 @@ To estimate the parameters of model, we use the maximum likelihood estimation
   && \left. \left. + \sum_{v \in E} \sum_{k=1}^{\max_{l}(n_l)} \overline{N}_{uv}^b(k; L) \log(\overline{F}_{u v}(k; \theta_{uv})) \right. \right.\\ 
   && \left. \left.+  \sum_{k=1}^{\max_{l}(n_l)} \overline{N}_{u \bullet}^e(k; L) \log \left(1- \sum_{m=1}^{k} \sum_{v \in E} p_{u v} f_{u v}(m; \theta_{u v})\right) \right)_{u \in E} \right), \nonumber 
 \end{eqnarray}
-where we introduced the following counting processes
+where we introduced the following counting processes:
 \begin{eqnarray*} 
-  N_{ij}(L, n_{1:L}) &=& \label{eq_NijSM_Ltraj} \sum_{l=1}^{L} \sum_{m=1}^{N^l(n_l)-1}  \mi_{\{J_m^l = i ; J_{m+1}^l=j\}},\\
-%N_{i\bullet}(L, n_{1:L}) &=& \label{eq_NiSM_Ltraj} \sum_{m=1}^{N^l(n_l)-1} \mi_{\{J_m^l = i\}},\\
-  N_{ij}(k; L, n_{1:L}) &=& \label{eq_NijkSM_Ltraj} \sum_{m=1}^{N^l(n_l)-1} \mi_{\{J_m^l = i ; J_{m+1}^l=j ; T_{m+1}^l-T_m^l=k\}},\\
-  \overline{N}_{ij}^b(k; L) &=& \label{eq_Nijk_great} \sum_{l=1}^{L} \mi_{\{J_0^l = i ; J_{1}^l=j ; T_{1}^l-T_0^l > k\}},\\
-  \overline{N}_{i \bullet}^e(k; L) &=& \label{eq_Nik_end_great} \sum_{l=1}^{L} \mi_{\{J^l_{T^l_{N^l(n_l)}} = i, X^l_{T^l_{N^l(n_l)+1}} > k\}},\\
-%N_{i}^{start}(L) &=& \label{eq_NiStart_Ltraj} \sum_{l=1}^{L} \mi_{\{J_0^l = i\}},
+  N_{ij}(L, n_{1:L}) &=& \label{eq_NijSM_Ltraj} \sum_{l=1}^{L} \sum_{m=1}^{N^l(n_l)-1}  \one_{\{J_m^l = i ; J_{m+1}^l=j\}},\\
+%N_{i\bullet}(L, n_{1:L}) &=& \label{eq_NiSM_Ltraj} \sum_{m=1}^{N^l(n_l)-1} \one_{\{J_m^l = i\}},\\
+  N_{ij}(k; L, n_{1:L}) &=& \label{eq_NijkSM_Ltraj} \sum_{m=1}^{N^l(n_l)-1} \one_{\{J_m^l = i ; J_{m+1}^l=j ; T_{m+1}^l-T_m^l=k\}},\\
+  \overline{N}_{ij}^b(k; L) &=& \label{eq_Nijk_great} \sum_{l=1}^{L} \one_{\{J_0^l = i ; J_{1}^l=j ; T_{1}^l-T_0^l > k\}},\\
+  \overline{N}_{i \bullet}^e(k; L) &=& \label{eq_Nik_end_great} \sum_{l=1}^{L} \one_{\{J^l_{T^l_{N^l(n_l)}} = i, X^l_{T^l_{N^l(n_l)+1}} > k\}},\\
+%N_{i}^{start}(L) &=& \label{eq_NiStart_Ltraj} \sum_{l=1}^{L} \one_{\{J_0^l = i\}},
 \end{eqnarray*}
 where
 $$ N^l(n_l) = \max \{m \in \mathbb N \mid T_m^l \leq n_l \} $$
@@ -931,91 +852,95 @@ state $j$ along the $L$ sample paths; \\
 - $N_{ij}(k; L, n_{1:L})$ represents the number of transitions from state $i$ to 
 state $j$ along the $L$ sample paths, with sojourn time of length $k$ in state $i$; \\
  
-- $\overline{N}_{ij}^b(k; L)$ represents the number of trajectories starting in state 
-$i,$ with a next transition to state $j$ and censored sojourn time in state $i$ 
-greater than $k$; \\
+- $\overline{N}_{ij}^b(k; L)$ represents the number of trajectories starting in
+state $i,$ with a next transition to state $j$ and censored sojourn time in 
+state $i$ greater than $k$; \\
 
-- $\overline{N}_{i \bullet}^e(k; L)$ represents the number of trajectories ending in 
-state $i$ with a censored sojourn time in state $i$ greater than $k.$\\
+- $\overline{N}_{i \bullet}^e(k; L)$ represents the number of trajectories 
+ending in state $i$ with a censored sojourn time in state $i$ greater than $k.$\\
 
-Note also that in the expression \eqref{EMV} of the log-likelihood, the first two terms
-correspond to the transition probabilities and the observed (non censored) sojourn times,
-the third term is the contribution to the likelihood of the first sojourn times, assumed
-to be right censored, while the last term is the contribution to the likelihood of the
-last sojourn times, assumed to be right censored.\\
+Note also that in the expression \eqref{EMV} of the log-likelihood, the first 
+two terms correspond to the transition probabilities and the observed 
+(non censored) sojourn times, the third term is the contribution to the 
+likelihood of the first sojourn times, assumed to be right censored, while the 
+last term is the contribution to the likelihood of the last sojourn times, 
+assumed to be right censored.\\
 
-Up to here we presented the estimation for the general case, that is to say taking into
-account the censoring at the beginning and at the end and the sojourn times 
-depending on the current state and on the next state.  Thus the maximization problem
-\eqref{EMV} is written with the sojourn times depending on the current state and on the
-next state (the general model of the type $q_{ij}(k)=p_{ij}f_{ij}(k)$ given in 
-\eqref{eq_kernel_fij}), but the different cases of sojourn times are written and coded 
-in the package. Note also that different types of censoring are also written and coded 
-in the package. %For more details, see \citep{BaBeCeSaVe}.
+Up to here we presented the estimation for the general case, that is to say 
+taking into account the censoring at the beginning and at the end and the 
+sojourn times depending on the current state and on the next state. Thus the 
+maximization problem \eqref{EMV} is written with the sojourn times depending 
+on the current state and on the next state (the general model of the type 
+$q_{ij}(k)=p_{ij}f_{ij}(k)$ given in \eqref{eq_kernel_fij}), but the different 
+cases of sojourn times are written and coded in the package. Note also that 
+different types of censoring are also written and coded in the package. 
+%For more details, see \citep{BaBeCeSaVe}.
 
 \paragraph{Parameters:}
-The estimation is carried out by the function {\tt fitsemimarkovmodel}. The different
-parameters of the function are:
+The estimation is carried out by the function \fct{fitsemimarkovmodel}. The 
+different parameters of the function are:
 
 \begin{itemize}
 
-  \item {\tt sequences}: A List of vectors representing the sequence(s) from which to estimate.
+  \item \code{sequences}: A List of vectors representing the sequence(s) from 
+    which to estimate.
 
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
   
-  \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
-    {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
+  \item \code{type.sojourn}: Type of sojourn time; it can be \code{"fij"}, \code{"fi"}, 
+    \code{"fj"} or \code{"f"} according to the four cases previously discussed.
   
-  \item {\tt distr}: By default {\tt "nonparametric"} for the non-parametric estimation 
-    case. If the parametric estimation case is desired, {\tt distr} should be:
+  \item \code{distr}: By default \code{"nonparametric"} for the non-parametric estimation 
+    case. If the parametric estimation case is desired, \code{distr} should be:
     {
     \begin{itemize}
-      \item  Matrix of distributions of size $s\times s$ if {\tt type.sojourn = "fij"};
-      \item Vector of distributions of size $s$ if  {\tt type.sojourn = "fi"} or 
-        {\tt type.sojourn = "fj"};
-      \item A distribution if {\tt type.sojourn = "f"}.
+      \item  Matrix of distributions of size $s\times s$ if \code{type.sojourn = "fij"};
+      \item Vector of distributions of size $s$ if  \code{type.sojourn = "fi"} or 
+        \code{type.sojourn = "fj"};
+      \item A distribution if \code{type.sojourn = "f"}.
     \end{itemize}
     }
-    where the distributions to be used can be one of {\tt "unif"}, {\tt "geom"}, 
-    {\tt "pois"}, {\tt "dweibull"} or {\tt "nbinom"}.
+    where the distributions to be used can be one of \code{"unif"}, \code{"geom"}, 
+    \code{"pois"}, \code{"dweibull"} or \code{"nbinom"}.
     
-  \item {\tt cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
-    {\tt TRUE} (if the first sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
+    \code{TRUE} (if the first sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 
-  \item {\tt cens.end}: Optional. Type of censoring at the end of sample paths; 
-    {\tt TRUE} (if the last sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.end}: Optional. Type of censoring at the end of sample paths; 
+    \code{TRUE} (if the last sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 \end{itemize}
 
-\begin{lstlisting}
-  > # State space
-  > states <- c("a", "c", "g", "t")
-  > # Creation of the distribution matrix
-  > distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
-  +                          "geom", NA, "pois", "dweibull", 
-  +                          "pois", "pois", NA, "geom", 
-  +                          "pois", "geom", "geom", NA), 
-  +                        nrow = s, ncol = s, byrow = TRUE)
-  > # Estimation of simulated sequences
-  > est1 <- fitsemimarkovmodel(sequences = seq1, states = states, type.sojourn = "fij", 
-  +                            distr = distr.matrix)
-\end{lstlisting}
+<<estparam>>=
+# State space
+states <- c("a", "c", "g", "t")
 
-Here, we estimate simulated sequences with no censoring. The estimation performed will
-correspond to the likelihood given in \eqref{EMV}, without the third and fourth terms. 
+# Creation of the distribution matrix
+distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
+                         "geom", NA, "pois", "dweibull", 
+                         "pois", "pois", NA, "geom", 
+                         "pois", "geom", "geom", NA), 
+                       nrow = s, ncol = s, byrow = TRUE)
+
+estparam <- fitsemimarkovmodel(sequences = seqparam, states = states, 
+                               type.sojourn = "fij", distr = distr.matrix)
+@
+
+Here, we estimate simulated sequences with no censoring. The estimation 
+performed will correspond to the likelihood given in \eqref{EMV}, without the 
+third and fourth terms. 
 For more details on the parametric estimation, one can see \cite{BaBeCeSaVe}.
 
 \paragraph{Values:}
 
-The function {\tt fitsemimarkovmodel} returns an object of class {\tt smm}, more
-precisely an object of class {\tt smmparametric} if a parametric estimation is required 
-or an object of class {\tt smmnonparametric} otherwise:
+The function \fct{fitsemimarkovmodel} returns an object of class \class{smm}, 
+more precisely an object of class \class{smmparametric} if a parametric 
+estimation is required or an object of class \class{smmnonparametric} otherwise:
 
-\begin{lstlisting}
-  > class(est1)
-  [1] "smm"           "smmparametric"
-\end{lstlisting}
+<<classestparam>>=
+class(estparam)
+@
 
 \paragraph{Values:}
 
@@ -1023,49 +948,29 @@ The values of the estimated parameters are:
 
 \begin{itemize}
 
-  \item Attribute {\tt init}: Vector of size $s$ with the estimated initial 
+  \item Attribute \code{init}: Vector of size $s$ with the estimated initial 
     probabilities of the semi-Markov chain
     
-    \begin{lstlisting}
-      > est1$init
-      [1] 0.2056339 0.2527220 0.2715249 0.2701192
-    \end{lstlisting}
+<<estparaminit>>=
+estparam$init
+@
   
-  \item Attribute {\tt ptrans}: Matrix of size  $s\times s$ with the estimated 
+  \item Attribute \code{ptrans}: Matrix of size  $s\times s$ with the estimated 
     transition probabilities of the embedded Markov chain $J=(J_m)_{m}$
 
-    \begin{lstlisting}
-      > est1$ptrans
-                [,1]      [,2]      [,3]      [,4]
-      [1,] 0.0000000 0.2081949 0.4905869 0.3012182
-      [2,] 0.2081985 0.0000000 0.2988134 0.4929881
-      [3,] 0.2987365 0.4936823 0.0000000 0.2075812
-      [4,] 0.3960293 0.1985371 0.4054336 0.0000000
-    \end{lstlisting}
+<<estparamptrans>>=
+estparam$ptrans
+@
     
-\item Attribute {\tt param}: Array with the estimated parameters of the sojourn 
-  time distributions
-  \begin{lstlisting}
-    > est1$param
-    , , 1
+  \item Attribute \code{param}: Array with the estimated parameters of the sojourn 
+    time distributions
     
-              [,1]      [,2]      [,3]      [,4]
-    [1,]        NA 1.8776596 0.4075437 4.2673358
-    [2,] 0.6819788        NA 5.1696751 0.5415246
-    [3,] 1.9063444 2.9853748        NA 0.6052632
-    [4,] 4.0870712 0.2883156 0.4245077        NA
-    
-    , , 2
-    
-         [,1] [,2] [,3]      [,4]
-    [1,]   NA   NA   NA 0.6020990
-    [2,]   NA   NA   NA 0.7488554
-    [3,]   NA   NA   NA        NA
-    [4,]   NA   NA   NA        NA
-  \end{lstlisting}
+<<estparamparam>>=
+estparam$param
+@
 \end{itemize}
 
-Note that, for example, {\tt est1\$param[1, 3, ]} is the vector containing the 
+Note that, for example, \code{estparam\$param[1, 3, ]} is the vector containing the 
 parameters of the distribution $f_{13}(\cdot)$.
 
 \paragraph{3.3.2 Non-parametric estimation of semi-Markov models}
@@ -1073,8 +978,8 @@ parameters of the distribution $f_{13}(\cdot)$.
 
 Here we will consider two types of estimation for semi-Markov chains: a direct 
 estimation, obtaining thus empirical estimators (in fact, approached MLEs), 
-cf.~\citet{BL06,BarbuLimnios2008} and an estimation based on a couple Markov chain
-associated to the semi-Markov chain \citep[see][]{TL11}.
+cf.~\citet{BL06,BarbuLimnios2008} and an estimation based on a couple Markov 
+chain associated to the semi-Markov chain \citep[see][]{TL11}.
 
 \paragraph{No censoring: direct estimation}
 \ \\
@@ -1084,45 +989,47 @@ $Y=(Y_n)_{n\in\mathbb{N}},$ censored at an arbitrary fixed time $n$.\\
 
 \begin{itemize}
 
-\item{The case $q_{ij}(k)=p_{ij}f_{i j}(k)$}: The  maximum likelihood estimators are
-$$
-\widehat{p_{ij}}(n)  =   \nonumber \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad 
-\widehat{f_{ij}}(k; n)  =  \frac{N_{ij}(k; n)}{N_{ij}(n)}, \quad
-\widehat{q_{ij}}(k; n)  =  \frac{N_{ij}(k; n)}{N_{i\bullet}(n)}. 
-$$
-where $N_{ij}(n) = \sum_{m=1}^{N(n)-1}  \mi_{\{J_m = i ; J_{m+1}=j\}}$, 
-$N_{i\bullet}(n) = \sum_{m=1}^{N(n)-1} \mi_{\{J_m = i\}}$,\\
-$N_{ij}(k; n) = \sum_{m=1}^{N(n)-1} \mi_{\{J_m = i ; J_{m+1}=j ; T_{m+1}-T_m=k\}}$.
+  \item{The case $q_{ij}(k)=p_{ij}f_{i j}(k)$}: The  maximum likelihood 
+  estimators are 
+  $$
+  \widehat{p_{ij}}(n)  =   \nonumber \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad 
+  \widehat{f_{ij}}(k; n)  =  \frac{N_{ij}(k; n)}{N_{ij}(n)}, \quad
+  \widehat{q_{ij}}(k; n)  =  \frac{N_{ij}(k; n)}{N_{i\bullet}(n)}. 
+  $$
+  where $N_{ij}(n) = \sum_{m=1}^{N(n)-1}  \one_{\{J_m = i ; J_{m+1}=j\}}$, 
+  $N_{i\bullet}(n) = \sum_{m=1}^{N(n)-1} \one_{\{J_m = i\}}$,\\
+  $N_{ij}(k; n) = \sum_{m=1}^{N(n)-1} \one_{\{J_m = i ; J_{m+1}=j ; T_{m+1}-T_m=k\}}$.
 
-\item{The case $q_{ij}(k)=p_{ij}f_{i \bullet}(k)$}: The  maximum likelihood estimators are
-$$
-\widehat{p_{ij}}(n) = \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
-\widehat{f_{i \bullet}}(k; n) = \frac{N_{i\bullet}(k; n)}{N_{ij}(n)}, \quad
-\widehat{q_{ij}}(k; n) = \frac{N_{i\bullet}(k; n)}{N_{i\bullet}(n)},
-$$
-where $N_{i \bullet}(k; n) = \label{eq_NikSM} \sum_{m=1}^{N(n)-1} \mi_{\{J_m = i; T_{m+1}-T_m=k\}}$.
+  \item{The case $q_{ij}(k)=p_{ij}f_{i \bullet}(k)$}: The maximum likelihood 
+  estimators are
+  $$
+  \widehat{p_{ij}}(n) = \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
+  \widehat{f_{i \bullet}}(k; n) = \frac{N_{i\bullet}(k; n)}{N_{ij}(n)}, \quad
+  \widehat{q_{ij}}(k; n) = \frac{N_{i\bullet}(k; n)}{N_{i\bullet}(n)},
+  $$
+  where $N_{i \bullet}(k; n) = \label{eq_NikSM} \sum_{m=1}^{N(n)-1} \one_{\{J_m = i; T_{m+1}-T_m=k\}}$.
 
-\item{The case $q_{ij}(k)=p_{ij}f_{\bullet j}(k)$}: The  maximum likelihood estimators are
-$$
-\widehat{p_{ij}}(n)  =   \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
-\widehat{f_{\bullet j}}(k; n)  =  \frac{N_{\bullet j}(k; n)}{N_{ij}(n)}, \quad
-\widehat{q_{ij}}(k; n)  = \frac{N_{\bullet j}(k; n)}{N_{i\bullet}(n)}$$,
-where $N_{\bullet j}(k; n) = \label{eq_NjkSM} \sum_{m=1}^{N(n)-1} \mi_{\{J_{m+1} = j; T_{m+1}-T_m=k\}}$.
+  \item{The case $q_{ij}(k)=p_{ij}f_{\bullet j}(k)$}: The  maximum likelihood 
+  estimators are $$
+  \widehat{p_{ij}}(n)  =   \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
+  \widehat{f_{\bullet j}}(k; n)  =  \frac{N_{\bullet j}(k; n)}{N_{ij}(n)}, \quad
+  \widehat{q_{ij}}(k; n)  = \frac{N_{\bullet j}(k; n)}{N_{i\bullet}(n)}$$,
+  where $N_{\bullet j}(k; n) = \label{eq_NjkSM} \sum_{m=1}^{N(n)-1} \one_{\{J_{m+1} = j; T_{m+1}-T_m=k\}}$.
 
-\item{The case $q_{ij}(k)=p_{ij}f(k)$}: The  maximum likelihood estimators are
-$$
-\widehat{p_{ij}}(n) = \nonumber \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
-\widehat{f}(k; n) = \frac{N(k; n)}{N_{ij}(n)},\quad
-\widehat{q_{ij}}(k; n) = \frac{N(k; n)}{N_{i\bullet}(n)}
-$$,
-where $N(k; n) = \label{eq_NkSM} \sum_{m=1}^{N(n)-1} \mi_{\{T_{m+1}-T_m=k\}}$.
+  \item{The case $q_{ij}(k)=p_{ij}f(k)$}: The  maximum likelihood estimators are
+  $$
+  \widehat{p_{ij}}(n) = \nonumber \frac{N_{ij}(n)}{N_{i\bullet}(n)}, \quad
+  \widehat{f}(k; n) = \frac{N(k; n)}{N_{ij}(n)},\quad
+  \widehat{q_{ij}}(k; n) = \frac{N(k; n)}{N_{i\bullet}(n)}
+  $$,
+  where $N(k; n) = \label{eq_NkSM} \sum_{m=1}^{N(n)-1} \one_{\{T_{m+1}-T_m=k\}}$.
 
 \end{itemize}
 
 \paragraph{Censoring: couple Markov chain}
 
-For a semi-Markov chain $Y=(Y_n)_{n\in\mathbb{N}}$, let $U=(U_n)_{n\in\mathbb{N}}$ be 
-the backward recurrence time of the SMC, defined by 
+For a semi-Markov chain $Y=(Y_n)_{n\in\mathbb{N}}$, let $U=(U_n)_{n\in\mathbb{N}}$ 
+be the backward recurrence time of the SMC, defined by 
 \begin{equation}\label{eqUn}
   U_n:=n - T_{N(n)}.
 \end{equation}
@@ -1146,48 +1053,50 @@ Thus we obtain the corresponding estimator of $p_{ij}$
   \widehat{p}_{ij} &=& \sum_{k=0}^{\infty}\widehat{q}_{ij}(k).
 \end{eqnarray}
 
-In order to compute the estimators of the sojourn times, we consider the four different
-types of semi-Markov kernels defined in Equations (\ref{eq_kernel_fij}), 
+In order to compute the estimators of the sojourn times, we consider the four 
+different types of semi-Markov kernels defined in Equations (\ref{eq_kernel_fij}), 
 (\ref{eq_kernel_fi}), (\ref{eq_kernel_fj}) and (\ref{eq_kernel_f}).
 
 \paragraph{Parameters:}
-The estimation is carried out by the function {\tt fitsemimarkomodel} and several parameters must be given.
+
+The estimation is carried out by the function \fct{fitsemimarkomodel} and 
+several parameters must be given.
 
 \begin{itemize}
 
-  \item {\tt sequences}: A List of vectors representing the sequence(s) from which to estimate.
+  \item \code{sequences}: A List of vectors representing the sequence(s) from 
+    which to estimate.
 
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
   
-  \item {\tt type.sojourn}: Type of sojourn time; it can be {\tt "fij"}, {\tt "fi"}, 
-    {\tt "fj"} or {\tt "f"} according to the four cases previously discussed.
+  \item \code{type.sojourn}: Type of sojourn time; it can be \code{"fij"}, \code{"fi"}, 
+    \code{"fj"} or \code{"f"} according to the four cases previously discussed.
   
-  \item {\tt distr}: Let's keep the default value {\tt "nonparametric"}.
+  \item \code{distr}: Let's keep the default value \code{"nonparametric"}.
     
-  \item {\tt cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
-    {\tt TRUE} (if the first sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.beg}: Optional. Type of censoring at the beginning of sample paths; 
+    \code{TRUE} (if the first sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 
-  \item {\tt cens.end}: Optional. Type of censoring at the end of sample paths; 
-    {\tt TRUE} (if the last sojourn time is censored) or {\tt FALSE} (if not). 
+  \item \code{cens.end}: Optional. Type of censoring at the end of sample paths; 
+    \code{TRUE} (if the last sojourn time is censored) or \code{FALSE} (if not). 
     All the sequences must be censored in the same way.
 \end{itemize}
 
-\begin{lstlisting}
-  > # Estimation of simulated sequences
-  > est2 <- fitsemimarkovmodel(sequences = seq2, states = states, type.sojourn = "fj")
-\end{lstlisting}
+<<estnonparam>>=
+estnonparam <- fitsemimarkovmodel(sequences = seqnonparam, states = states, 
+                                  type.sojourn = "fj")
+@
 
 Here, we estimate simulated sequences with no censoring.
 
-The function {\tt fitsemimarkovmodel} returns an object of class {\tt smm}, more
-precisely an object of class {\tt smmparametric} if a parametric estimation is required 
-or an object of class {\tt smmnonparametric} otherwise:
+The function \fct{fitsemimarkovmodel} returns an object of class \class{smm}, more
+precisely an object of class \class{smmparametric} if a parametric estimation is 
+required or an object of class \class{smmnonparametric} otherwise:
 
-\begin{lstlisting}
-  > class(est2)
-  [1] "smm"              "smmnonparametric"
-\end{lstlisting}
+<<classestnonparam>>=
+class(estnonparam)
+@
 
 \paragraph{Values:}
 
@@ -1195,98 +1104,94 @@ The values of the estimated parameters are:
 
 \begin{itemize}
 
-  \item Attribute {\tt init}: Vector of size $s$ with the estimated initial 
+  \item Attribute \code{init}: Vector of size $s$ with the estimated initial 
     probabilities of the semi-Markov chain
     
-    \begin{lstlisting}
-      > est2$init
-      [1] 0.2078682 0.2409731 0.3101855 0.2409731
-    \end{lstlisting}
+<<estnonparaminit>>=
+estnonparam$init
+@
   
-  \item Attribute {\tt ptrans}: Matrix of size  $s\times s$ with the estimated 
+  \item Attribute \code{ptrans}: Matrix of size  $s\times s$ with the estimated 
     transition probabilities of the embedded Markov chain $J=(J_m)_{m}$
 
-    \begin{lstlisting}
-      > est2$ptrans
-                [,1]      [,2]      [,3]      [,4]
-      [1,] 0.0000000 0.2012038 0.4772141 0.3215821
-      [2,] 0.1980519 0.0000000 0.2913961 0.5105519
-      [3,] 0.2930200 0.5093296 0.0000000 0.1976503
-      [4,] 0.3840186 0.2024825 0.4134988 0.0000000
-    \end{lstlisting}
+<<estnonparamptrans>>=
+estnonparam$ptrans
+@
     
-\item Attribute {\tt distr}: Array of size $s \times s \times kmax$ with estimated 
-  values of the sojourn time distributions
-  \begin{lstlisting}
-    > est2$distr
-              [,1]       [,2]       [,3]       [,4]      [,5]       [,6]
-    [1,] 0.2132416 0.08856406 0.28890800 0.21582115 0.1934652 0.00000000
-    [2,] 0.4107143 0.19480519 0.09821429 0.00000000 0.1980519 0.09821429
-    [3,] 0.4968901 0.29371113 0.14858328 0.06081548 0.0000000 0.00000000
-    [4,] 0.3087665 0.20791311 0.09619860 0.20480993 0.1823119 0.00000000
-  \end{lstlisting}
+  \item Attribute \code{distr}: Array of size $s \times s \times kmax$ with estimated 
+    values of the sojourn time distributions
+    
+<<estnonparamdistr>>=
+estnonparam$distr
+@
 \end{itemize}
 
 
 
 \subsection{Supplementary functions}
 
-In this package, others functions are available. These functions enable to compute the 
-log-likelihood of a semi-Markov model and the AIC and BIC of a semi-Markov model.
+In this package, others functions are available. These functions enable to 
+compute the log-likelihood of a semi-Markov model and the AIC and BIC of a 
+semi-Markov model.
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt loglik}: Computation of the log-likelihood
+  \item[$\blacksquare$] \fct{loglik}: Computation of the log-likelihood
 \end{itemize}
 
 \paragraph{Parameters:}
 
 \begin{itemize}
 
-  \item {\tt x}: An object inheriting from the class {\tt smm}
+  \item \code{x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt sequences}: A list of vectors representing the sequences for which the 
-    log-likelihood must be computed.
+  \item \code{sequences}: A list of vectors representing the sequences for which
+    the log-likelihood must be computed.
     
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
-\begin{lstlisting}
-  > # State space
-  > states <- c("a", "c", "g", "t")
-  > s <- length(states)
-  > # Creation of the initial distribution
-  > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-  > # Creation of transition matrix
-  > pij <- matrix(c(0, 0.2, 0.5, 0.3, 
-  +                 0.2, 0, 0.3, 0.5, 
-  +                 0.3, 0.5, 0, 0.2, 
-  +                 0.4, 0.2, 0.4, 0), 
-  +               ncol = 4, byrow = TRUE)
-  > # Model specification
-  > smmspec <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-  +                          type.sojourn = "f", distr = "pois", param = 2)
-  > # Simulation of a squence of length 5000
-  > seq5000 <- simulate(object = smmspec, nsim = 5000, seed = 150)
-  > # Estimation of the semi-Markov model
-  > est <- fitsemimarkovmodel(sequences = seq5000, states = states, 
-  +                           type.sojourn = "f", distr = "pois")
-  > # Computation of  the log-likelihood
-  > loglik(x = est, sequences = seq5000, states = states)
-  [1] -4594.97
-\end{lstlisting}
+<<loglikelihood>>=
+# State space
+states <- c("a", "c", "g", "t")
+s <- length(states)
+
+# Creation of the initial distribution
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+
+# Creation of transition matrix
+pij <- matrix(c(0, 0.2, 0.5, 0.3, 
+                0.2, 0, 0.3, 0.5, 
+                0.3, 0.5, 0, 0.2, 
+                0.4, 0.2, 0.4, 0), 
+              ncol = 4, byrow = TRUE)
+
+# Model specification
+smmspec <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+                         type.sojourn = "f", distr = "pois", param = 2)
+
+# Simulation of a squence of length 5000
+seq5000 <- simulate(object = smmspec, nsim = 5000, seed = 150)
+
+# Estimation of the semi-Markov model
+est <- fitsemimarkovmodel(sequences = seq5000, states = states, 
+                          type.sojourn = "f", distr = "pois")
+
+# Computation of  the log-likelihood
+loglik(x = est, sequences = seq5000, states = states)
+@
 
 \paragraph{Values:}
 
-The function {\tt loglik} returns a vector giving the value of the loglikelihood 
+The function \fct{loglik} returns a vector giving the value of the loglikelihood 
 for each sequence.
 
 We also consider model selection criteria in order to evaluate and choose among 
-candidate models; the Akaike information criterion (AIC) and the Bayesian information
-criterion (BIC) are considered.
+candidate models; the Akaike information criterion (AIC) and the Bayesian 
+information criterion (BIC) are considered.
 
 \begin{itemize}
-\item[$\blacksquare$] {\tt aic}: computation of the AIC
+  \item[$\blacksquare$] \fct{aic}: computation of the AIC
 \end{itemize}
 %
 $$ AIC(M)= -2\log{\cal L}+2 M, $$
@@ -1297,206 +1202,176 @@ in the model.
 
 \begin{itemize}
 
-  \item {\tt x}: An object inheriting from the class {\tt smm}
+  \item \code{x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt sequences}: A list of vectors representing the sequences for which the 
-    log-likelihood must be computed.
+  \item \code{sequences}: A list of vectors representing the sequences for which 
+    the log-likelihood must be computed.
     
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
-\begin{lstlisting}
-  > aic(x = est, sequences = seq5000, states = states)
-  [1] 9191.939
-\end{lstlisting}
+<<aic>>=
+# Computation of the AIC
+aic(x = est, sequences = seq5000, states = states)
+@
 
 \paragraph{Values:}
 
-The function {\tt aic} returns vector giving the value of the AIC for each sequence.
+The function \fct{aic} returns vector giving the value of the AIC for each sequence.
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt bic}: computation of the BIC
+  \item[$\blacksquare$] \fct{bic}: computation of the BIC
 \end{itemize}
 
 $$BIC(M) = -2\log{\cal L}+log(n) M,$$
-where $\cal L$ is the log-likelihood, $M$ is the number of parameters involved in the model and $n$ is the sample size.
+where $\cal L$ is the log-likelihood, $M$ is the number of parameters involved 
+in the model and $n$ is the sample size.
 
 \paragraph{Parameters:}
 
 \begin{itemize}
 
-  \item {\tt x}: An object inheriting from the class {\tt smm}
+  \item \code{x}: An object inheriting from the class {\tt smm}
     ({\tt smmnonparametric} or {\tt smmnparametric}).
     
-  \item {\tt sequences}: A list of vectors representing the sequences for which the 
+  \item \code{sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
-\begin{lstlisting}
-  > bic(x = est, sequences = seq5000, states = states)
-  [1] 9198.457
-\end{lstlisting}
+<<bic>>=
+# Computation of the BIC
+bic(x = est, sequences = seq5000, states = states)
+@
 
 \paragraph{Values:}
 
-The function {\tt bic} returns vector giving the value of the BIC for each sequence.
+The function \fct{bic} returns vector giving the value of the BIC for each 
+sequence.
 
 
 
 \subsection{Markov case}
 
-In the {\tt SMM R} package, we also implemented the estimation and the simulation 
-of discrete-time multi-state Markov models. 
-As in the semi-Markov case, others functions are available, enabling to compute the 
-log-likelihood and also the AIC and BIC of a Markov model.
+In the \pkg{SMM} \proglang{R} package, we also implemented the estimation and 
+the simulation of discrete-time multi-state Markov models. 
+As in the semi-Markov case, others functions are available, enabling to 
+compute the log-likelihood and also the AIC and BIC of a Markov model.
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt markovmodel}: Specification of a Markov chain of order $k$
+  \item[$\blacksquare$] \fct{markovmodel}: Specification of a Markov chain of order $k$
 \end{itemize}
 
-\begin{lstlisting}
-  > # State space 
-  > states <- c("a", "c", "g", "t")
-  > s <- length(states)
-  > vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-  > k <- 2
-  > p <- matrix(0.25, nrow = s ^ k, ncol = s)
-  > # Specify the Markov model
-  > markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
-\end{lstlisting}
+<<markov>>=
+# State space
+states <- c("a", "c", "g", "t")
+s <- length(states)
+vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+k <- 2
+p <- matrix(0.25, nrow = s ^ k, ncol = s)
+
+# Specify the Markov model
+markovspec <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
+@
 
 \paragraph{Values:}
-The function {\tt markovmodel} returns an object of class {\tt markovmodel}. The S3 
-class {\tt markovmodel} contains various methods such as {\tt simulate}.
+The function \fct{markovmodel} returns an object of class \class{markovmodel}. The S3 
+class \class{markovmodel} contains various methods such as \fct{simulate}.
 
-\begin{lstlisting}
-  > markov1
-  $states
-  [1] "a" "c" "g" "t"
-  
-  $k
-  [1] 2
-  
-  $init
-  [1] 0.25 0.25 0.25 0.25
-  
-  $ptrans
-        [,1] [,2] [,3] [,4]
-   [1,] 0.25 0.25 0.25 0.25
-   [2,] 0.25 0.25 0.25 0.25
-   [3,] 0.25 0.25 0.25 0.25
-   [4,] 0.25 0.25 0.25 0.25
-   [5,] 0.25 0.25 0.25 0.25
-   [6,] 0.25 0.25 0.25 0.25
-   [7,] 0.25 0.25 0.25 0.25
-   [8,] 0.25 0.25 0.25 0.25
-   [9,] 0.25 0.25 0.25 0.25
-  [10,] 0.25 0.25 0.25 0.25
-  [11,] 0.25 0.25 0.25 0.25
-  [12,] 0.25 0.25 0.25 0.25
-  [13,] 0.25 0.25 0.25 0.25
-  [14,] 0.25 0.25 0.25 0.25
-  [15,] 0.25 0.25 0.25 0.25
-  [16,] 0.25 0.25 0.25 0.25
-  
-  attr(,"class")
-  [1] "markovmodel"
-\end{lstlisting}
+<<markovspec>>=
+markovspec
+@
 
 \begin{itemize}
-\item[$\blacksquare$] {\tt simulate.markovmodel}: Simulation of Markov chains of order $k$
+\item[$\blacksquare$] \fct{simulate.markovmodel}: Simulation of Markov chains of order $k$
 \end{itemize}
 
-Let's use the object {\tt markov1} to simulate 3 sequences of length $1000$, $10000$ and
-$2000$.
+Let's use the object \code{markovspec} to simulate 3 sequences of length $1000$,
+$10000$ and $2000$.
 
-\begin{lstlisting}
-  > seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
-  > seq1[[1]][1:15]
-   [1] "c" "g" "g" "a" "c" "g" "g" "g" "g" "a" "t" "a" "a" "g" "t"
-\end{lstlisting}
+<<seqmarkov>>=
+seqmarkov <- simulate(object = markovspec, nsim = c(1000, 10000, 2000), seed = 150)
+seqmarkov[[1]][1:15]
+@
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt fitmarkovmodel}: Estimation of a Markov chain of order $k$
+  \item[$\blacksquare$] \fct{fitmarkovmodel}: Estimation of a Markov chain of order $k$
 \end{itemize}
 
-\begin{lstlisting}
-  > # State space
-  > states <- c("a", "c", "g", "t")
-  > est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
-\end{lstlisting}
+<<estmarkov>>=
+# State space
+states <- c("a", "c", "g", "t")
+estmarkov <- fitmarkovmodel(sequences = seqmarkov, states = states, k = 2)
+@
 
 \paragraph{Values:}
 
-The function {\tt fitmarkovmodel} returns an object of class {\tt markovmodel}:
+The function \fct{fitmarkovmodel} returns an object of class \class{markovmodel}:
 
-\begin{lstlisting}
-  > class(est)
-  [1] "markovmodel"
-\end{lstlisting}
+<<classestmarkov>>=
+class(estmarkov)
+@
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt loglik}: Computation of the log-likelihood
+  \item[$\blacksquare$] \fct{loglik}: Computation of the log-likelihood
 \end{itemize}
 
 \paragraph{Parameters:}
 
 \begin{itemize}
 
-  \item {\tt x}: An object of the class {\tt markovmodel}.
+  \item \code{x}: An object of the class \class{markovmodel}.
     
-  \item {\tt sequences}: A list of vectors representing the sequences for which the 
-    log-likelihood must be computed.
+  \item \code{sequences}: A list of vectors representing the sequences for which
+    the log-likelihood must be computed.
     
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
-\begin{lstlisting}
-  > # Computation of  the log-likelihood
-  > loglik(x = est, sequences = seq1, states = states)
-  [1] -17986.76
-\end{lstlisting}
+<<loglikelihoodestmarkov>>=
+# Computation of  the log-likelihood
+loglik(x = estmarkov, sequences = seqmarkov, states = states)
+@
 
 \paragraph{Values:}
 
-The function {\tt loglik} returns a vector giving the value of the loglikelihood 
+The function \fct{loglik} returns a vector giving the value of the loglikelihood 
 for each sequence.
 
 \begin{itemize}
-  \item[$\blacksquare$] {\tt aic}: Computation of the AIC for a Markov chain of order $k$
+  \item[$\blacksquare$] \fct{aic}: Computation of the AIC for a Markov chain of order $k$
 \end{itemize}
 
 \paragraph{Parameters:}
 
 \begin{itemize}
 
-  \item {\tt x}: An object of class {\tt markovmodel}.
+  \item \code{x}: An object of class {\tt markovmodel}.
     
-  \item {\tt sequences}: A list of vectors representing the sequences for which the 
+  \item \code{sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item {\tt states}: Vector of state space of length $s$.
+  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
-\begin{lstlisting}
-  > # Computation of the AIC
-  > aic(x = est, sequences = seq1, states = states)
-  [1] 36069.53
-\end{lstlisting}
+<<aicestmarkov>>=
+# Computation of the AIC
+aic(x = estmarkov, sequences = seqmarkov, states = states)
+@
 
 \paragraph{Values:}
 
-The function {\tt aic} returns vector giving the value of the AIC for each sequence.
+The function \fct{aic} returns vector giving the value of the AIC for each sequence.
 
 
 \paragraph{Values:}
-The function {\tt bic} returns vector giving the value of the BIC for each sequence.
+The function \fct{bic} returns vector giving the value of the BIC for each sequence.
 
 
-\section[Concluding remarks]{Concluding remarks} \label{concluding}
+\section{Concluding remarks}
+\label{concluding}
 
 In this paper we have presented \pkg{SMM}, an \proglang{R} package for simulation 
 and estimation of discrete-time multi-state semi-Markov models.

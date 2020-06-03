@@ -2,12 +2,9 @@ image: rocker/tidyverse
 test:  
   script:
     - apt update
-    - apt install -y zlib1g-dev libjpeg-dev texlive-full
-    - R -e 'install.packages(c("DiscreteWeibull","seqinr","qpdf", "roxygen2"))'
-    - cd SMM
-    - R -e 'devtools::document()'
-    - cd -
-    - R CMD build SMM
+    - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
+    - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2"))'
+    - R CMD build --compact-vignettes=both SMM
     - mv SMM*.tar.gz SMM.tar.gz
     - R CMD check --as-cran SMM.tar.gz
   artifacts:
