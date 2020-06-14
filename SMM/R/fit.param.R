@@ -1,4 +1,4 @@
-.fit.param <- function(sequences, states, type.sojourn, distr, cens.end, cens.beg) {
+.fit.param <- function(sequences, states, type.sojourn, distr, init.estim = init.estim, cens.end, cens.beg) {
   
   states <- sequences$states
   s <- sequences$s
@@ -133,27 +133,26 @@
   }
   
   estimate <-
-    list(
+    smmparametric(
       states = states,
-      s = s,
-      init = rep.int(x = NA, times = s),
-      type.sojourn = type.sojourn,
+      init = rep.int(x = 1 / s, times = s),
       ptrans = ptrans,
+      type.sojourn = type.sojourn,
       distr = distr,
       param = param,
       cens.beg = cens.beg,
       cens.end = cens.end
     )
   
-  class(estimate) <- c("smm", "smmparametric")
-  
   # Inital distribution
-  if (L >= s * 10) {
+  if (init.estim == "mle") {
     estimate$init <- counting$Nstarti / sum(counting$Nstarti)
-  } else {# Computation of the limit distribution
+  } else {# init.estim == "stationary"
     q <- .get.q(estimate, kmax)
     estimate$init <- .limitDistribution(q = q, ptrans = estimate$ptrans)
   }
+  
+  names(estimate$init) <- colnames(estimate$ptrans)
   
   return(estimate)
   

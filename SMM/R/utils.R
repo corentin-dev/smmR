@@ -263,3 +263,14 @@
   
   return(out)
 }
+
+## __________________________________________________________
+## .productProb
+## __________________________________________________________
+.productProb <- function(length = 2, prob) {
+  if (length == 1) {
+    return(prob)
+  } else {
+    return(kronecker(prob, .productProb(length - 1, prob)))
+  }
+}

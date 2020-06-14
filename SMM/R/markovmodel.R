@@ -4,7 +4,7 @@
 #'
 #' @param states Vector of state space of length s.
 #' @param k Order of the Markov chain.
-#' @param init Vector of initial distribution of length s.
+#' @param init Vector of initial distribution of length s ^ k.
 #' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
 #'   \eqn{J=(J_m)_{m}} of size sxs.
 #' @return An object of class [markovmodel][markovmodel].
@@ -29,8 +29,8 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   # Checking parameter init
   #############################
 
-  if (!(is.vector(init) && (length(init) == s))) {
-    stop("init is not a vector of length s")
+  if (!(is.vector(init) && (length(init) == s ^ k))) {
+    stop("init is not a vector of length s ^ k.")
   }
   
   if (!(all(init >= 0) && all(init <= 1))) {
@@ -62,15 +62,20 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   }
   
   if (!((dim(ptrans)[1] == s ^ k) && (dim(ptrans)[2] == s))) {
-    stop("The size of the matrix ptrans must be equal to sxs")
+    stop("The size of the matrix ptrans must be equal to (s ^ k)xs")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
     stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
+  
+  
+  # Add names to the attributes init, ptrans, for readability
+  colnames(ptrans) <- words(length = 1, alphabet = states)
+  row.names(ptrans) <- words(length = k, alphabet = states)
+  names(init) <- row.names(ptrans)
 
-
-  ans <- list(states = states, k = k, init = init, ptrans = ptrans)
+  ans <- list(states = states, s = s, k = k, init = init, ptrans = ptrans)
   
   class(ans) <- "markovmodel"
   
@@ -128,7 +133,7 @@ loglik.markovmodel <- function(x, sequences, states) {
   # Checking markovmodel parameter
   #############################
   
-  if ((x$s != s)) {
+  if (x$s != s) {
     stop("The size of the matrix ptrans must be equal to sxs with s = length(states)")
   }
   
@@ -146,14 +151,11 @@ loglik.markovmodel <- function(x, sequences, states) {
   
   for (i in 1:nbseq) {
     
-    Nijl[, , i] <- matrix(count(seq = sequences[[i]], wordsize = x$k + 1, alphabet = x$states), byrow = TRUE, ncol = x$s)
+    # Transitions
+    Nijl[, , i] <- matrix(count(seq = sequences[[i]], wordsize = x$k + 1, alphabet = x$states), byrow = TRUE, ncol = s)
     
-    for (j in 1:x$k) {# Warning to initial law
-      if (x$init[which(x$states == sequences[[i]][j])] != 0) {
-        contrInit[i] <- contrInit[i] + log(x$init[which(x$states == sequences[[i]][j])])  
-      }
-    }
-    
+    # Initial state(s)
+    contrInit[i] <- log(x$init[which(words(length = x$k, alphabet = x$states) == c2s(sequences[[i]][1:x$k]))])
   }
   
   Nij <- apply(Nijl, c(1, 2), sum)
@@ -168,7 +170,9 @@ loglik.markovmodel <- function(x, sequences, states) {
 # (useful for the computation of criteria such as AIC and BIC)
 .getKpar.markovmodel <- function(x) {
   
-  kpar <- (x$s - 1) * x$s ^ x$k
+  s <- x$s
+  
+  kpar <- (s - 1) * s ^ x$k
   
   return(kpar)
 }

@@ -1,4 +1,4 @@
-.fit.nonparam.nocensoring <- function(processes, type.sojourn = c("fij", "fi", "fj", "f"), cens.beg = cens.beg) {
+.fit.nonparam.nocensoring <- function(processes, type.sojourn = c("fij", "fi", "fj", "f"), init.estim = init.estim, cens.beg = cens.beg) {
   
   s <- processes$s
   states <- processes$states
@@ -57,26 +57,22 @@
   }
   
   # Initial distribution
-  if (L >= s * 10) {
+  if (init.estim == "mle") {
     init <- Nstart / sum(Nstart)
-  } else {# Computation of the limit distribution
+  } else {# init.estim == "stationary"
     init <- .limitDistribution(q = q, ptrans = p)
   }
-  
+
   estimate <-
-    list(
+    smmnonparametric(
       states = states,
-      s = s,
-      kmax = kmax,
       init = init,
-      type.sojourn = type.sojourn,
       ptrans = p,
+      type.sojourn = type.sojourn,
       distr = f,
       cens.beg = cens.beg,
       cens.end = FALSE
     )
-  
-  class(estimate) <- c("smm", "smmnonparametric")
   
   return(estimate)
 }

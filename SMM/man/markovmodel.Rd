@@ -9,7 +9,7 @@ markovmodel(states, init, ptrans, k = 1)
 \arguments{
 \item{states}{Vector of state space of length s.}
 
-\item{init}{Vector of initial distribution of length s.}
+\item{init}{Vector of initial distribution of length s ^ k.}
 
 \item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
 \eqn{J=(J_m)_{m}} of size sxs.}

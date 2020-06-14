@@ -103,6 +103,10 @@
 #'   
 #'   The distributions to be used in `distr` must be one of `"unif"`, `"geom"`, 
 #'   `"pois"`, `"dweibull"`, `"nbinom"`.
+#' @param init.estim Optional. Method used to estimate the initial distribution.
+#'   If `init.estim = "mle"`, then the classical Maximum Likelihood Estimator 
+#'   is used. If `init.estim = "stationary"`, then the initial distribution
+#'   is replaced by the stationary distribution of the semi-Markov chains.
 #' @param cens.beg Optional. A logical value indicating whether or not 
 #'   sequences are censored at the beginning.
 #' @param cens.end Optional. A logical value indicating whether or not 
@@ -164,8 +168,10 @@
 #'                            distr = distr.matrix)
 #' est1
 #' 
-fitsemimarkovmodel <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"),
-                   distr = "nonparametric", cens.beg = FALSE, cens.end = FALSE) {
+fitsemimarkovmodel <-
+  function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), distr = "nonparametric",
+           init.estim = c("mle", "stationary"), cens.beg = FALSE, cens.end = FALSE) {
+    
 
   #############################
   # Checking parameters sequences and states
@@ -227,20 +233,27 @@ fitsemimarkovmodel <- function(sequences, states, type.sojourn = c("fij", "fi", 
     }
     
   }
+  
+  #############################
+  # Checking parameter init.estim
+  #############################
+  
+  init.estim <- match.arg(init.estim)
+  
 
   sequences <- processes(sequences = sequences, states = states)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     if (!cens.beg && !cens.end) {
-      .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, cens.beg = cens.beg)
+      .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
     } else if (cens.beg && !cens.end) {
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = FALSE")
     } else if (!cens.beg && cens.end) {
-      .fit.nonparam.endcensoring(processes = sequences, states = states, type.sojourn = type.sojourn, cens.beg = cens.beg)
+      .fit.nonparam.endcensoring(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
     } else {
       warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = TRUE")
     }
   } else {
-    .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, cens.end = cens.end, cens.beg = cens.beg)
+    .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
   }
 }

@@ -248,6 +248,21 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   }
   
   
+  # Add names to the attributes init, ptrans, distr and param for readability
+  colnames(ptrans) <- words(length = 1, alphabet = states)
+  row.names(ptrans) <- colnames(ptrans)
+  names(init) <- colnames(ptrans)
+  
+  if (is.matrix(distr)) {
+    colnames(distr) <- colnames(ptrans)
+    row.names(distr) <- colnames(distr)
+    dimnames(param) <- rep(list(colnames(distr)), 2)
+  } else if (length(distr) != 1) {
+    names(distr) <- colnames(ptrans)
+    row.names(param) <- colnames(ptrans)
+  }
+  
+  
   ans <-
     list(
       states = states,

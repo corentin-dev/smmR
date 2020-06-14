@@ -210,6 +210,23 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     kmax <- length(distr)
   }
   
+  colnames(ptrans) <- words(length = 1, alphabet = states)
+  row.names(ptrans) <- colnames(ptrans)
+  names(init) <- colnames(ptrans)
+  
+  
+  # Add names to the attributes init, ptrans, distr and param for readability
+  colnames(ptrans) <- words(length = 1, alphabet = states)
+  row.names(ptrans) <- colnames(ptrans)
+  names(init) <- colnames(ptrans)
+  
+  if (is.array(distr) & !(is.matrix(distr))) {
+    dimnames(distr) <- rep(list(colnames(ptrans)), 2)
+  } else if (is.matrix(distr)) {
+    row.names(distr) <- colnames(ptrans)
+  }
+  
+  
   ans <-
     list(
       states = states,

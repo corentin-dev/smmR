@@ -20,8 +20,8 @@
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)
-#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' k <- 2
+#' vect.init <- rep.int(1 / s ^ k, s ^ k)
 #' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
 #' # Specify the Markov model
@@ -43,9 +43,8 @@ simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
   for (n in 1:nbseq) {
     y <- rep.int(NA, nsim[n])
     
-    y[1:object$k] <- sample(x = object$states, size = object$k, replace = TRUE, prob = object$init)
-    # y[1:object$k] <- s2c(sample(x = as.character(words(length = k, alphabet = states)), 
-    #                         size = 1, prob = object$init))
+    # Initial state(s)
+    y[1:object$k] <- s2c(sample(x = names(object$init), size = 1, prob = object$init))
     
     for (i in 1:(nsim[n] - object$k)) {
       ind <- which(object$states == y[i + object$k - 1])

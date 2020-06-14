@@ -9,6 +9,7 @@ fitsemimarkovmodel(
   states,
   type.sojourn = c("fij", "fi", "fj", "f"),
   distr = "nonparametric",
+  init.estim = c("mle", "stationary"),
   cens.beg = FALSE,
   cens.end = FALSE
 )
@@ -32,6 +33,11 @@ If the parametric estimation case is desired, \code{distr} should be:
 
 The distributions to be used in \code{distr} must be one of \code{"unif"}, \code{"geom"},
 \code{"pois"}, \code{"dweibull"}, \code{"nbinom"}.}
+
+\item{init.estim}{Optional. Method used to estimate the initial distribution.
+If \code{init.estim = "mle"}, then the classical Maximum Likelihood Estimator
+is used. If \code{init.estim = "stationary"}, then the initial distribution
+is replaced by the stationary distribution of the semi-Markov chains.}
 
 \item{cens.beg}{Optional. A logical value indicating whether or not
 sequences are censored at the beginning.}

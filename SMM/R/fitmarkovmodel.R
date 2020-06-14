@@ -12,16 +12,37 @@
 #'   to any state. For \eqn{k > 1} we have similar expressions.
 #'
 #'  The initial distribution of a k-th order Markov chain is defined as 
-#'  \eqn{\mu_i = P(X_1 = i)}. An estimation of the initial law for a first order 
-#'  Markov chain is assumed to be the estimation of the stationary distribution. 
-#'  If the order of the Markov is greater than 1, then an estimation of the 
-#'  initial law is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where \eqn{N_i} is the number occurences 
-#'  of state \eqn{i} in the sequences and \eqn{N} is the sum of the sequence 
-#'  lengths.
+#'  \eqn{\mu_i = P(X_1 = i)}. Three methods are proposed for the estimation
+#'  of the latter :
+#'  \describe{
+#'    \item{Estimation based on the Maximum Likelihood Estimator:}{
+#'      The Maximum Likelihood Estimator for the initial distribution. The 
+#'      formula is: \eqn{\widehat{\mu_i} = \frac{Nstart_i}{L}}, where 
+#'      \eqn{Nstart_i} is the number of occurences of the word \eqn{i} (of 
+#'      length \eqn{k}) at the beginning of each sequence and \eqn{L} is the 
+#'      number of sequences. This estimator is reliable when the number of 
+#'      sequences \eqn{L} is high.}
+#'    \item{Estimation based on the frequency:}{The initial distribution is 
+#'      estimated by taking the frequences of the words of length `k` for all 
+#'      sequences. The formula is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where 
+#'      \eqn{N_i} is the number of occurences of the word \eqn{i} (of length \eqn{k}) 
+#'      in the sequences and \eqn{N} is the sum of the lengths of the sequences.}
+#'    \item{Estimation based on the product of the frequences of each state:}{
+#'      The initial distribution is estimated by using the product of the 
+#'      frequences of each state (for all the sequences) in the word of length
+#'      \eqn{k}.}
+#'  }
 #'
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
 #' @param k Order of the Markov chain.
+#' @param init.estim Optional. Method used to estimate the initial distribution.
+#'   If `init.estim = "mle"`, then the classical Maximum Likelihood Estimator 
+#'   is used, if `init.estim = "freq"`, then, the initial distribution `init` 
+#'   is estimated by taking the frequences of the words of length `k` for all 
+#'   sequences. If `init.estim = "prod"`, then, `init` is estimated by using 
+#'   the product of the frequences of each letter (for all the sequences) in 
+#'   the word of length `k`. See Details for the formulas.
 #' @return An object of class [markovmodel][markovmodel].
 #' 
 #' 
@@ -31,8 +52,8 @@
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)
-#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' k <- 2
+#' vect.init <- rep.int(1 / s ^ k, s ^ k)
 #' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
 #' # Specify the Markov model
@@ -42,7 +63,7 @@
 #' 
 #' est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 #' 
-fitmarkovmodel <- function(sequences, states, k = 1) {
+fitmarkovmodel <- function(sequences, states, k = 1, init.estim = c("mle", "freq", "prod")) {
   
   #############################
   # Checking parameters sequences and states
@@ -64,6 +85,12 @@ fitmarkovmodel <- function(sequences, states, k = 1) {
     stop("k must be a strictly positive integer")
   }
   
+  #############################
+  # Checking parameter init.estim
+  #############################
+  
+  init.estim <- match.arg(init.estim)
+
   
   s <- length(states) # State space size
   nbseq <- length(sequences) # Number of sequences
@@ -108,15 +135,20 @@ fitmarkovmodel <- function(sequences, states, k = 1) {
   ptrans <- Nij / tcrossprod(Ni, rep.int(1, s))
   ptrans[which(is.na(ptrans))] <- 0
   
-  if (k == 1) {
-    init <- .stationaryDistribution(ptrans)
-  } else {
-    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states)) ## initial law for k > 1 ???
+  if (init.estim == "mle") {
+    Nstart <- as.vector(count(seq = unlist(lapply(sequences, function(x) x[1:k])), wordsize = k, by = k, alphabet = states))
     init <- Nstart / sum(Nstart)
+  } else if (init.estim == "freq") {
+    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = k, alphabet = states))
+    init <- Nstart / sum(Nstart)
+  } else {# init.estim == "prod"
+    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states))
+    prob <- Nstart / sum(Nstart)
+    
+    init <- as.vector(.productProb(length = k, prob = prob))
   }
   
-  estimate <- list(states = states, s = s, init = init, ptrans = ptrans, k = k)
-  class(estimate) <- "markovmodel"
+  estimate <- markovmodel(states = states, init = init, ptrans = ptrans, k = k)
   
   return(estimate)
 }

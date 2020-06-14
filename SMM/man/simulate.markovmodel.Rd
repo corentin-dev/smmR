@@ -30,8 +30,8 @@ sequences are generated with respective lengths.
 \examples{
 states <- c("a", "c", "g", "t")
 s <- length(states)
-vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 k <- 2
+vect.init <- rep.int(1 / s ^ k, s ^ k)
 p <- matrix(0.25, nrow = s ^ k, ncol = s)
 
 # Specify the Markov model
