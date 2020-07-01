@@ -19,8 +19,7 @@ is.smm <- function(x) {
   UseMethod(".getKpar", x)
 }
 
-# Method to compute the value of psi
-# (useful for the computation of criteria such as the reliability)
+# Method to compute the value of psi (estimator p. 53 (3.16))
 .get.psi <- function(x, k, states = x$states) {
   
   q <- .get.q(x, k)[which(x$states %in% states), which(x$states %in% states),]
@@ -31,10 +30,10 @@ is.smm <- function(x) {
     
     for (j in 1:k) {
       psi[, , j + 1] <-
-        Reduce('+', lapply(
+        -Reduce('+', lapply(
           X = 0:(j - 1),
           FUN = function(l)
-            -psi[, , l + 1] %*% (-q[, , j - l])
+            psi[, , l + 1] %*% (-q[, , j - l])
         ))
     }
     
@@ -44,10 +43,10 @@ is.smm <- function(x) {
     
     for (j in 1:k) {
       psi[, , j + 1] <-
-        Reduce('+', lapply(
+        -Reduce('+', lapply(
           X = 0:(j - 1),
           FUN = function(l)
-            -psi[, , l + 1] %*% (-q[j - l])
+            psi[, , l + 1] %*% (-q[j - l])
         ))
     }
   }
@@ -56,8 +55,7 @@ is.smm <- function(x) {
   
 }
 
-# Method to compute the value of H
-# (useful for the computation of criteria such as the reliability)
+# Method to compute the value of H (definition p. 46 (Definition 3.4))
 .get.H <- function(x, k) {
   
   q <- .get.q(x, k)
@@ -73,8 +71,7 @@ is.smm <- function(x) {
   return(H)
 }
 
-# Method to compute the value of P
-# (useful for the computation of criteria such as the reliability)
+# Method to compute the value of P (estimator p. 59 (3.33))
 .get.P <- function(x, k, states = x$states) {
   
   psi <- .get.psi(x, k, states = states)
@@ -82,26 +79,29 @@ is.smm <- function(x) {
   H1 <- H[which(x$states %in% states), which(x$states %in% states), ]
   
   p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1))
+  p[, , 1] <- diag(nrow(psi))
   
   if (!is.null(dim(H1))) {
     
-    for (j in 0:k) {
+    for (j in 1:k) {
       p[, , j + 1] <-
         Reduce('+', lapply(
           X = 0:j,
           FUN = function(l)
             psi[, , j - l + 1] %*% (diag(nrow(H1)) - H1[, , l + 1])
+            # psi[, , l + 1] %*% (diag(nrow(H1)) - H1[, , j - l + 1])
         ))
     }
   
   } else {
     
-    for (j in 0:k) {
+    for (j in 1:k) {
       p[, , j + 1] <-
         Reduce('+', lapply(
           X = 0:j,
           FUN = function(l)
             psi[, , j - l + 1] %*% (1 - H1[l + 1])
+            # psi[, , l + 1] %*% (diag(nrow(H1)) - H1[, , j - l + 1])
         ))
     }
     
@@ -597,7 +597,7 @@ mttf <- function(x, alpha = x$init, upstates = x$states) {
 
 #' Mean Time To Repair (MTTR) Function
 #'
-#' @description Consider a system \eqn{S_{ystem}} starting to work at time 
+#' @description Consider a system \eqn{S_{ystem}} starting to fail at time 
 #'   \eqn{k = 0}. The mean time to repair (MTTR) is defined as the mean of the 
 #'   repair duration.
 #'
@@ -615,7 +615,7 @@ mttf <- function(x, alpha = x$init, upstates = x$states) {
 #'   We are interested in investigating the mean time to repair theory of a 
 #'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
 #'   that the evolution in time of the system is governed by an E-state space 
-#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to fail at 
 #'   instant \eqn{0} and the state of the system is given at each instant 
 #'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
 #'   \eqn{i \in U}, means that the system \eqn{S_{ystem}} is in operating mode 

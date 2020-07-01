@@ -31,8 +31,11 @@ Depends: seqinr,
     DiscreteWeibull
 Imports:
     MASS
-Suggests: utils
-VignetteBuilder: utils
+Suggests: 
+    utils,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2020-01-24 14:04:32 UTC; vergnnic
 Repository: CRAN

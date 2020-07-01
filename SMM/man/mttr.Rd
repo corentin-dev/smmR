@@ -20,7 +20,7 @@ A vector of length \eqn{\textrm{card}(D)} giving the values of the
 mean time to repair for each state \eqn{i \in D}.
 }
 \description{
-Consider a system \eqn{S_{ystem}} starting to work at time
+Consider a system \eqn{S_{ystem}} starting to fail at time
 \eqn{k = 0}. The mean time to repair (MTTR) is defined as the mean of the
 repair duration.
 }
@@ -39,7 +39,7 @@ systems with different modes.
 We are interested in investigating the mean time to repair theory of a
 discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
 that the evolution in time of the system is governed by an E-state space
-semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at
+semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to fail at
 instant \eqn{0} and the state of the system is given at each instant
 \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain
 \eqn{i \in U}, means that the system \eqn{S_{ystem}} is in operating mode
