@@ -18,12 +18,8 @@
   Nstart <- counting$Nstarti
   
   # Estimation of the transition matrix
-  p <- Nij / tcrossprod(Ni, rep.int(1, s))
+  p <- Nij / matrix(data = Ni, nrow = s, ncol = s)
   p[which(is.na(p))] <- 0
-  
-  # # Estimation of the transition matrix
-  # a <- Nijk / array(Ni, c(s, s, kmax))
-  # a[which(is.na(a))] <- 0
   
   # Estimation of the sojourn time distribution and the kernel
   if (type.sojourn == "fij") {
@@ -31,20 +27,24 @@
     f <- Nijk / array(Nij, c(s, s, kmax))
     f[which(is.na(f))] <- 0
     
-    q <- array(p, c(s, s, kmax)) * f
+    q <- Nijk / array(data = Ni, dim = dim(Nijk))
     
   } else if (type.sojourn == "fi") {
     
-    f <- Nik / Ni %*% t(rep.int(1, kmax))
+    f <- Nik / matrix(data = Ni, nrow = s, ncol = kmax)
     f[which(is.na(f))] <- 0
     
+    # q <- aperm(a = array(data = Nik, dim = c(s, kmax, s)), perm = c(1, 3, 2)) * array(data = Nij, dim = c(s, s, kmax)) / 
+    #   array(data = Ni ^ 2, dim = c(s, s, kmax))
     q <- array(p, c(s, s, kmax)) * aperm(array(f, c(s, kmax, s)), c(1, 3, 2))
     
   } else if (type.sojourn == "fj") {
     
-    f <- Njk / Nj %*% t(rep.int(1, kmax))
+    f <- Njk / matrix(data = Nj, nrow = s, ncol = kmax)
     f[which(is.na(f))] <- 0
     
+    # q <- aperm(a = array(data = Njk, dim = c(s, kmax, s)), perm = c(3, 1, 2)) * array(data = Nij, dim = c(s, s, kmax)) / 
+    #   (aperm(a = array(data = Nj, dim = c(s, s, kmax)), perm = c(2, 1, 3)) * array(data = Ni, dim = c(s, s, kmax)))
     q <- array(p, c(s, s, kmax)) * aperm(array(f, c(s, kmax, s)), c(3, 1, 2))
     
   } else if (type.sojourn == "f") {
@@ -52,6 +52,8 @@
     f <- Nk / N
     f[which(is.na(f))] <- 0
     
+    # q <- aperm(a = array(data = Nk, dim = c(kmax, s, s)), perm = c(2, 3, 1)) * array(data = Nij, dim = c(s, s, kmax)) / 
+    #   (N * array(data = Ni, dim = c(s, s, kmax)))
     q <- array(p, c(s, s, kmax)) * aperm(array(f, c(kmax, s, s)), c(2, 3, 1))
     
   }

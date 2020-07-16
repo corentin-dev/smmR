@@ -239,7 +239,7 @@ time $k$ (independently of the fact that the system has failed or not in
 $[0, k)$).
 
 ```{r}
-avail <- availability(x = factory, k = k, alpha = alpha, upstates = upstates)
+avail <- availability(x = factory, k = k, alpha = c(1, 0, 0), upstates = upstates)
 ```
 
 ```{r}

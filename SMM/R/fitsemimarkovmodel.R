@@ -244,14 +244,27 @@ fitsemimarkovmodel <-
   sequences <- processes(sequences = sequences, states = states)
 
   if (length(distr) == 1 && distr == "nonparametric") {
-    if (!cens.beg && !cens.end) {
-      .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
-    } else if (cens.beg && !cens.end) {
-      warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = FALSE")
-    } else if (!cens.beg && cens.end) {
-      .fit.nonparam.endcensoring(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
+    
+    if (!(cens.beg)) {
+      
+      if (sequences$L > 1) {# If more than one sequence, use the estimation based on a couple Markov chain
+        .fit.nonparam.couplemarkovchain(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+      } else {
+        if (!cens.end) {
+          .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
+        } else {
+          .fit.nonparam.couplemarkovchain(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+        }
+      }
+      
     } else {
-      warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = TRUE")
+     
+      if (!cens.end) {
+        warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = FALSE")
+      } else {
+        warning("fitsmm not implemented in the case distr = \"nonparametric\", cens.beg = TRUE, cens.end = TRUE")
+      }
+       
     }
   } else {
     .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)

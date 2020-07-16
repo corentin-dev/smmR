@@ -1,4 +1,4 @@
-.fit.nonparam.endcensoring <- function(processes, states, type.sojourn = c("fij", "fi", "fj", "f"), init.estim = init.estim, cens.beg = cens.beg) {
+.fit.nonparam.couplemarkovchain <- function(processes, states, type.sojourn = c("fij", "fi", "fj", "f"), init.estim = c("mle", "stationary"), cens.end) {
   
   s <- processes$s
   states <- processes$states
@@ -70,8 +70,8 @@
       ptrans = ptrans,
       type.sojourn = type.sojourn,
       distr = f,
-      cens.beg = cens.beg,
-      cens.end = TRUE
+      cens.beg = FALSE,
+      cens.end = cens.end
     )
   
   return(estimate)
