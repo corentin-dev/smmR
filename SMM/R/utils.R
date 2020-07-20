@@ -289,7 +289,7 @@
 }
 
 ## __________________________________________________________
-## .productProb
+## .productProb: Useful to compute the initial distribution when init.estim == "prod"
 ## __________________________________________________________
 .productProb <- function(length = 2, prob) {
   if (length == 1) {
@@ -297,4 +297,34 @@
   } else {
     return(kronecker(prob, .productProb(length - 1, prob)))
   }
+}
+
+## __________________________________________________________
+## Discrete-time matrix convolution product (definition 3.5 p. 48)
+## __________________________________________________________
+.matrixConvolve <- function(A, B) {
+  
+  ###########################################################
+  ###########################################################
+  # A and B must be of dimension (S, S, k + 1) where:
+  #   - S represents the cardinal of the state space E;
+  #   - k represents the time horizon;
+  # 
+  # Return: Matrix C which is the matrix convolution product A * B
+  ###########################################################
+  ###########################################################
+  
+  k <- dim(A)[3] - 1 # A[, , 1] represents k = 0
+  
+  C <- matrix(data = NA, nrow = nrow(A), ncol(A))
+  
+  C <-
+    Reduce('+', lapply(
+      X = 0:k,
+      FUN = function(l)
+        A[, , k - l + 1] %*% B[, , l + 1]
+    ))
+  
+  return(C)
+  
 }

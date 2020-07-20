@@ -4,7 +4,7 @@
 \alias{mttf}
 \title{Mean Time To Failure (MTTF) Function}
 \usage{
-mttf(x, alpha = x$init, upstates = x$states)
+mttf(x, alpha = x$init, upstates = x$states, k = 10000)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -14,6 +14,10 @@ mttf(x, alpha = x$init, upstates = x$states)
 length \eqn{\textrm{card}(U) = s1}.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
+
+\item{k}{Optional. The time horizon used to approximate the series in the
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function).}
 }
 \value{
 A vector of length \eqn{\textrm{card}(U)} giving the values of the

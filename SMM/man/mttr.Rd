@@ -4,7 +4,7 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, alpha = x$init, downstates = x$states)
+mttr(x, alpha = x$init, downstates = x$states, k = 10000)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -14,6 +14,10 @@ mttr(x, alpha = x$init, downstates = x$states)
 length \eqn{\textrm{card}(D) = s - s1}.}
 
 \item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
+
+\item{k}{Optional. The time horizon used to approximate the series in the
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function).}
 }
 \value{
 A vector of length \eqn{\textrm{card}(D)} giving the values of the

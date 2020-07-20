@@ -22,33 +22,19 @@ is.smm <- function(x) {
 # Method to compute the value of psi (estimator p. 53 (3.16))
 .get.psi <- function(x, k, states = x$states) {
   
-  q <- .get.q(x, k)[which(x$states %in% states), which(x$states %in% states),]
+  q <- .get.q(x, k)[which(x$states %in% states), which(x$states %in% states), ,  drop = FALSE]
   
-  if (!is.null(dim(q))) {
-    psi <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
-    psi[, , 1] <- diag(x = 1, nrow = nrow(q), ncol = ncol(q)) # k = 0
+  psi <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1)) # (S, S, k + 1)
+  psi[, , 1] <- diag(x = 1, nrow = nrow(q), ncol = ncol(q)) # k = 0
+  
+  for (j in 1:k) {
     
-    for (j in 1:k) {
-      psi[, , j + 1] <-
-        -Reduce('+', lapply(
-          X = 0:(j - 1),
-          FUN = function(l)
-            psi[, , l + 1] %*% (-q[, , j - l])
-        ))
-    }
-    
-  } else {
-    psi <- array(data = 0, dim = c(1, 1, k + 1))
-    psi[, , 1] <- diag(x = 1, nrow = 1, ncol = 1) # k = 0
-    
-    for (j in 1:k) {
-      psi[, , j + 1] <-
-        -Reduce('+', lapply(
-          X = 0:(j - 1),
-          FUN = function(l)
-            psi[, , l + 1] %*% (-q[j - l])
-        ))
-    }
+    psi[, , j + 1] <-
+      -Reduce('+', lapply(
+        X = 0:(j - 1),
+        FUN = function(l)
+          psi[, , l + 1] %*% (-q[, , j - l])
+      ))
   }
   
   return(psi)
@@ -64,6 +50,7 @@ is.smm <- function(x) {
   Hik <- t(apply(X = hik, MARGIN = 1, cumsum))
   
   H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
+  
   for (j in 2:(k + 1)) {
     H[, , j] <- diag(Hik[, j - 1])
   }
@@ -75,36 +62,15 @@ is.smm <- function(x) {
 .get.P <- function(x, k, states = x$states) {
   
   psi <- .get.psi(x, k, states = states)
-  H <- .get.H(x, k)
-  H1 <- H[which(x$states %in% states), which(x$states %in% states), ]
   
-  p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1))
-  p[, , 1] <- diag(nrow(psi))
+  H1 <- .get.H(x, k)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
+  B <- array(data = diag(nrow(H1)), dim = dim(H1)) - H1
   
-  if (!is.null(dim(H1))) {
-    
-    for (j in 1:k) {
-      p[, , j + 1] <-
-        Reduce('+', lapply(
-          X = 0:j,
-          FUN = function(l)
-            psi[, , j - l + 1] %*% (diag(nrow(H1)) - H1[, , l + 1])
-            # psi[, , l + 1] %*% (diag(nrow(H1)) - H1[, , j - l + 1])
-        ))
-    }
+  p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1)) # (S, S, k + 1)
+  p[, , 1] <- diag(nrow(psi)) # k = 0
   
-  } else {
-    
-    for (j in 1:k) {
-      p[, , j + 1] <-
-        Reduce('+', lapply(
-          X = 0:j,
-          FUN = function(l)
-            psi[, , j - l + 1] %*% (1 - H1[l + 1])
-            # psi[, , l + 1] %*% (diag(nrow(H1)) - H1[, , j - l + 1])
-        ))
-    }
-    
+  for (j in 1:k) {
+    p[, , j + 1] <- .matrixConvolve(psi[, , 1:(j + 1), drop = FALSE], B[, , 1:(j + 1), drop = FALSE])
   }
   
   return(p)
@@ -530,6 +496,52 @@ failureRateRG <- function(x, k, alpha = x$init, upstates = x$states) {
   
 }
 
+#' Mean Sojourn Times Function
+#'
+#' @description Consider a system \eqn{S_{ystem}} starting to work at time 
+#'   \eqn{k = 0}. The mean time to failure (MTTF) is defined as the mean 
+#'   lifetime.
+#'
+#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
+#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
+#'   
+#'   We are interested in investigating the mean sojourn times of a 
+#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
+#'   that the evolution in time of the system is governed by an E-state space 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
+#'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
+#'   
+#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
+#'   state changes in \eqn{(Z_{n})_{n \in N}} occur.
+#'   
+#'   The mean sojourn times vector is defined as follows:
+#'   
+#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{n \geq 0} (1 - H_{j}(n)),\ i \in E}
+#'   
+#' @param x An object inheriting from the S3 class `smm` (an object of class
+#'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
+#' @param states Vector giving the states for which the mean sojourn time 
+#'   should be computed. `states` is a subset of \eqn{E}.
+#' @param k Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector.
+#' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
+#'   mean sojourn times for each state \eqn{i \in E}.
+#' 
+#' @export
+#'
+meanSojournTimes <- function(x, states = x$states, k = 10000) {
+  
+  H1 <- .get.H(x = x, k = k)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
+  
+  if (dim(H1)[1] != 1) {
+    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)  
+  } else {
+    m1 <- sum(1 - H1)
+  }
+  
+  return(m1)
+}
+
 #' Mean Time To Failure (MTTF) Function
 #'
 #' @description Consider a system \eqn{S_{ystem}} starting to work at time 
@@ -574,24 +586,26 @@ failureRateRG <- function(x, k, alpha = x$init, upstates = x$states) {
 #' @param alpha Vector of initial distribution \eqn{(\alpha_i)_{i \in U}} of 
 #'   length \eqn{\textrm{card}(U) = s1}.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @param k Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes][meanSojournTimes] function).
 #' @return A vector of length \eqn{\textrm{card}(U)} giving the values of the 
 #'   mean time to failure for each state \eqn{i \in U}.
 #' 
 #' @export
 #'
-mttf <- function(x, alpha = x$init, upstates = x$states) {
+mttf <- function(x, alpha = x$init, upstates = x$states, k = 10000) {
   
-  p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates)]
-  H1 <- .get.H(x = x, k = 10000)[which(x$states %in% upstates), which(x$states %in% upstates), ]
+  p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates), drop = FALSE]
   
-  if (!is.null(dim(H1))) {
-    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)
+  m1 <- meanSojournTimes(x = x, states = upstates, k = k)
+  
+  if (length(m1) != 1) {
     mttf <- t(alpha) %*% solve(diag(nrow(p11)) - p11) %*% diag(m1)
   } else {
-    m1 <- sum(1 - H1)
-    mttf <- alpha * 1 / (1 - p11) * m1
+    mttf <- t(alpha) %*% solve(diag(nrow(p11)) - p11) * m1
   }
- 
+  
   return(mttf)
 }
 
@@ -639,25 +653,16 @@ mttf <- function(x, alpha = x$init, upstates = x$states) {
 #' @param alpha Vector of initial distribution \eqn{(\alpha_i)_{i \in D}} of 
 #'   length \eqn{\textrm{card}(D) = s - s1}.
 #' @param downstates Vector giving the subset of non-operational states \eqn{D}.
+#' @param k Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes][meanSojournTimes] function).
 #' @return A vector of length \eqn{\textrm{card}(D)} giving the values of the 
 #'   mean time to repair for each state \eqn{i \in D}.
 #' 
 #' @export
 #'
-mttr <- function(x, alpha = x$init, downstates = x$states) {
+mttr <- function(x, alpha = x$init, downstates = x$states, k = 10000) {
   
-  p22 <- x$ptrans[which(x$states %in% downstates), which(x$states %in% downstates)]
-  
-  H1 <- .get.H(x = x, k = 10000)[which(x$states %in% downstates), which(x$states %in% downstates), ]
-  
-  if (!is.null(dim(H1))) {
-    m2 <- apply(1 - apply(H1, 3, diag), 1, sum)
-    mttr <- t(alpha) %*% solve(diag(nrow(p22)) - p22) %*% diag(m2)
-  } else {
-    m2 <- sum(1 - H1)
-    mttr <- alpha * 1 / (1 - p22) * m2
-  }
-  
-  return(mttr)
+  return(mttf(x = x, alpha = alpha, upstates = downstates, k = k))
   
 }
