@@ -1,4 +1,28 @@
 ## __________________________________________________________
+## Functions to generate one random variable according to a specific distribution
+## __________________________________________________________
+
+.runif <- function(b, void) {
+  return(sample(x = 1:b, size = 1))
+}
+
+.rgeom <- function(prob, void) {
+  return(rgeom(n = 1, prob = prob) + 1)
+}
+
+.rpois <- function(lambda, void) {
+  return(rpois(n = 1, lambda = lambda) + 1)
+}
+
+.rnbinom <- function(size, prob) {
+  return(rnbinom(n = 1, size = size, prob = prob) + 1)
+}
+
+.rdweibull <- function(q, beta) {
+  return(rdweibull(n = 1, q = q, beta = beta, zero = FALSE))
+}
+
+## __________________________________________________________
 ## .getSeq: Returns the character sequence given the processes J and T
 ## __________________________________________________________
 .getSeq <- function(Jm, Tm) {

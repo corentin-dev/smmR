@@ -64,16 +64,49 @@
 #' 
 simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
   
-  # If nsim is a single integer then a SMM of that length is produced. 
-  #   If nsim is a vector of integers, then length(nsim) sequences are 
-  #   generated with respective lengths.
+  ###########################################################
+  ###########################################################
+  # The algorithm used to simulate the sequences is the following:
+  # 
+  # 1. Set k = 0, S_{0} = 0 and sample J_{0} from the initial distribution \alpha;
+  # 2. Sample the random variable J \sim p(J_{k} , .) and set J_{k+1} = J(\omega);
+  # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
+  # 4. Set S_{k+1} = S_{k} + X;
+  # 5. If S_{k+1} >= M, then end;
+  # 6. Else, set k= k + 1 and continue to step 2.
+  # 
+  ###########################################################
+  ###########################################################
   
   if (!is.null(seed)) {
     set.seed(seed)  
   }
   
-  out <- list()
+  sequences <- list()
   nbseq <- length(nsim)
+  
+  # Preparation of the parameters and the distributions matrix to ease the sampling process
+  param1 <- rep.int(x = NA, times = object$s)
+  param2 <- rep.int(x = NA, times = object$s)
+  distributions <- array(data = NA, dim = c(object$s, object$s))
+  if (object$type.sojourn == "fij") {
+    param1 <- object$param[, , 1]
+    param2 <- object$param[, , 2]
+    distributions <- object$distr
+  } else if (object$type.sojourn == "fj") {
+    param1 <- t(matrix(data = object$param[, 1], nrow = object$s, ncol = object$s))
+    param2 <- t(matrix(data = object$param[, 2], nrow = object$s, ncol = object$s))
+    distributions <- t(matrix(data = object$distr, nrow = object$s, ncol = object$s))
+  } else if (object$type.sojourn == "fi") {
+    param1 <- matrix(data = object$param[, 1], nrow = object$s, ncol = object$s)
+    param2 <- matrix(data = object$param[, 2], nrow = object$s, ncol = object$s)
+    distributions <- matrix(data = object$distr, nrow = object$s, ncol = object$s)
+  } else {
+    param1 <- matrix(data = object$param[1], nrow = object$s, ncol = object$s)
+    param2 <- matrix(data = object$param[2], nrow = object$s, ncol = object$s)
+    distributions <- matrix(data = object$distr, nrow = object$s, ncol = object$s)
+  }
+  
   
   for (m in 1:nbseq) {
     
@@ -88,107 +121,12 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
       
       J[i + 1] <- sample(object$states, 1, prob = object$ptrans[which(object$states == J[i]), ])
       
-      if (object$type.sojourn == "fij") {
-        
-        if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "unif") {
-          
-          kmax <- object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]
-          k <- sample(1:kmax, 1)
-          
-        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "geom") {
-          
-          k <- rgeom(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]) + 1
-          
-        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "pois") {
-          
-          k <- rpois(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1]) + 1 # no sojourn time equal to zero so we shift the Poisson distribution
-          
-        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "dweibull") {
-          
-          k <- rdweibull(1, object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1], object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 2], zero = FALSE)
-          
-        } else if (object$distr[which(J[i] == object$states), which(J[i + 1] == object$states)] == "nbinom") {
-          
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 1], prob = object$param[which(J[i] == object$states), which(J[i + 1] == object$states), 2]) + 1
-          
-        }
-        
-      } else if (object$type.sojourn == "fi") {
-        
-        if (object$distr[which(J[i] == object$states)] == "unif") {
-          
-          kmax <- object$param[which(J[i] == object$states), 1]
-          k <- sample(1:kmax, 1)
-          
-        } else if (object$distr[which(J[i] == object$states)] == "geom") {
-          
-          k <- rgeom(1, object$param[which(J[i] == object$states), 1]) + 1
-          
-        } else if (object$distr[which(J[i] == object$states)] == "pois") {
-          
-          k <- rpois(1, object$param[which(J[i] == object$states), 1]) + 1
-          
-        } else if (object$distr[which(J[i] == object$states)] == "dweibull") {
-          
-          k <- rdweibull(1, object$param[which(J[i] == object$states), 1], object$param[which(J[i] == object$states), 2], zero = FALSE)
-          
-        } else if (object$distr[which(J[i] == object$states)] == "nbinom") {
-          
-          k <- rnbinom(n = 1, size = object$param[which(J[i] == object$states), 1], prob = object$param[which(J[i] == object$states), 2]) + 1
-          
-        }
-        
-      } else if (object$type.sojourn == "fj") {
-        
-        if (object$distr[which(J[i + 1] == object$states)] == "unif") {
-          
-          kmax <- object$param[which(J[i + 1] == object$states), 1]
-          k <- sample(1:kmax, 1)
-          
-        } else if (object$distr[which(J[i + 1] == object$states)] == "geom") {
-          
-          k <- rgeom(1, object$param[which(J[i + 1] == object$states), 1]) + 1
-          
-        } else if (object$distr[which(J[i + 1] == object$states)] == "pois") {
-          
-          k <- rpois(1, object$param[which(J[i + 1] == object$states), 1]) + 1
-          
-        } else if (object$distr[which(J[i + 1] == object$states)] == "dweibull") {
-          
-          k <- rdweibull(1, object$param[which(J[i + 1] == object$states), 1], object$param[which(J[i + 1] == object$states), 2], zero = FALSE)
-          
-        } else if (object$distr[which(J[i + 1] == object$states)] == "nbinom") {
-          
-          k <- rnbinom(n = 1, size = object$param[which(J[i + 1] == object$states), 1], prob = object$param[which(J[i + 1] == object$states), 2]) + 1
-          
-        }
-        
-      } else {# f case
-        
-        if (object$distr == "unif") {
-          
-          kmax <- object$param[1]
-          k <- sample(1:kmax, 1)
-          
-        } else if (object$distr == "geom") {
-          
-          k <- rgeom(1, object$param[1]) + 1 # we shift
-          
-        } else if (object$distr == "pois") {
-          
-          k <- rpois(1, object$param[1]) + 1 # we shift
-          
-        } else if (object$distr == "dweibull") {
-          
-          k <- rdweibull(1, object$param[1], object$param[2], zero = FALSE)
-          
-        } else if (object$distr == "nbinom") {
-          
-          k <- rnbinom(n = 1, size = object$param[1], prob = object$param[2]) + 1 # we shift
-          
-        }
-        
-      }
+      indices <- matrix(data = c(which(J[i] == object$states), which(J[i + 1] == object$states)), nrow = 1)
+      
+      distr <- paste0(".r", substring(text = distributions[indices], first = 1))
+      
+      k <- do.call(what = distr, args = list(param1[indices], param2[indices]))
+      
       
       T[i] <- t + k
       t <- T[i]
@@ -199,6 +137,7 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
     #############################
     # Censoring sequences
     #############################
+    
     if (object$cens.beg == TRUE && object$cens.end == TRUE) {
       
       l <- t - nsim[m]
@@ -208,12 +147,12 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
       y <- .getSeq(J, T)
       y <- y[Nl:(t - 1 - Nl)]
       
-    } else if (object$cens.beg == FALSE && object$cens.end == TRUE) {# First time is a Jump Time
+    } else if (object$cens.beg == FALSE && object$cens.end == TRUE) {
       
       y <- .getSeq(J, T)
       y <- y[1:nsim[m]]
       
-    } else if (object$cens.beg == 1 && object$cens.end == 0) {
+    } else if (object$cens.beg == TRUE && object$cens.end == FALSE) {
       
       l <- t - nsim[m]
       y <- .getSeq(J, T)
@@ -225,11 +164,11 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
       
     }
     
-    out[[m]] <- y
+    sequences[[m]] <- y
     
     
   }
   
-  return(out)
+  return(sequences)
   
 }

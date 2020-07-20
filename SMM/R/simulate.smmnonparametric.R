@@ -50,15 +50,25 @@
 #'
 simulate.smmnonparametric <- function(object, nsim = 1, seed = NULL, ...) {
   
-  # If nsim is a single integer then a SMM of that length is produced. 
-  #   If nsim is a vector of integers, then length(nsim) sequences are 
-  #   generated with respective lengths.
+  ###########################################################
+  ###########################################################
+  # The algorithm used to simulate the sequences is the following:
+  # 
+  # 1. Set k = 0, S_{0} = 0 and sample J_{0} from the initial distribution \alpha;
+  # 2. Sample the random variable J \sim p(J_{k} , .) and set J_{k+1} = J(\omega);
+  # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
+  # 4. Set S_{k+1} = S_{k} + X;
+  # 5. If S_{k+1} >= M, then end;
+  # 6. Else, set k= k + 1 and continue to step 2.
+  # 
+  ###########################################################
+  ###########################################################
   
   if (!is.null(seed)) {
     set.seed(seed)  
   }
   
-  out <- list()
+  sequences <- list()
   nbseq <- length(nsim)
   
   for (m in 1:nbseq) {
@@ -131,10 +141,10 @@ simulate.smmnonparametric <- function(object, nsim = 1, seed = NULL, ...) {
       
     }
     
-    out[[m]] <- y
+    sequences[[m]] <- y
   }
   
   
-  return(out)
+  return(sequences)
   
 }
