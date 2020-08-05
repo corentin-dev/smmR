@@ -443,10 +443,10 @@ is.smmparametric <- function(x) {
 # Method to get the semi-Markov kernel q
 .get.q.smmparametric <- function(x, kmax) {
   
-  s <- x$s
+  q <- array(data = 0, dim = c(x$s, x$s, kmax + 1))
   
   fijk <- .get.fijk.smmparametric(x, kmax)
-  q <- array(x$ptrans, c(s, s, kmax)) * fijk
+  q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * fijk
   
   return(q)
   

@@ -4,7 +4,7 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, alpha = x$init, downstates = x$states, k = 10000)
+mttr(x, alpha = x$init, downstates = x$states, k = 10000, var = FALSE)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -18,10 +18,20 @@ length \eqn{\textrm{card}(D) = s - s1}.}
 \item{k}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function).}
+
+\item{var}{Optional. A logical value indicating whether or not the variance
+of the estimator should be computed.}
 }
 \value{
-A vector of length \eqn{\textrm{card}(D)} giving the values of the
-mean time to repair for each state \eqn{i \in D}.
+If \code{var = FALSE}, a vector of length \eqn{\textrm{card}(D)} giving
+the values of the mean time to repair for each state \eqn{i \in D}. If
+\code{var = TRUE}, a list containing the following components:
+\itemize{
+\item{mttf: }{A vector of length \eqn{\textrm{card}(D)} giving the values
+of the mean time to repair for each state \eqn{i \in D}}.
+\item{sigma2: } the variance of the estimator for each estimation of the
+mean time to failure;
+}
 }
 \description{
 Consider a system \eqn{S_{ystem}} starting to fail at time

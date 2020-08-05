@@ -4,7 +4,7 @@
 \alias{availability}
 \title{Availability Function}
 \usage{
-availability(x, k, alpha = x$init, upstates = x$states)
+availability(x, k, alpha = x$init, upstates = x$states, var = FALSE)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -17,6 +17,9 @@ availability should be computed.}
 length \eqn{\textrm{card}(E) = s}.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
+
+\item{var}{Optional. A logical value indicating whether or not the variance
+of the estimator should be computed.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the availability

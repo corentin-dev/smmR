@@ -19,7 +19,18 @@ is.smm <- function(x) {
   UseMethod(".getKpar", x)
 }
 
-# Method to compute the value of psi (estimator p. 53 (3.16))
+# Method to get the mean recurrence times \mu
+.get.mu <- function(x, k = 10000) {
+  
+  nu <- .stationaryDistribution(ptrans = x$ptrans)
+  m <- meanSojournTimes(x = x)
+  mu <- sum(nu * m) / nu
+  
+  return(mu)
+  
+}
+
+# Method to compute the value of psi (estimator p.53 (3.16))
 .get.psi <- function(x, k, states = x$states) {
   
   q <- .get.q(x, k)[which(x$states %in% states), which(x$states %in% states), ,  drop = FALSE]
@@ -33,7 +44,7 @@ is.smm <- function(x) {
       -Reduce('+', lapply(
         X = 0:(j - 1),
         FUN = function(l)
-          psi[, , l + 1] %*% (-q[, , j - l])
+          psi[, , l + 1] %*% (-q[, , j - l + 1])
       ))
   }
   
@@ -41,7 +52,7 @@ is.smm <- function(x) {
   
 }
 
-# Method to compute the value of H (definition p. 46 (Definition 3.4))
+# Method to compute the value of H (definition p.46 (Definition 3.4))
 .get.H <- function(x, k) {
   
   q <- .get.q(x, k)
@@ -51,29 +62,105 @@ is.smm <- function(x) {
   
   H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
   
-  for (j in 2:(k + 1)) {
-    H[, , j] <- diag(Hik[, j - 1])
+  for (j in 1:(k + 1)) {
+    H[, , j] <- diag(Hik[, j])
   }
   
   return(H)
 }
 
-# Method to compute the value of P (estimator p. 59 (3.33))
-.get.P <- function(x, k, states = x$states) {
+# Method to compute the value of P (estimator p.59 (3.33))
+.get.P <- function(x, k, states = x$states, var = FALSE) {
+  
+  ###########################################################
+  # Compute P, the transition function
+  ###########################################################
   
   psi <- .get.psi(x, k, states = states)
   
-  H1 <- .get.H(x, k)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
+  H <- .get.H(x, k)
+  H1 <- H[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   B <- array(data = diag(nrow(H1)), dim = dim(H1)) - H1
   
   p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1)) # (S, S, k + 1)
   p[, , 1] <- diag(nrow(psi)) # k = 0
   
-  for (j in 1:k) {
-    p[, , j + 1] <- .matrixConvolve(psi[, , 1:(j + 1), drop = FALSE], B[, , 1:(j + 1), drop = FALSE])
+  for (t in 1:k) {
+    p[, , t + 1] <- .matrixConvolve(psi[, , 1:(t + 1), drop = FALSE], B[, , 1:(t + 1), drop = FALSE])
   }
   
-  return(p)
+  
+  ###########################################################
+  # Compute the variance (equation (4.29), p.91)
+  # The decomposition of the variance is as follows:
+  #
+  # \sigma_{P}^{2}(i, j, k)) = \sum_{m = 1}^{s} \mu_{mm} \left\{ \sum_{r = 1}^{s} \underbrace{\underbrace{\left[\delta_{mj}\Psi_{ij} - \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj}}_{\text{part11}} \right]^2}_{\text{part12}} * \ q_{mr}(k)}_{\text{part1}} - \left[ \underbrace{\delta_{mj} \psi_{ij} * H_{m}(k)}_{\text{part22}} - \sum_{r = 1}^{s} \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}}_{\text{part21}} \right]^{2}(k) \right\}
+  #
+  ###########################################################
+  
+  if (var) {
+    
+    Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
+    q <- .get.q(x = x, kmax = k)
+    mu <- .get.mu(x = x)
+    
+    
+    convolpsi <- array(data = 0, dim = c(x$s, x$s, x$s, x$s, k + 1)) # (i, j, m, r, k)
+    
+    part11 <- array(data = 0, dim = c(x$s, x$s, x$s, x$s, k + 1)) # (1 - H_{j}) * \psi_{im} * \psi_{rj}
+    part12 <- array(data = 0, dim = c(x$s, x$s, x$s, x$s, k + 1)) # [\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}]^2
+    part1 <- array(data = 0, dim = c(x$s, x$s, x$s, x$s, k + 1)) # [\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}]^2 * q_{mr}(k)
+    
+    part21 <- array(data = 0, dim = c(x$s, x$s, x$s, x$s, k + 1)) # (1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}
+    part22 <- array(data = 0, dim = c(x$s, x$s, x$s, k + 1)) # (i, j, m, k) \delta_{mj} \psi_{ij} * H_{m}(k)
+    
+    for (t in 0:k) {
+      
+      for (i in 1:x$s) {
+        
+        for (j in 1:x$s) {
+          
+          convolpsi[i, j, , , t + 1] <-
+            outer(
+              X = 1:x$s,
+              Y = 1:x$s,
+              FUN = function(m, r)
+                Reduce('+', lapply(
+                  X = 0:t,
+                  FUN = function(h)
+                    psi[i, m, h + 1] * psi[r, j, t - h + 1]
+                ))
+            )
+          
+          part11[i, j, , , t + 1] <- apply(X = convolpsi[i, j, , , 1:(t + 1)], MARGIN = c(1, 2), FUN = function(elt) Reduce('+', elt * (1 - H[j, j, (t + 1):1])))
+          
+          delta_mj <- ifelse(1:x$s == j, 1, 0)
+          
+          part12[i, j, , , t + 1] <- (delta_mj * Psi[i, j, t + 1] - part11[i, j, , , t + 1]) ^ 2
+          
+          part1[i, j, , , t + 1] <- apply(X = part12[i, j, , , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
+          
+          part21[i, j, , , t + 1] <- apply(X = part11[i, j, , , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
+          
+          part22[i, j, which(delta_mj != 0), t + 1] <- Reduce('+', psi[i, j, 1:(t + 1)] * H[delta_mj != 0, delta_mj != 0, (t + 1):1])
+          
+        }
+        
+      }
+    
+    }
+      
+    sigma2 <- apply(X = apply(part1, c(1, 2, 3, 5), sum) - 
+                      (part22 - apply(part21, c(1, 2, 3, 5), sum)) ^ 2, MARGIN = c(1, 2, 4), function(elt) sum(elt * mu))
+   
+    return(list(p = p, sigma2 = sigma2))
+     
+  } else {
+    
+    return(p)
+      
+  }
+  
 }
 
 #' Reliability Function
@@ -331,12 +418,14 @@ maintainability <- function(x, k, alpha = x$init, downstates = x$states) {
 #' @param alpha Vector of initial distribution \eqn{(\alpha_i)_{i \in E}} of 
 #'   length \eqn{\textrm{card}(E) = s}.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @param var Optional. A logical value indicating whether or not the variance 
+#'   of the estimator should be computed.
 #' @return A vector of length \eqn{k + 1} giving the values of the availability
 #'   for the period \eqn{[0,\dots,k]}.
 #' 
 #' @export
 #'
-availability <- function(x, k, alpha = x$init, upstates = x$states) {
+availability <- function(x, k, alpha = x$init, upstates = x$states, var = FALSE) {
   
   #############################
   # Checking parameters k
@@ -378,6 +467,9 @@ availability <- function(x, k, alpha = x$init, upstates = x$states) {
     stop("The sum of alpha is not equal to one")
   }
   
+  ###########################################################
+  # Compute A, the availability
+  ###########################################################
   
   P <- .get.P(x, k)
   
@@ -386,7 +478,99 @@ availability <- function(x, k, alpha = x$init, upstates = x$states) {
           MARGIN = 3, function(y)
             rowSums(t(alpha[which(x$states %in% upstates)]) %*% y))
   
-  return(avail)
+  ###########################################################
+  # Compute the variance (Theorem 5.2. equation (5.34), p.118)
+  # The decomposition of the variance is as follows:
+  #
+  # \sigma_{A}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \sum_{j = 1}^{s} \underbrace{\underbrace{\left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \sum_{j = 1}^{s} \underbrace{\left( \underbrace{D_{ij} * q_{ij}}_{\text{part22}} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \underbrace{\psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}
+  #
+  # D_{ij} := \underbrace{\sum_{n = 1}^{s} \sum_{r \in U} \underbrace{\alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}_{partdij}}_{dij}
+  # 
+  ###########################################################
+  
+  if (var) {
+  
+    psi <- .get.psi(x, k, states = x$states)
+    Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
+    H <- .get.H(x, k)
+    q <- .get.q(x = x, kmax = k)
+    Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
+    mu <- .get.mu(x = x)
+    
+    u <- length(upstates)
+    indices_u <- which(x$states %in% upstates)
+    
+    
+    convolpsi <- array(data = 0, dim = c(x$s, x$s, x$s, u, k + 1)) # (i, j, n, r, k)
+    
+    partdij <- array(data = 0, dim = c(x$s, x$s, x$s, u, k + 1)) # \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}
+    dij <- array(data = 0, dim = c(x$s, x$s, k + 1))
+    
+    part11 <- array(data = 0, dim = c(x$s, x$s, k + 1))
+    part1 <- array(data = 0, dim = c(x$s, x$s, k + 1))
+    
+    part21 <- array(data = 0, dim = c(x$s, x$s, x$s, k + 1)) # (t, i, j, k)
+    part22 <- array(data = 0, dim = c(x$s, x$s, k + 1))
+    
+    part2 <- array(data = 0, dim = c(x$s, x$s, k + 1))
+    
+    for (t in 0:k) {
+      
+      for (i in 1:x$s) {
+        
+        for (j in 1:x$s) {
+          
+          convolpsi[i, j, , , t + 1] <- outer(X = 1:x$s, Y = 1:u, FUN = function(n, r)
+            Reduce('+', lapply(
+              X = 0:t,
+              FUN = function(h) psi[n, i, h + 1] * psi[j, indices_u[r], t - h + 1]))
+          )
+          
+          for (r in 1:u) {
+            for (n in 1:x$s) {
+              
+              partdij[i, j, n, r, t + 1] <- sum(convolpsi[i, j, n, indices_u[r], 1:(t + 1)] * (1 - H[indices_u[r], indices_u[r], (t + 1):1]))
+              partdij[i, j, n, r, t + 1] <- partdij[i, j, n, r, t + 1] * alpha[n]
+            }
+          }
+          
+          dij[, , t + 1] <- apply(partdij[, , , , t + 1], c(1, 2), sum)
+          
+          # partduij[i, j, , , t + 1] <- apply(X = convolpsi[i, j, , , 1:(t + 1)], MARGIN = 1, function(elt) rowSums(elt * apply(H[indices_u, indices_u, (t + 1):1], 3, diag)))
+          # duij[i, j, t + 1] <- sum(apply(partduij[i, j, , , t + 1], 2, function(elt) sum(elt * alpha)))
+          
+          for (r in 1:x$s) {
+            part21[r, i, j, t + 1] <- sum(psi[r, i, 1:(t + 1)] * Q[i, j, (t + 1):1])
+          }
+          
+          # part21[, i, j, t + 1] <- apply(X = psi[indices_u, i, 1:(t + 1)] * Q[i, j, (t + 1):1], MARGIN = 1, sum)
+          
+        }
+      }
+      
+      # part11[, , t + 1] <- (duij[, , t + 1] - matrix(1 * (row(part11[, , t + 1]) %in% indices_u), nrow = x$s) * apply(Psi[indices_u, , t + 1], 2, function(elt) sum(elt * alpha)) %*% t(rep.int(times = 3, x = 1))) ^ 2
+      part11[, , t + 1] <- (dij[, , t + 1] - matrix(1 * (row(part11[, , t + 1]) %in% indices_u), nrow = x$s) * (t(t(alpha) %*% Psi[, , t + 1]) %*% t(rep.int(times = x$s, x = 1)))) ^ 2
+      part1[, , t + 1] <- apply(X = part11[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
+      
+      if (t > 0) {
+        part22[, , t + 1] <- apply(X = dij[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
+      }
+      
+      part2[, , t + 1] <- part22[, , t + 1] - matrix(1 * (row(part2[, , t + 1]) %in% indices_u), nrow = x$s) * apply(part21[, , , t + 1], c(2, 3), function(elt) elt %*% alpha)
+      
+    }
+    
+    sigma2 <-
+      apply(apply(part1, c(1, 3), sum) - (apply(part2, c(1, 3), sum)) ^ 2, c(2), function(elt)
+        sum(elt * mu))
+    
+    return(list(avail = avail, sigma2 = sigma2))
+  
+  } else {
+    
+    return(avail)
+    
+  }
   
 }
 
@@ -534,7 +718,7 @@ meanSojournTimes <- function(x, states = x$states, k = 10000) {
   H1 <- .get.H(x = x, k = k)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   
   if (dim(H1)[1] != 1) {
-    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)  
+    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)
   } else {
     m1 <- sum(1 - H1)
   }
@@ -589,24 +773,60 @@ meanSojournTimes <- function(x, states = x$states, k = 10000) {
 #' @param k Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes][meanSojournTimes] function).
-#' @return A vector of length \eqn{\textrm{card}(U)} giving the values of the 
-#'   mean time to failure for each state \eqn{i \in U}.
+#' @param var Optional. A logical value indicating whether or not the variance 
+#'   of the estimator should be computed.
+#' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(U)} giving 
+#'   the values of the mean time to failure for each state \eqn{i \in U}. If 
+#'   `var = TRUE`, a list containing the following components:
+#'   \itemize{
+#'    \item{mttf: }{A vector of length \eqn{\textrm{card}(U)} giving the values
+#'      of the mean time to failure for each state \eqn{i \in U}}.
+#'    \item{sigma2: } the variance of the estimator for each estimation of the 
+#'      mean time to failure;
+#'  }
 #' 
 #' @export
 #'
-mttf <- function(x, alpha = x$init, upstates = x$states, k = 10000) {
+mttf <- function(x, alpha = x$init, upstates = x$states, k = 10000, var = FALSE) {
   
   p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates), drop = FALSE]
   
   m1 <- meanSojournTimes(x = x, states = upstates, k = k)
   
   if (length(m1) != 1) {
-    mttf <- t(alpha) %*% solve(diag(nrow(p11)) - p11) %*% diag(m1)
+    # mttf <- as.numeric(t(alpha) %*% solve(diag(nrow(p11)) - p11) %*% m1)
+    mttf <- as.vector(solve(diag(nrow(p11)) - p11) %*% m1)
   } else {
-    mttf <- t(alpha) %*% solve(diag(nrow(p11)) - p11) * m1
+    # mttf <- as.numeric(t(alpha) %*% solve(diag(nrow(p11)) - p11) * m1)
+    mttf <- as.vector(solve(diag(nrow(p11)) - p11) * m1)
+  }
+  names(mttf) <- upstates
+  
+  if (var) {
+    
+    q <- .get.q(x = x, kmax = k)
+    q11 <- q[which(x$states %in% upstates), which(x$states %in% upstates), 2:(k + 1), drop = FALSE]
+    mu <- .get.mu(x = x, k = k)
+    
+    Qml <- apply(q11, 2, function(elt) rowSums(elt * t(sapply(m1, function(x) 1:k - x))))
+    a <- solve(diag(nrow(p11)) - p11)
+    etal <- t(a) %*% m1
+    etildal <- p11 %*% etal
+    
+    hik <- t(apply(X = q, MARGIN = c(1, 3), sum))[2:(k + 1), which(x$states %in% upstates)]
+    sigma2_m1 <- colSums(sapply(m1, function(x) (1:k - x) ^ 2) * hik)
+    
+    sigma2 <- as.vector(a %*% a %*% (mu[which(x$states %in% upstates)] * (sigma2_m1 + apply(p11 * sapply(etal, function(x) x - etildal) ^ 2, 1, sum) + 2 * Qml %*% etal)))
+    names(sigma2) <- upstates
+    
+    return(list(mttf = mttf, sigma2 = sigma2))
+    
+  } else {
+    
+    return(mttf)  
+    
   }
   
-  return(mttf)
 }
 
 #' Mean Time To Repair (MTTR) Function
@@ -656,13 +876,22 @@ mttf <- function(x, alpha = x$init, upstates = x$states, k = 10000) {
 #' @param k Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes][meanSojournTimes] function).
-#' @return A vector of length \eqn{\textrm{card}(D)} giving the values of the 
-#'   mean time to repair for each state \eqn{i \in D}.
+#' @param var Optional. A logical value indicating whether or not the variance 
+#'   of the estimator should be computed.
+#' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(D)} giving 
+#'   the values of the mean time to repair for each state \eqn{i \in D}. If 
+#'   `var = TRUE`, a list containing the following components:
+#'   \itemize{
+#'    \item{mttf: }{A vector of length \eqn{\textrm{card}(D)} giving the values
+#'      of the mean time to repair for each state \eqn{i \in D}}.
+#'    \item{sigma2: } the variance of the estimator for each estimation of the 
+#'      mean time to failure;
+#'  }
 #' 
 #' @export
 #'
-mttr <- function(x, alpha = x$init, downstates = x$states, k = 10000) {
+mttr <- function(x, alpha = x$init, downstates = x$states, k = 10000, var = FALSE) {
   
-  return(mttf(x = x, alpha = alpha, upstates = downstates, k = k))
+  return(mttf(x = x, alpha = alpha, upstates = downstates, k = k, var = var))
   
 }
