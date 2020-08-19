@@ -121,7 +121,7 @@
   statesj <- col(Nij)[-indexdiag][which(Nij.temp == 0)]
   
   if ((length(statesi) != 0) | (length(statesj) != 0)) {
-    warning(
+    message(
       "Some transitions from state i to state j are not observed.
             The following are ",
       paste0(sapply(1:length(statesi), function(x)
@@ -146,7 +146,7 @@
   Ni <- apply(Nij, 1, sum)
   
   if (length(which(Ni == 0)) != 0) {
-    warning("Warning: missing state space(s)")
+    message("missing state space(s)")
   }
   
   Nj <- apply(Nij, 2, sum)
@@ -154,7 +154,7 @@
   Nj <- colSums(Nij)
   
   if (length(which(Nj == 0)) != 0) {
-    warning("Warning: missing state space(s)")
+    message("missing state space(s)")
   }
   
   N <- sum(Nij)
