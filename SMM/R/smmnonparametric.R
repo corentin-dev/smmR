@@ -251,37 +251,38 @@ is.smmnonparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q.smmnonparametric <- function(x, kmax = x$kmax) {
+.get.q.smmnonparametric <- function(x, kmax = x$kmax, var = FALSE, k = 10000) {
   
   q <- array(data = 0, dim = c(x$s, x$s, kmax + 1))
   
   if (kmax <= x$kmax) {
+    end <- kmax
+  } else {
+    end <- x$kmax
+  }
+   
+  if (x$type.sojourn == "fij") {
+    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * x$distr[, , 1:end]
+  } else if (x$type.sojourn == "fi") {
+    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(1, 3, 2))
+  } else if (x$type.sojourn == "fj") {
+    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(3, 1, 2))
+  } else if (x$type.sojourn == "f") {
+    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[1:end], c(end, x$s, x$s)), c(2, 3, 1))
+  }
+  
+  if (var) {
     
-    if (x$type.sojourn == "fij") {
-      q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * x$distr[, , 1:kmax]
-    } else if (x$type.sojourn == "fi") {
-      q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * aperm(array(x$distr[, 1:kmax], c(x$s, kmax, x$s)), c(1, 3, 2))
-    } else if (x$type.sojourn == "fj") {
-      q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * aperm(array(x$distr[, 1:kmax], c(x$s, kmax, x$s)), c(3, 1, 2))
-    } else if (x$type.sojourn == "f") {
-      q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * aperm(array(x$distr[1:kmax], c(kmax, x$s, x$s)), c(2, 3, 1))
-    }
+    m <- meanSojournTimes(x = x)
+    sigma2 <- array(data = m, dim = c(x$s, x$s, kmax + 1)) * q * (1 - q)
+    
+    return(list(q = q, sigma2 = sigma2))
     
   } else {
     
-    if (x$type.sojourn == "fij") {
-      q[, , 2:(x$kmax + 1)] <- array(x$ptrans, c(x$s, x$s, x$kmax)) * x$distr
-    } else if (x$type.sojourn == "fi") {
-      q[, , 2:(x$kmax + 1)] <- array(x$ptrans, c(x$s, x$s, x$kmax)) * aperm(array(x$distr, c(x$s, x$kmax, x$s)), c(1, 3, 2))
-    } else if (x$type.sojourn == "fj") {
-      q[, , 2:(x$kmax + 1)] <- array(x$ptrans, c(x$s, x$s, x$kmax)) * aperm(array(x$distr, c(x$s, x$kmax, x$s)), c(3, 1, 2))
-    } else if (x$type.sojourn == "f") {
-      q[, , 2:(x$kmax + 1)] <- array(x$ptrans, c(x$s, x$s, x$kmax)) * aperm(array(x$distr, c(x$kmax, x$s, x$s)), c(2, 3, 1))
-    }
+    return(q)
     
   }
-  
-  return(q)
   
 }
 

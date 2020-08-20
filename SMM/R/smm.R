@@ -9,7 +9,7 @@ is.smm <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q <- function(x, ...) {
+.get.q <- function(x, kmax, var = FALSE, k = 10000) {
   UseMethod(".get.q", x)
 }
 

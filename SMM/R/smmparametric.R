@@ -441,14 +441,25 @@ is.smmparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q.smmparametric <- function(x, kmax) {
+.get.q.smmparametric <- function(x, kmax, var = FALSE, k = 10000) {
   
   q <- array(data = 0, dim = c(x$s, x$s, kmax + 1))
   
   fijk <- .get.fijk.smmparametric(x, kmax)
   q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * fijk
   
-  return(q)
+  if (var) {
+    
+    m <- meanSojournTimes(x = x)
+    sigma2 <- array(data = m, dim = c(x$s, x$s, kmax + 1)) * q * (1 - q)
+    
+    return(list(q = q, sigma2 = sigma2))
+    
+  } else {
+    
+    return(q)
+    
+  }
   
 }
 
