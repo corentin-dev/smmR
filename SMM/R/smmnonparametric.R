@@ -512,3 +512,97 @@ bic.smmnonparametric <- function(x, sequences, states) {
   return(bic)
   
 }
+
+#' Plot function for an object of class smmnonparametric
+#'
+#' @description Displays the densities for the conditional sojourn time 
+#'   distributions depending on the current state `i` and on the next state 
+#'   `j`.
+#'
+#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param i An integer giving the current state in the following cases: 
+#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
+#'   ignored.
+#' @param j An integer giving the next state in the following cases: 
+#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
+#'   ignored.
+#' @param klim An integer giving the limit value for which the density will be 
+#'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
+#' @param ... Arguments passed to plot.
+#' 
+#' @export
+#'
+#' @import graphics
+plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
+  
+  #############################
+  # Checking parameters i and j
+  #############################
+  
+  if (x$type.sojourn != "f") {
+    
+    if (x$type.sojourn == "fi") {
+      
+      if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
+        stop(paste0("i must be an integer between 1 and ", dim(x$distr)[1]))
+      }
+      
+    } else if (x$type.sojourn == "fj") {
+      
+      if (!((j > 0) & (j <= dim(x$distr)[1]) & ((j %% 1) == 0))) {
+        stop(paste0("j must be an integer between 1 and ", dim(x$distr)[1]))
+      }
+      
+    } else {
+      
+      if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
+        stop(paste0("i must be an integer between 1 and ", dim(x$distr)[1]))
+      }
+      
+      if (!((j > 0) & (j <= dim(x$distr)[2]) & ((j %% 1) == 0))) {
+        stop(paste0("j must be an integer between 1 and ", dim(x$distr)[2]))
+      }
+      
+    }
+    
+  }
+  
+  #############################
+  # Checking parameter klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) && ((klim %% 1) == 0))) {
+      stop("klim must be a strictly positive integer")
+    }
+  }
+  
+  
+  if (x$type.sojourn == "fij") {
+    f <- x$distr[i, j, ]
+    ylab <- bquote(f["i = " ~ .(i) ~ ", j = " ~ .(j)])
+    main <- paste0("Sojourn time density function for the \n current state i = ", i, " and the next state j = ", j)
+  } else if (x$type.sojourn == "fi") {
+    f <- x$distr[i, ]
+    ylab <- bquote(f["i = " ~ .(i)])
+    main <- paste0("Sojourn time density function for the current state i = ", i)
+  } else if (x$type.sojourn == "fj") {
+    f <- x$distr[j, ]
+    ylab <- bquote(f["i = " ~ .(j)])
+    main <- paste0("Sojourn time density function for the next state j = ", j)
+  } else {
+    f <- x$distr
+    ylab <- "f"
+    main <- paste0("Sojourn time density function")
+  }
+  
+  # Compute the quantile of order alpha if klim is NULL
+  alpha <- 0.95
+  if (is.null(klim)) {
+    cdf <- cumsum(f)
+    klim <- ifelse(is.na(which(cdf >= alpha)[1]), x$klim, which(cdf >= alpha)[1])
+  }
+  
+  plot.default(x = 1:klim, y = f[1:klim], xlab = "k", ylab = ylab, ...)
+  title(main = main)
+}

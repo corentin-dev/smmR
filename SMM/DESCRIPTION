@@ -30,7 +30,8 @@ License: GPL
 Depends: seqinr,
     DiscreteWeibull
 Imports:
-    MASS
+    MASS,
+    graphics
 Suggests: 
     utils,
     knitr,

@@ -23,6 +23,54 @@
 }
 
 ## __________________________________________________________
+## Functions giving the value of the densities
+## __________________________________________________________
+
+.dunif <- function(x, b, void) {
+  return(sapply(x, function(k) ifelse(k <= b, 1 / b, 0)))
+}
+
+.dgeom <- function(x, prob, void) {
+  return(dgeom(x = x - 1, prob = prob))
+}
+
+.dpois <- function(x, lambda, void) {
+  return(dpois(x = x - 1, lambda = lambda))
+}
+
+.dnbinom <- function(x, size, prob) {
+  return(dnbinom(x = x - 1, size = size, prob = prob))
+}
+
+.ddweibull <- function(x, q, beta) {
+  return(ddweibull(x = x, q = q, beta = beta, zero = FALSE))
+}
+
+## __________________________________________________________
+## Functions giving the quantiles of the densities
+## __________________________________________________________
+
+.qunif <- function(p, b, void) {
+  return(ceiling((b - 1) * p + 1))
+}
+
+.qgeom <- function(p, prob, void) {
+  return(qgeom(p = p, prob = prob) + 1)
+}
+
+.qpois <- function(p, lambda, void) {
+  return(qpois(p = p, lambda = lambda) + 1)
+}
+
+.qnbinom <- function(p, size, prob) {
+  return(qnbinom(p = p, size = size, prob = prob) + 1)
+}
+
+.qdweibull <- function(p, q, beta) {
+  return(qdweibull(p = p, q = q, beta = beta, zero = FALSE))
+}
+
+## __________________________________________________________
 ## .getSeq: Returns the character sequence given the processes J and T
 ## __________________________________________________________
 .getSeq <- function(Jm, Tm) {
