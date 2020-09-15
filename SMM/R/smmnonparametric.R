@@ -251,12 +251,13 @@ is.smmnonparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q.smmnonparametric <- function(x, kmax = x$kmax, var = FALSE, k = 10000) {
+#' @export
+.get.q.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
-  q <- array(data = 0, dim = c(x$s, x$s, kmax + 1))
+  q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
-  if (kmax <= x$kmax) {
-    end <- kmax
+  if (k <= x$kmax) {
+    end <- k
   } else {
     end <- x$kmax
   }
@@ -273,8 +274,8 @@ is.smmnonparametric <- function(x) {
   
   if (var) {
     
-    m <- meanSojournTimes(x = x)
-    sigma2 <- array(data = m, dim = c(x$s, x$s, kmax + 1)) * q * (1 - q)
+    m <- meanSojournTimes(x = x, klim = klim)
+    sigma2 <- array(data = m, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
     return(list(q = q, sigma2 = sigma2))
     
@@ -554,6 +555,10 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
       }
       
     } else {
+      
+      if (i == j) {
+        stop(paste0("the conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist.")) 
+      }
       
       if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
         stop(paste0("i must be an integer between 1 and ", dim(x$distr)[1]))

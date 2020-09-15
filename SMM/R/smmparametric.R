@@ -287,74 +287,74 @@ is.smmparametric <- function(x) {
 }
 
 # Method used to compute the semi-Markov kernel q (see method .get.q.smmparametric)
-.get.fijk.smmparametric <- function(x, kmax) {
+.get.fijk.smmparametric <- function(x, k) {
   
   s <- x$s
 
   if (x$type.sojourn == "fij") {
     param1 <- x$param[, , 1]
     param2 <- x$param[, , 2]
-    f <- matrix(0, nrow = s * s, ncol = kmax)
+    f <- matrix(0, nrow = s * s, ncol = k)
   } else if (x$type.sojourn == "fj") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = s, ncol = kmax)
+    f <- matrix(0, nrow = s, ncol = k)
   } else if (x$type.sojourn == "fi") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = s, ncol = kmax)
+    f <- matrix(0, nrow = s, ncol = k)
   } else {
     param1 <- x$param[1]
     param2 <- x$param[2]
-    f <- matrix(0, nrow = 1, ncol = kmax)
+    f <- matrix(0, nrow = 1, ncol = k)
   }
 
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
-      f[j, ] <- ddweibull(1:kmax, q = param1[j], beta = param2[j], zero = FALSE)
+      f[j, ] <- ddweibull(1:k, q = param1[j], beta = param2[j], zero = FALSE)
     }
   }
   if ("geom" %in% x$distr) {
     indices <- which(x$distr == "geom")
     for (j in indices) {
-      f[j, ] <- dgeom(0:(kmax - 1), prob = param1[j])
+      f[j, ] <- dgeom(0:(k - 1), prob = param1[j])
     }
   }
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(kmax - 1), size = param1[j], prob = param2[j])
+      f[j, ] <- dnbinom(0:(k - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {
     indices <- which(x$distr == "pois")
     for (j in indices) {
-      f[j, ] <- dpois(0:(kmax - 1), lambda = param1[j])
+      f[j, ] <- dpois(0:(k - 1), lambda = param1[j])
     }
   }
   if ("unif" %in% x$distr) {
     indices <- which(x$distr == "unif")
     for (j in indices) {
-      f[j, ] <- sapply(1:kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+      f[j, ] <- sapply(1:k, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
     }
   }
 
   if (x$type.sojourn == "fij") {
-    fijk <- array(f, c(s, s, kmax))
+    fijk <- array(f, c(s, s, k))
   } else if (x$type.sojourn == "fi") {
     f <- rep(as.vector(t(f)), each = s)
-    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
-    fk <- array(as.vector(t(fmat)), c(s, s, kmax))
+    fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
+    fk <- array(as.vector(t(fmat)), c(s, s, k))
     fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
   } else if (x$type.sojourn == "fj") {
     f <- rep(as.vector(t(f)), each = s)
-    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(s, s, kmax))
+    fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(s, s, k))
   } else {
     f <- rep(f, each = s * s)
-    fmat <- matrix(f, nrow = kmax, ncol = s * s, byrow = TRUE)
-    fijk <- array(as.vector(t(fmat)), c(s, s, kmax))
+    fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
+    fijk <- array(as.vector(t(fmat)), c(s, s, k))
   }
 
   return(fijk)
@@ -362,61 +362,61 @@ is.smmparametric <- function(x) {
 }
 
 # Method to get the sojourn time distribution f
-.get.f.smmparametric <- function(x, kmax) {
+.get.f.smmparametric <- function(x, k) {
   
   s <- x$s
   
   if (x$type.sojourn == "fij") {
     param1 <- x$param[, , 1]
     param2 <- x$param[, , 2]
-    f <- matrix(0, nrow = s * s, ncol = kmax)
+    f <- matrix(0, nrow = s * s, ncol = k)
   } else if (x$type.sojourn == "fj") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = s, ncol = kmax)
+    f <- matrix(0, nrow = s, ncol = k)
   } else if (x$type.sojourn == "fi") {
     param1 <- x$param[, 1]
     param2 <- x$param[, 2]
-    f <- matrix(0, nrow = s, ncol = kmax)
+    f <- matrix(0, nrow = s, ncol = k)
   } else {
     param1 <- x$param[1]
     param2 <- x$param[2]
-    f <- matrix(0, nrow = 1, ncol = kmax)
+    f <- matrix(0, nrow = 1, ncol = k)
   }
   
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
-      f[j, ] <- ddweibull(1:kmax, q = param1[j], beta = param2[j], zero = FALSE)
+      f[j, ] <- ddweibull(1:k, q = param1[j], beta = param2[j], zero = FALSE)
     }
   }
   if ("geom" %in% x$distr) {
     indices <- which(x$distr == "geom")
     for (j in indices) {
-      f[j, ] <- dgeom(0:(kmax - 1), prob = param1[j])
+      f[j, ] <- dgeom(0:(k - 1), prob = param1[j])
     }
   }
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(kmax - 1), size = param1[j], prob = param2[j])
+      f[j, ] <- dnbinom(0:(k - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {
     indices <- which(x$distr == "pois")
     for (j in indices) {
-      f[j, ] <- dpois(0:(kmax - 1), lambda = param1[j])
+      f[j, ] <- dpois(0:(k - 1), lambda = param1[j])
     }
   }
   if ("unif" %in% x$distr) {
     indices <- which(x$distr == "unif")
     for (j in indices) {
-      f[j, ] <- sapply(1:kmax, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
+      f[j, ] <- sapply(1:k, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
     }
   }
   
   if (x$type.sojourn == "fij") {
-    f <- array(f, c(s, s, kmax))
+    f <- array(f, c(s, s, k))
   }
   
   return(f)
@@ -425,9 +425,9 @@ is.smmparametric <- function(x) {
 
 # Method to get the survival/reliability function Fbar
 # (useful to compute the contribution to the likelihood when censoring)
-.get.Fbar.smmparametric <- function(x, kmax) {
+.get.Fbar.smmparametric <- function(x, k) {
   
-  f <- .get.f.smmparametric(x, kmax)
+  f <- .get.f.smmparametric(x, k)
   
   if (x$type.sojourn == "fij") {
     Fbar <- 1 - apply(X = f, MARGIN = c(1, 2), cumsum)
@@ -441,17 +441,18 @@ is.smmparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-.get.q.smmparametric <- function(x, kmax, var = FALSE, k = 10000) {
+#' @export
+.get.q.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
   
-  q <- array(data = 0, dim = c(x$s, x$s, kmax + 1))
+  q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
-  fijk <- .get.fijk.smmparametric(x, kmax)
-  q[, , 2:(kmax + 1)] <- array(x$ptrans, c(x$s, x$s, kmax)) * fijk
+  fijk <- .get.fijk.smmparametric(x, k)
+  q[, , 2:(k + 1)] <- array(x$ptrans, c(x$s, x$s, k)) * fijk
   
   if (var) {
     
-    m <- meanSojournTimes(x = x)
-    sigma2 <- array(data = m, dim = c(x$s, x$s, kmax + 1)) * q * (1 - q)
+    m <- meanSojournTimes(x = x, klim = klim)
+    sigma2 <- array(data = m, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
     return(list(q = q, sigma2 = sigma2))
     
@@ -530,7 +531,7 @@ loglik.smmparametric <- function(x, sequences, states) {
   Nij <- sequences$counting$Nij
   maskNij <- Nij != 0 & pij != 0
   
-  f <- .get.f(x, kmax = kmax) # Compute the sojourn time distribution
+  f <- .get.f.smmparametric(x = x, k = kmax) # Compute the sojourn time distribution
   
   
   if (type.sojourn == "fij") {
@@ -546,13 +547,13 @@ loglik.smmparametric <- function(x, sequences, states) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, kmax)
+      Fbar <- .get.Fbar.smmparametric(x = , k = kmax)
       
       Nbijk <- sequences$counting$Nbijk
       maskNbijk <- Nbijk != 0 & Fbar != 0
       
       # Contribution of the last right censored time to the loglikelihood
-      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x, kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x = x, k = kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
       
       Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbarj != 0
@@ -575,7 +576,7 @@ loglik.smmparametric <- function(x, sequences, states) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, kmax)
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbik <- sequences$counting$Nbik
       maskNbik <- Nbik != 0 & Fbar != 0
@@ -601,7 +602,7 @@ loglik.smmparametric <- function(x, sequences, states) {
     if (cens.beg || cens.end) {
       
       # Contribution of the first right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, kmax)
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbjk <- sequences$counting$Nbjk
       maskNbjk <- Nbjk != 0 & Fbar != 0
@@ -630,7 +631,7 @@ loglik.smmparametric <- function(x, sequences, states) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x, kmax)
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbk <- sequences$counting$Nbk
       maskNbk <- Nbk != 0 & Fbar != 0

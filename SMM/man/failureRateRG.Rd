@@ -4,7 +4,7 @@
 \alias{failureRateRG}
 \title{RG-Failure Rate Function}
 \usage{
-failureRateRG(x, k, alpha = x$init, upstates = x$states)
+failureRateRG(x, k, upstates = x$states)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -12,9 +12,6 @@ failureRateRG(x, k, alpha = x$init, upstates = x$states)
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
 RG-Failure Rate should be computed.}
-
-\item{alpha}{Vector of initial distribution \eqn{(\alpha_i)_{i \in U}} of
-length \eqn{\textrm{card}(U) = s1}.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 }

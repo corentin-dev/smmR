@@ -4,18 +4,15 @@
 \alias{mttf}
 \title{Mean Time To Failure (MTTF) Function}
 \usage{
-mttf(x, alpha = x$init, upstates = x$states, k = 10000, var = FALSE)
+mttf(x, upstates = x$states, klim = 10000, var = FALSE)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
 \link{smmparametric} or \link{smmnonparametric}).}
 
-\item{alpha}{Vector of initial distribution \eqn{(\alpha_i)_{i \in U}} of
-length \eqn{\textrm{card}(U) = s1}.}
-
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
-\item{k}{Optional. The time horizon used to approximate the series in the
+\item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function).}
 

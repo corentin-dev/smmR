@@ -4,7 +4,7 @@
 \alias{meanSojournTimes}
 \title{Mean Sojourn Times Function}
 \usage{
-meanSojournTimes(x, states = x$states, k = 10000)
+meanSojournTimes(x, states = x$states, klim = 10000)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -13,7 +13,7 @@ meanSojournTimes(x, states = x$states, k = 10000)
 \item{states}{Vector giving the states for which the mean sojourn time
 should be computed. \code{states} is a subset of \eqn{E}.}
 
-\item{k}{Optional. The time horizon used to approximate the series in the
+\item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector.}
 }
 \value{

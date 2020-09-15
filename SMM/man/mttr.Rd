@@ -4,18 +4,15 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, alpha = x$init, downstates = x$states, k = 10000, var = FALSE)
+mttr(x, downstates = x$states, klim = 10000, var = FALSE)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
 \link{smmparametric} or \link{smmnonparametric}).}
 
-\item{alpha}{Vector of initial distribution \eqn{(\alpha_i)_{i \in D}} of
-length \eqn{\textrm{card}(D) = s - s1}.}
-
 \item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
 
-\item{k}{Optional. The time horizon used to approximate the series in the
+\item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function).}
 

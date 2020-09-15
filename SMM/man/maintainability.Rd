@@ -4,7 +4,7 @@
 \alias{maintainability}
 \title{Maintainability Function}
 \usage{
-maintainability(x, k, alpha = x$init, downstates = x$states)
+maintainability(x, k, downstates = x$states)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -12,9 +12,6 @@ maintainability(x, k, alpha = x$init, downstates = x$states)
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
 maintainability should be computed.}
-
-\item{alpha}{Vector of initial distribution \eqn{(\alpha_i)_{i \in U}} of
-length \eqn{\textrm{card}(U) = s1} (see Details).}
 
 \item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
 }

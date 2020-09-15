@@ -65,8 +65,8 @@ be the set of possible states of the system, where we set:
   are in good state and $\mathcal{T}$ is empty;
  * **State 2** - $\mathcal{U}$ has failed, but $\mathcal{T}$ is not yet full, 
   so the factory is still working;
- * **State 3** - $\mathcal{U}$ has failed and $\mathcal{T}$ is full, so the factory 
-  is not working.
+ * **State 3** - $\mathcal{U}$ has failed and $\mathcal{T}$ is full, so the 
+  factory is not working.
 
 The possible transitions between states are given in the following figure:
 
@@ -207,7 +207,10 @@ print(x = estimate$param, digits = 2)
 ```
 
 In the following sections, based on the estimated model, we are going to 
-compute some quantities/indicators such as the reliability, the availability...
+compute some indicators such as the reliability, the availability, the 
+maintainability and also their asymptotic confidence intervals.
+
+
 
 
 ## Reliability
@@ -215,12 +218,12 @@ compute some quantities/indicators such as the reliability, the availability...
 Consider a system $S_{ystem}$ starting to function at time $k = 0$. The 
 **reliability** of $S_{ystem}$ at time $k \in \mathbb{N}$ is the probability 
 that the system has functioned without failure in the period $[0, k]$. Let's 
-take $k = 100$.
+take $k = 300$.
 
 ```{r}
 k <- 300
 upstates <- c("1", "2") # Working states of the semi-Markov system
-reliab <- reliability(x = factory, k = k, alpha = c(1, 0), upstates = upstates)
+reliab <- reliability(x = factory, k = k, upstates = upstates)
 ```
 
 ```{r}
@@ -239,12 +242,22 @@ time $k$ (independently of the fact that the system has failed or not in
 $[0, k)$).
 
 ```{r}
-avail <- availability(x = factory, k = k, alpha = c(1, 0, 0), upstates = upstates)
+avail <- availability(x = factory, k = k, upstates = upstates, var = TRUE)
+
+level <- 0.95
+confInf <- avail$avail - sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- avail$avail + sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 0:k, y = avail, pch = ".", cex = 2.5, ylim = c(0.95, 1), 
+plot(x = 0:k, y = avail$avail, type = "l", cex = 2.5, ylim = c(0.95, 1), 
      col = "blue", xlab = "time", ylab = "availability")
+
+lines(x = confInf, lty = 4, col = "blue")
+lines(x = confSup, lty = 4, col = "blue")
+legend(x = "topright", 
+       legend = c("True value", "95% confidence interval"), 
+       col = "blue", lty = c(1, 4))
 ```
 
 
@@ -259,7 +272,7 @@ $k = 0$.
 
 ```{r}
 downstates <- c("3") # Failure state of the semi-Markov system
-maintain <- maintainability(x = factory, k = 300, alpha = c(1), downstates = c("3"))
+maintain <- maintainability(x = factory, k = 300, downstates = c("3"))
 ```
 
 ```{r}
@@ -282,7 +295,7 @@ that the failure of the system occurs at time $k$, given that the system has
 worked until time $k - 1$.
 
 ```{r}
-failureBMP <- failureRateBMP(x = factory, k = k, alpha = c(1, 0), upstates = upstates)
+failureBMP <- failureRateBMP(x = factory, k = k, upstates = upstates)
 ```
 
 ```{r}
@@ -298,7 +311,7 @@ Discrete-time adapted failure rate, proposed by Roy and Gupta (1992). We call
 it the **RG-failure rate** and denote it by $r(k),\ k \in \mathbb{N}$.
 
 ```{r}
-failureRG <- failureRateRG(x = factory, k = k, alpha = c(1, 0), upstates = upstates)
+failureRG <- failureRateRG(x = factory, k = k, upstates = upstates)
 ```
 
 ```{r}
@@ -319,7 +332,23 @@ Consider a system $S_{ystem}$ starting to work at time $k = 0$.
 The **mean time to failure** (MTTF) is defined as the mean lifetime.
 
 ```{r}
-mttf(x = factory, alpha = c(1, 0), upstates = upstates)
+mttf <- mttf(x = factory, upstates = upstates, var = TRUE)
+
+level <- 0.95
+confInf <- mttf$mttf - sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- mttf$mttf + sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+```
+
+```{r}
+plot(x = 1:2, y = mttf$mttf, pch = "+", col = "red", axes = FALSE, 
+     xlab = "", ylab = "", xlim = c(0.5, 2.5), ylim = c(61, 72))
+axis(side = 2)
+axis(side = 1, at = c(1, 2), labels = c("state 1", "state 2"), lty = 0)
+segments(x0 = 1:2, y0 = mttf$mttf, y1 = confInf, lty = 4, col = "blue")
+segments(x0 = 1:2, y0 = mttf$mttf, y1 = confSup, lty = 4, col = "blue")
+legend(x = "topright", 
+       legend = c("True value", "95% confidence interval"), 
+       col = c("red", "blue"), lty = c(0, 4), pch = c("+", ""))
 ```
 
 
@@ -330,5 +359,5 @@ Consider a system $S_{ystem}$ starting to fail at time $k = 0$. The
 **mean time to repair (MTTR)** is defined as the mean of the repair duration.
 
 ```{r}
-mttr(x = factory, alpha = c(1), downstates = downstates)
+mttr(x = factory, downstates = downstates)
 ```
