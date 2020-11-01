@@ -4,7 +4,7 @@
 #' 
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
-#' @return An object of S3 class processes.
+#' @return An object of class S3 `processes`.
 #'
 #' @noRd
 #' 

@@ -134,9 +134,9 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("The size of the matrix ptrans must be equal to sxs")
   }
   
-  if (!all(apply(ptrans, 1, sum) == 1)) {
-    stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
-  }
+  # if (!all(apply(ptrans, 1, sum) == 1)) {
+  #   stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
+  # }
   
   if (!all(diag(ptrans) == 0)) {
     stop("All the diagonal elements of ptrans must be equal to 0 since transitions to the same state are not allowed")
@@ -251,7 +251,6 @@ is.smmnonparametric <- function(x) {
 }
 
 # Method to get the semi-Markov kernel q
-#' @export
 .get.q.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
   q <- array(data = 0, dim = c(x$s, x$s, k + 1))
@@ -274,8 +273,8 @@ is.smmnonparametric <- function(x) {
   
   if (var) {
     
-    m <- meanSojournTimes(x = x, klim = klim)
-    sigma2 <- array(data = m, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
+    mu <- .get.mu(x = x, klim = klim)
+    sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
     return(list(q = q, sigma2 = sigma2))
     

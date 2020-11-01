@@ -4,20 +4,33 @@
 \alias{reliability}
 \title{Reliability Function}
 \usage{
-reliability(x, k, upstates = x$states)
+reliability(x, k, upstates = x$states, var = FALSE, klim = 10000)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
 \link{smmparametric} or \link{smmnonparametric}).}
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
-reliablity should be computed.}
+reliability should be computed.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
+
+\item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
+
+\item{klim}{Optional. The time horizon used to approximate the series in the
+computation of the mean recurrence times vector for the asymptotic
+variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the reliability
-for the period \eqn{[0,\dots,k]}.
+for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE}, a list
+containing the following components:
+\itemize{
+\item{reliab: }{a vector of length \eqn{k + 1} giving the values of the
+reliability for the period \eqn{[0,\dots,k]};}
+\item{sigma2: }{a vector giving the asymptotic variance of the estimator
+\eqn{\sigma_{q}^{2}(k)}.}
+}
 }
 \description{
 Consider a system \eqn{S_{ystem}} starting to function at time

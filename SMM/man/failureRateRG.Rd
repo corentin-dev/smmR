@@ -4,7 +4,7 @@
 \alias{failureRateRG}
 \title{RG-Failure Rate Function}
 \usage{
-failureRateRG(x, k, upstates = x$states)
+failureRateRG(x, k, upstates = x$states, var = FALSE, klim = 10000)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -14,10 +14,23 @@ failureRateRG(x, k, upstates = x$states)
 RG-Failure Rate should be computed.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
+
+\item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
+
+\item{klim}{Optional. The time horizon used to approximate the series in the
+computation of the mean recurrence times vector for the asymptotic
+variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the RG-Failure
-Rate for the period \eqn{[0,\dots,k]}.
+Rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
+a list containing the following components:
+\itemize{
+\item{lbda: }{a vector of length \eqn{k + 1} giving the values of the
+RG-Failure Rate for the period \eqn{[0,\dots,k]};}
+\item{sigma2: }{a vector giving the asymptotic variance of the estimator
+\eqn{\sigma_{q}^{2}(k)}.}
+}
 }
 \description{
 Discrete-time adapted failure rate, proposed by Roy and Gupta (1992).

@@ -24,10 +24,10 @@ If \code{var = FALSE}, a vector of length \eqn{\textrm{card}(U)} giving
 the values of the mean time to failure for each state \eqn{i \in U}. If
 \code{var = TRUE}, a list containing the following components:
 \itemize{
-\item{mttf: }{A vector of length \eqn{\textrm{card}(U)} giving the values
-of the mean time to failure for each state \eqn{i \in U}}.
-\item{sigma2: } the variance of the estimator for each estimation of the
-mean time to failure;
+\item{mttf: }{a vector of length \eqn{\textrm{card}(U)} giving the values
+of the mean time to failure for each state \eqn{i \in U}.}
+\item{sigma2: }{the variance of the estimator for each estimation of the
+mean time to failure;}
 }
 }
 \description{

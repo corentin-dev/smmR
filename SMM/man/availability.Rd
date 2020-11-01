@@ -23,7 +23,14 @@ computation of the mean recurrence times vector for the asymptotic variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the availability
-for the period \eqn{[0,\dots,k]}.
+for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE}, a list
+containing the following components:
+\itemize{
+\item{avail: }{a vector of length \eqn{k + 1} giving the values of the
+availability for the period \eqn{[0,\dots,k]};}
+\item{sigma2: }{a vector giving the asymptotic variance of the estimator
+\eqn{\sigma_{q}^{2}(k)}.}
+}
 }
 \description{
 The pointwise (or instantaneous) availability of a system
