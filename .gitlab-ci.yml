@@ -3,7 +3,7 @@ test:
   script:
     - apt update
     - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
-    - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2"))'
+    - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
     - R CMD build --compact-vignettes=both SMM
     - mv SMM*.tar.gz SMM.tar.gz
     - R CMD check --as-cran SMM.tar.gz
