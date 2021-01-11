@@ -270,7 +270,7 @@ fitsemimarkovmodel <-
     estimate <- .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
   }
   
-  if (any(estimate$init != 0)) {
+  if (any(estimate$init == 0)) {
     message("The probabilities of the initial states ",
             paste0(names(which(estimate$init == 0)), collapse = ", "),
             " are 0.")

@@ -134,9 +134,9 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("The size of the matrix ptrans must be equal to sxs")
   }
   
-  # if (!all(apply(ptrans, 1, sum) == 1)) {
-  #   stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
-  # }
+  if (!all(apply(ptrans, 1, sum) == 1)) {
+    stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
+  }
   
   if (!all(diag(ptrans) == 0)) {
     stop("All the diagonal elements of ptrans must be equal to 0 since transitions to the same state are not allowed")
@@ -181,7 +181,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     temp <- apply(distr, c(1, 2), sum)
     indexdiag <- seq(1, s * s, by = s + 1)
     
-    if (!(all(diag(temp == 0)) && (temp[-indexdiag] == 0 || abs(temp[-indexdiag] - 1) < .Machine$double.eps))) {
+    if (!(all(diag(temp == 0)) && (temp[-indexdiag] == 0 || temp[-indexdiag]  == 1))) {
       stop("distr is not a stochastic matrix")
     }
   }
@@ -209,11 +209,6 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   } else {
     kmax <- length(distr)
   }
-  
-  colnames(ptrans) <- words(length = 1, alphabet = states)
-  row.names(ptrans) <- colnames(ptrans)
-  names(init) <- colnames(ptrans)
-  
   
   # Add names to the attributes init, ptrans, distr and param for readability
   colnames(ptrans) <- words(length = 1, alphabet = states)

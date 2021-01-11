@@ -132,6 +132,9 @@
     
   }
   
+  # Renormalize ptrans for potential numerical issues
+  ptrans <- .normalizePtrans(ptrans)
+  
   estimate <-
     smmparametric(
       states = states,

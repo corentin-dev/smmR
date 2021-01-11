@@ -376,3 +376,21 @@
   return(C)
   
 }
+
+## __________________________________________________________
+## Normalize transition matrix
+## __________________________________________________________
+.normalizePtrans <- function(p) {
+  
+  p <- p / apply(p, 1, sum)
+  
+  s <- nrow(p)
+  ind <- 1:s
+  for (i in 1:s) {
+    col <- sample(x = ind[-i], size = 1)
+    p[i, col] <- 1 - sum(p[i, -col])
+  }
+  
+  return(p)
+  
+}
