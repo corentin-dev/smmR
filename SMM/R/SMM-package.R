@@ -17,4 +17,11 @@
 #' @import stats
 #' @import seqinr
 #' @import DiscreteWeibull
+#' 
+## usethis namespace: start
+#' @useDynLib SMM, .registration = TRUE
+## usethis namespace: end
+## usethis namespace: start
+#' @importFrom Rcpp sourceCpp
+## usethis namespace: end
 "_PACKAGE"

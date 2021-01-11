@@ -31,11 +31,15 @@ Depends: seqinr,
     DiscreteWeibull
 Imports:
     MASS,
-    graphics
+    graphics,
+    Rcpp
 Suggests: 
     utils,
     knitr,
     rmarkdown
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2020-01-24 14:04:32 UTC; vergnnic
