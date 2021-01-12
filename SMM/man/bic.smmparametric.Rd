@@ -4,18 +4,16 @@
 \alias{bic.smmparametric}
 \title{Bayesian Information Criterion (BIC)}
 \usage{
-\method{bic}{smmparametric}(x, sequences, states)
+\method{bic}{smmparametric}(x, sequences)
 }
 \arguments{
 \item{x}{An object of class \link{smmparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 BIC criterion must be computed.}
-
-\item{states}{Vector of state space (of length s).}
 }
 \value{
-A numeric value giving the value of the BIC.
+Value of the BIC.
 }
 \description{
 Computation of the Bayesian Information Criterion.

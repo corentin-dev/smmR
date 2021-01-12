@@ -1178,13 +1178,12 @@ est <- fitsemimarkovmodel(sequences = seq5000, states = states,
                           type.sojourn = "f", distr = "pois")
 
 # Computation of  the log-likelihood
-loglik(x = est, sequences = seq5000, states = states)
+loglik(x = est, sequences = seq5000)
 @
 
 \paragraph{Values:}
 
-The function \fct{loglik} returns a vector giving the value of the loglikelihood 
-for each sequence.
+The function \fct{loglik} returns the value of the loglikelihood.
 
 We also consider model selection criteria in order to evaluate and choose among 
 candidate models; the Akaike information criterion (AIC) and the Bayesian 
@@ -1208,17 +1207,16 @@ in the model.
   \item \code{sequences}: A list of vectors representing the sequences for which 
     the log-likelihood must be computed.
     
-  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
 <<aic>>=
 # Computation of the AIC
-aic(x = est, sequences = seq5000, states = states)
+aic(x = est, sequences = seq5000)
 @
 
 \paragraph{Values:}
 
-The function \fct{aic} returns vector giving the value of the AIC for each sequence.
+The function \fct{aic} returns the value of the AIC.
 
 \begin{itemize}
   \item[$\blacksquare$] \fct{bic}: computation of the BIC
@@ -1243,13 +1241,12 @@ in the model and $n$ is the sample size.
 
 <<bic>>=
 # Computation of the BIC
-bic(x = est, sequences = seq5000, states = states)
+bic(x = est, sequences = seq5000)
 @
 
 \paragraph{Values:}
 
-The function \fct{bic} returns vector giving the value of the BIC for each 
-sequence.
+The function \fct{bic} returns the value of the BIC for each sequence.
 
 
 
@@ -1327,18 +1324,16 @@ class(estmarkov)
   \item \code{sequences}: A list of vectors representing the sequences for which
     the log-likelihood must be computed.
     
-  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
 <<loglikelihoodestmarkov>>=
 # Computation of  the log-likelihood
-loglik(x = estmarkov, sequences = seqmarkov, states = states)
+loglik(x = estmarkov, sequences = seqmarkov)
 @
 
 \paragraph{Values:}
 
-The function \fct{loglik} returns a vector giving the value of the loglikelihood 
-for each sequence.
+The function \fct{loglik} returns the value of the loglikelihood.
 
 \begin{itemize}
   \item[$\blacksquare$] \fct{aic}: Computation of the AIC for a Markov chain of order $k$
@@ -1353,21 +1348,20 @@ for each sequence.
   \item \code{sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.
     
-  \item \code{states}: Vector of state space of length $s$.
 \end{itemize}
 
 <<aicestmarkov>>=
 # Computation of the AIC
-aic(x = estmarkov, sequences = seqmarkov, states = states)
+aic(x = estmarkov, sequences = seqmarkov)
 @
 
 \paragraph{Values:}
 
-The function \fct{aic} returns vector giving the value of the AIC for each sequence.
+The function \fct{aic} returns the value of the AIC.
 
 
 \paragraph{Values:}
-The function \fct{bic} returns vector giving the value of the BIC for each sequence.
+The function \fct{bic} returns the value of the BIC.
 
 
 \section{Concluding remarks}

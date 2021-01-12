@@ -6,12 +6,11 @@
 #' @param x An object for which the logikelihood can be computed.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
-#' @param states Vector of state space E (of length s).
-#' @return A numeric value giving the value of the AIC.
+#' @return Value of the AIC.
 #' 
 #' 
 #' @export
 #'
-aic <- function(x, sequences, states) {
+aic <- function(x, sequences) {
   UseMethod("aic", x)
 }

@@ -4,18 +4,16 @@
 \alias{bic}
 \title{Bayesian Information Criterion (BIC)}
 \usage{
-bic(x, sequences, states)
+bic(x, sequences)
 }
 \arguments{
 \item{x}{An object for which the logikelihood can be computed.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 BIC criterion must be computed.}
-
-\item{states}{Vector of state space E (of length s).}
 }
 \value{
-A numeric value giving the value of the BIC.
+Value of the BIC.
 }
 \description{
 Generic function computing the Bayesian Information Criterion

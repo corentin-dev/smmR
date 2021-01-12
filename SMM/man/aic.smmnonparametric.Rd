@@ -4,18 +4,16 @@
 \alias{aic.smmnonparametric}
 \title{Akaike Information Criterion (AIC)}
 \usage{
-\method{aic}{smmnonparametric}(x, sequences, states)
+\method{aic}{smmnonparametric}(x, sequences)
 }
 \arguments{
 \item{x}{An object of class \link{smmnonparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 AIC criterion must be computed.}
-
-\item{states}{Vector of state space (of length s).}
 }
 \value{
-A numeric value giving the value of the AIC.
+Value of the AIC.
 }
 \description{
 Computation of the Akaike Information Criterion.

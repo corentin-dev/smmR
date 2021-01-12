@@ -4,15 +4,13 @@
 \alias{bic.markovmodel}
 \title{Bayesian Information Criterion (BIC)}
 \usage{
-\method{bic}{markovmodel}(x, sequences, states)
+\method{bic}{markovmodel}(x, sequences)
 }
 \arguments{
 \item{x}{An object of class \link{markovmodel}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 BIC criterion must be computed.}
-
-\item{states}{Vector of state space (of length s).}
 }
 \value{
 A numeric value giving the value of the BIC.

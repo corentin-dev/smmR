@@ -4,15 +4,13 @@
 \alias{loglik.markovmodel}
 \title{Loglikelihood}
 \usage{
-\method{loglik}{markovmodel}(x, sequences, states)
+\method{loglik}{markovmodel}(x, sequences)
 }
 \arguments{
 \item{x}{An object of class \link{markovmodel}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 log-likelihood must be computed.}
-
-\item{states}{Vector of state space (of length s).}
 }
 \value{
 A vector giving the value of the loglikelihood for each sequence.

@@ -288,13 +288,12 @@ is.smmnonparametric <- function(x) {
 #' @param x An object of class [smmnonparametric][smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood must be computed.
-#' @param states Vector of state space (of length s).
-#' @return A vector giving the value of the loglikelihood for each sequence.
+#' @return Value of the loglikelihood.
 #' 
 #' 
 #' @export
 #'
-loglik.smmnonparametric <- function(x, sequences, states) {
+loglik.smmnonparametric <- function(x, sequences) {
   
   #############################
   # Checking parameters sequences and states
@@ -304,26 +303,12 @@ loglik.smmnonparametric <- function(x, sequences, states) {
     stop("The parameter sequences should be a list")
   }
   
-  if (!all(unique(unlist(sequences)) %in% states)) {
-    stop("Some states in the list of observed sequences sequences are not in the state space states")
-  }
-  
-  s <- length(states)
-  
-  #############################
-  # Checking smm parameter
-  #############################
-  
-  if ((x$s != s)) {
-    stop("The size of the matrix ptrans must be equal to sxs with s = length(states)")
-  }
-  
-  if (!all.equal(states, x$states)) {
-    stop("The state space of the estimated SMM smm is different from the given state states")
+  if (!all(unique(unlist(sequences)) %in% x$states)) {
+    stop("Some states in the list of observed sequences sequences are not in the state space given by the model x")
   }
   
   
-  sequences <- processes(sequences = sequences, states = states)
+  sequences <- processes(sequences = sequences, states = x$states)
   kmax <- sequences$kmax
   
   if (!(kmax == x$kmax)) {
@@ -455,19 +440,14 @@ loglik.smmnonparametric <- function(x, sequences, states) {
 #' @param x An object of class [smmnonparametric][smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC criterion must be computed.
-#' @param states Vector of state space (of length s).
-#' @return A numeric value giving the value of the AIC.
+#' @return Value of the AIC.
 #' 
 #' 
 #' @export
 #'
-aic.smmnonparametric <- function(x, sequences, states) {
+aic.smmnonparametric <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences, states)
-  sequences <- processes(sequences = sequences, states = states)
-  
-  s <- x$s
-  kmax <- sequences$kmax
+  loglik <- loglik(x, sequences)
   
   kpar <- .getKpar(x)
   
@@ -484,23 +464,18 @@ aic.smmnonparametric <- function(x, sequences, states) {
 #' @param x An object of class [smmnonparametric][smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
-#' @param states Vector of state space (of length s).
-#' @return A numeric value giving the value of the BIC.
+#' @return Value of the BIC.
 #' 
 #' 
 #' @export
 #'
-bic.smmnonparametric <- function(x, sequences, states) {
+bic.smmnonparametric <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences, states)
-  sequences <- processes(sequences = sequences, states = states)
-  
-  s <- x$s
-  kmax <- sequences$kmax
+  loglik <- loglik(x, sequences)
   
   kpar <- .getKpar(x)
   
-  n <- sum(sapply(sequences$Ym, length))
+  n <- sum(unlist(lapply(sequences, length)))
   
   bic <- -2 * loglik + log(n) * kpar
   

@@ -6,12 +6,11 @@
 #' @param x An object for which the logikelihood can be computed.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood must be computed.
-#' @param states Vector of state space (of length s).
-#' @return A vector giving the value of the loglikelihood for each sequence.
+#' @return Value of the loglikelihood for each sequence.
 #' 
 #' 
 #' @export
 #'
-loglik <- function(x, sequences, states) {
+loglik <- function(x, sequences) {
   UseMethod("loglik", x)
 }

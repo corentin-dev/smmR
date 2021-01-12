@@ -4,18 +4,16 @@
 \alias{loglik.smmnonparametric}
 \title{Loglikelihood}
 \usage{
-\method{loglik}{smmnonparametric}(x, sequences, states)
+\method{loglik}{smmnonparametric}(x, sequences)
 }
 \arguments{
 \item{x}{An object of class \link{smmnonparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 log-likelihood must be computed.}
-
-\item{states}{Vector of state space (of length s).}
 }
 \value{
-A vector giving the value of the loglikelihood for each sequence.
+Value of the loglikelihood.
 }
 \description{
 Computation of the loglikelihood for a semi-Markov model

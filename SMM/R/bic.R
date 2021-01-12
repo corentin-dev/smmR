@@ -6,12 +6,11 @@
 #' @param x An object for which the logikelihood can be computed.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC criterion must be computed.
-#' @param states Vector of state space E (of length s).
-#' @return A numeric value giving the value of the BIC.
+#' @return Value of the BIC.
 #' 
 #' 
 #' @export
 #'
-bic <- function(x, sequences, states) {
+bic <- function(x, sequences) {
   UseMethod("bic", x)
 }
