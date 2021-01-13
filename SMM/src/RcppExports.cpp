@@ -78,6 +78,54 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_rdweibull
+double C_rdweibull(double& q, double& beta);
+RcppExport SEXP _SMM_C_rdweibull(SEXP qSEXP, SEXP betaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double& >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double& >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_rdweibull(q, beta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulateParam
+List simulateParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, arma::mat& ptrans, arma::Mat<int>& distr, arma::mat& param1, arma::mat& param2, bool censBeg, bool censEnd);
+RcppExport SEXP _SMM_simulateParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP param1SEXP, SEXP param2SEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< unsigned int& >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< arma::Col<arma::uword>& >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type ptrans(ptransSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<int>& >::type distr(distrSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type param1(param1SEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type param2(param2SEXP);
+    Rcpp::traits::input_parameter< bool >::type censBeg(censBegSEXP);
+    Rcpp::traits::input_parameter< bool >::type censEnd(censEndSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulateParam(seed, nsim, init, ptrans, distr, param1, param2, censBeg, censEnd));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulateNonParam
+List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, arma::mat& ptrans, arma::cube& distr, bool censBeg, bool censEnd);
+RcppExport SEXP _SMM_simulateNonParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< unsigned int& >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< arma::Col<arma::uword>& >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type init(initSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type ptrans(ptransSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type distr(distrSEXP);
+    Rcpp::traits::input_parameter< bool >::type censBeg(censBegSEXP);
+    Rcpp::traits::input_parameter< bool >::type censEnd(censEndSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulateNonParam(seed, nsim, init, ptrans, distr, censBeg, censEnd));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
@@ -86,6 +134,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SMM_getCountingProcesses", (DL_FUNC) &_SMM_getCountingProcesses, 4},
     {"_SMM_getCountingNiuj", (DL_FUNC) &_SMM_getCountingNiuj, 4},
     {"_SMM_computeKernelNonParamEndcensoring", (DL_FUNC) &_SMM_computeKernelNonParamEndcensoring, 1},
+    {"_SMM_C_rdweibull", (DL_FUNC) &_SMM_C_rdweibull, 2},
+    {"_SMM_simulateParam", (DL_FUNC) &_SMM_simulateParam, 9},
+    {"_SMM_simulateNonParam", (DL_FUNC) &_SMM_simulateNonParam, 7},
     {NULL, NULL, 0}
 };
 

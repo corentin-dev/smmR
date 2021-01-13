@@ -82,3 +82,71 @@ computeKernelNonParamEndcensoring <- function(p) {
     .Call(`_SMM_computeKernelNonParamEndcensoring`, p)
 }
 
+#' Generate random variable from a Discrete Weibull distribution of type 1
+#' 
+#' @param q The first parameter, \eqn{0 < q < 1}.
+#' @param beta The second parameter, \eqn{\beta > 0}.
+#' @return A random variable.
+#' 
+#' @noRd
+#' 
+C_rdweibull <- function(q, beta) {
+    .Call(`_SMM_C_rdweibull`, q, beta)
+}
+
+#' Simulate parametric semi-Markov chain
+#' 
+#' @param seed A \code{unsigned int} that is the seed one wishes to use.
+#' @param nsim A vector of integers specifying the length of the sequences.
+#' @param init Vector of initial distribution of length s.
+#' @param ptrans Matrix of transition probabilities of the embedded Markov chain.
+#' @param distr A matrix giving the conditional sojourn time distributions for
+#'   each transition from the current state \eqn{i} to the next state \eqn{j}.
+#'   The values of the elements of the matrix \code{distr} are:
+#'   \itemize{
+#'     \item 0: if the sojourn time distribution is a uniform distribution;
+#'     \item 1: if the sojourn time distribution is a geometric distribution;
+#'     \item 2: if the sojourn time distribution is a poisson distribution;
+#'     \item 3: if the sojourn time distribution is a discrete weibull 
+#'       distribution;
+#'     \item 4: if the sojourn time distribution is a negative binomial 
+#'       distribution.
+#'   }
+#' @param param1 A matrix giving the first parameters of the sojourn time 
+#'   distributions.
+#' @param param2 A matrix giving the second parameters (if necessary, 
+#'   otherwise the value is NA) of the sojourn time distributions.
+#' @param censBeg A logical value indicating whether or not sequences are 
+#'   censored at the beginning.
+#' @param censEnd A logical value indicating whether or not sequences are 
+#'   censored at the end.
+#'   
+#' @return A list of vectors representing the simulated semi-Markov chains.
+#' 
+#' @noRd
+#' 
+simulateParam <- function(seed, nsim, init, ptrans, distr, param1, param2, censBeg = FALSE, censEnd = FALSE) {
+    .Call(`_SMM_simulateParam`, seed, nsim, init, ptrans, distr, param1, param2, censBeg, censEnd)
+}
+
+#' Simulate nonparametric semi-Markov chain
+#' 
+#' @param seed A \code{unsigned int} that is the seed one wishes to use.
+#' @param nsim A vector of integers specifying the length of the sequences.
+#' @param init Vector of initial distribution of length s.
+#' @param ptrans Matrix of transition probabilities of the embedded Markov chain.
+#' @param distr A cube giving the conditional sojourn time distributions for
+#'   each transition from the current state \eqn{i} to the next state \eqn{j}.
+#' @param censBeg A logical value indicating whether or not sequences are 
+#'   censored at the beginning.
+#' @param censEnd A logical value indicating whether or not sequences are 
+#'   censored at the end.
+#'   
+#' @return A list of vectors representing the simulated semi-Markov chains.
+#' 
+#' @noRd
+#' 
+simulateNonParam <- function(seed, nsim, init, ptrans, distr, censBeg = FALSE, censEnd = FALSE) {
+    .Call(`_SMM_simulateNonParam`, seed, nsim, init, ptrans, distr, censBeg, censEnd)
+}
+

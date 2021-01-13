@@ -301,3 +301,272 @@ arma::cube computeKernelNonParamEndcensoring(arma::cube& p) {
   return q;
   
 }
+
+
+
+
+
+//' Generate random variable from a Discrete Weibull distribution of type 1
+//' 
+//' @param q The first parameter, \eqn{0 < q < 1}.
+//' @param beta The second parameter, \eqn{\beta > 0}.
+//' @return A random variable.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+double C_rdweibull(double& q, double& beta) {
+  
+  double u = R::runif(0, 1);
+  return ceil(pow(log(1 - u) / log(q), 1 / beta));
+  
+}
+
+
+
+
+
+//' Simulate parametric semi-Markov chain
+//' 
+//' @param seed A \code{unsigned int} that is the seed one wishes to use.
+//' @param nsim A vector of integers specifying the length of the sequences.
+//' @param init Vector of initial distribution of length s.
+//' @param ptrans Matrix of transition probabilities of the embedded Markov chain.
+//' @param distr A matrix giving the conditional sojourn time distributions for
+//'   each transition from the current state \eqn{i} to the next state \eqn{j}.
+//'   The values of the elements of the matrix \code{distr} are:
+//'   \itemize{
+//'     \item 0: if the sojourn time distribution is a uniform distribution;
+//'     \item 1: if the sojourn time distribution is a geometric distribution;
+//'     \item 2: if the sojourn time distribution is a poisson distribution;
+//'     \item 3: if the sojourn time distribution is a discrete weibull 
+//'       distribution;
+//'     \item 4: if the sojourn time distribution is a negative binomial 
+//'       distribution.
+//'   }
+//' @param param1 A matrix giving the first parameters of the sojourn time 
+//'   distributions.
+//' @param param2 A matrix giving the second parameters (if necessary, 
+//'   otherwise the value is NA) of the sojourn time distributions.
+//' @param censBeg A logical value indicating whether or not sequences are 
+//'   censored at the beginning.
+//' @param censEnd A logical value indicating whether or not sequences are 
+//'   censored at the end.
+//'   
+//' @return A list of vectors representing the simulated semi-Markov chains.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+List simulateParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, 
+                 arma::mat& ptrans, arma::Mat<int>& distr, arma::mat& param1, arma::mat& param2, 
+                 bool censBeg = false, bool censEnd = false) {
+  
+  setSeed(seed);
+  
+  arma::uword nbseq = nsim.n_elem;
+  
+  arma::uvec states = arma::regspace<arma::uvec>(0, init.n_elem - 1);
+  
+  arma::vec prob(init.n_elem, arma::fill::zeros);
+  int distrib;
+  double parameter1;
+  double parameter2;
+  double k = 0;
+  
+  arma::uword i;
+  arma::uword t;
+  
+  List sequences(nbseq);
+  
+  for (arma::uword m = 0; m < nbseq; m++) {
+    
+    arma::vec J(nsim(m), arma::fill::zeros);
+    arma::vec T(nsim(m), arma::fill::zeros);
+    
+    // Initial state ...
+    J(0) = RcppArmadillo::sample(states, 1, false, init)(0);
+    
+    i = 0;
+    t = 1;
+    
+    // ... and the other states
+    while (t <= nsim(m)) {
+      
+      // Sample the following state ...
+      prob = ptrans.row(J(i)).t();
+      J(i + 1) = RcppArmadillo::sample(states, 1, false, prob)(0);
+      
+      // ... and sample the sojourn time according to the correct distribution
+      distrib = distr(J(i), J(i + 1));
+      
+      parameter1 = param1(J(i), J(i + 1));
+      parameter2 = param2(J(i), J(i + 1));
+      
+      switch (distrib) {
+      case 0: // unif
+        k = RcppArmadillo::sample(arma::regspace(1, (int)parameter1), 1, false)(0);
+        break;
+      case 1: // geom
+        k = R::rgeom(parameter1) + 1;
+        break;
+      case 2: // pois
+        k = R::rpois(parameter1) + 1;
+        break;
+      case 3: // dweibull
+        k = C_rdweibull(parameter1, parameter2);
+        break;
+      case 4: // nbinom
+        k = R::rnbinom(parameter1, parameter2) + 1;
+        break;
+      }
+      
+      T(i) = t + k;
+      t = T(i);
+      i += 1;
+      
+    }
+    
+    arma::vec sequence = getChain(J.subvec(0, i - 1), T.subvec(0, i - 1)) + 1;
+    
+    // Censoring sequences
+    if (censBeg && censEnd) {// Censoring at the beginning and at the end
+      
+      arma::uword n = nsim(m);
+      arma::uword l = t - n;
+      arma::uword Nl = (arma::uword)std::floor(l / 2.0);
+      
+      if (Nl == 0) {
+        sequences[m] = sequence.subvec(Nl, (t - 1 - Nl - 1));
+      } else {
+        sequences[m] = sequence.subvec(Nl - 1, (t - 1 - Nl - 1));
+      }
+      
+    } else if (!censBeg && censEnd) {// Censoring at the end
+      
+      sequences[m] = sequence.subvec(0, nsim(m) - 1);
+      
+    } else if (censBeg && !censEnd) {
+      
+      arma::uword n = nsim(m);
+      arma::uword l = t - n;
+      
+      sequences[m] = sequence.subvec(l - 1, (t - 1 - 1));
+      
+    } else {
+      
+      sequences[m] = sequence;
+      
+    }
+    
+  }
+  
+  return sequences;
+  
+}
+
+
+
+
+
+//' Simulate nonparametric semi-Markov chain
+//' 
+//' @param seed A \code{unsigned int} that is the seed one wishes to use.
+//' @param nsim A vector of integers specifying the length of the sequences.
+//' @param init Vector of initial distribution of length s.
+//' @param ptrans Matrix of transition probabilities of the embedded Markov chain.
+//' @param distr A cube giving the conditional sojourn time distributions for
+//'   each transition from the current state \eqn{i} to the next state \eqn{j}.
+//' @param censBeg A logical value indicating whether or not sequences are 
+//'   censored at the beginning.
+//' @param censEnd A logical value indicating whether or not sequences are 
+//'   censored at the end.
+//'   
+//' @return A list of vectors representing the simulated semi-Markov chains.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, 
+                         arma::mat& ptrans, arma::cube& distr, bool censBeg = false, bool censEnd = false) {
+  
+  setSeed(seed);
+  
+  arma::uword nbseq = nsim.n_elem;
+  arma::uword kmax = distr.n_slices;
+  
+  arma::uvec states = arma::regspace<arma::uvec>(0, init.n_elem - 1);
+  arma::uvec range1kmax = arma::regspace<arma::uvec>(1, kmax);
+  
+  arma::vec prob(init.n_elem, arma::fill::zeros);
+  double k = 0;
+  
+  arma::uword i;
+  arma::uword t;
+  
+  List sequences(nbseq);
+  
+  for (arma::uword m = 0; m < nbseq; m++) {
+    
+    arma::vec J(nsim(m), arma::fill::zeros);
+    arma::vec T(nsim(m), arma::fill::zeros);
+    
+    // Initial state ...
+    J(0) = RcppArmadillo::sample(states, 1, false, init)(0);
+    
+    i = 0;
+    t = 1;
+    
+    // ... and the other states
+    while (t <= nsim(m)) {
+      
+      // Sample the following state ...
+      prob = ptrans.row(J(i)).t();
+      J(i + 1) = RcppArmadillo::sample(states, 1, false, prob)(0);
+      
+      // ... and sample the sojourn time according to the correct distribution
+      k = RcppArmadillo::sample(range1kmax, 1, false, distr.tube(J(i), J(i + 1)))(0);
+      
+      T(i) = t + k;
+      t = T(i);
+      i += 1;
+      
+    }
+    
+    arma::vec sequence = getChain(J.subvec(0, i - 1), T.subvec(0, i - 1)) + 1;
+    
+    // Censoring sequences
+    if (censBeg && censEnd) {// Censoring at the beginning and at the end
+      
+      arma::uword n = nsim(m);
+      arma::uword l = t - n;
+      arma::uword Nl = (arma::uword)std::floor(l / 2.0);
+      
+      if (Nl == 0) {
+        sequences[m] = sequence.subvec(Nl, (t - 1 - Nl - 1));
+      } else {
+        sequences[m] = sequence.subvec(Nl - 1, (t - 1 - Nl - 1));
+      }
+      
+    } else if (!censBeg && censEnd) {// Censoring at the end
+      
+      sequences[m] = sequence.subvec(0, nsim(m) - 1);
+      
+    } else if (censBeg && !censEnd) {
+      
+      arma::uword n = nsim(m);
+      arma::uword l = t - n;
+      
+      sequences[m] = sequence.subvec(l - 1, (t - 1 - 1));
+      
+    } else {
+      
+      sequences[m] = sequence;
+      
+    }
+    
+  }
+  
+  return sequences;
+  
+}
