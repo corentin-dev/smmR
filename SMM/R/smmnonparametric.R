@@ -308,7 +308,7 @@ loglik.smmnonparametric <- function(x, sequences) {
   }
   
   
-  sequences <- processes(sequences = sequences, states = x$states)
+  sequences <- processes(sequences = sequences, states = x$states, verbose = FALSE)
   kmax <- sequences$kmax
   
   if (!(kmax == x$kmax)) {
@@ -377,14 +377,15 @@ loglik.smmnonparametric <- function(x, sequences) {
     
     
     # Computation of Niujv (couple Markov chain (Y, U))
-    Niujv <- .getCountingNiujv(Y, U, s, kmax)
+    Y <- lapply(Y, function(x) x - 1)
+    Niujv <- getCountingNiuj(Y, U, s, kmax)
     Niu <- apply(Niujv, c(1, 2), sum)
     
     phat <- Niujv / array(Niu, c(s, kmax, s, kmax))
     phat[is.na(phat)] <- 0
     
     # Computation of q
-    q <- .computeKernelNonParamEndcensoring(phat)
+    q <- computeKernelNonParamEndcensoring(phat)
     
     piujv <-
       apply(

@@ -18,3 +18,67 @@ setSeed <- function(seed) {
     invisible(.Call(`_SMM_setSeed`, seed))
 }
 
+#' Return the semi-Markov chain given the processes J and T
+#' 
+#' @param J A vector giving the successively visited states.
+#' @param T A vector giving the successive time points.
+#' @return A vector giving the reconstructed semi-Markov chain.
+#' 
+#' @noRd
+#' 
+getChain <- function(J, T) {
+    .Call(`_SMM_getChain`, J, T)
+}
+
+#' Return the processes Y, J, T, L and U given the sequences of states
+#' 
+#' @param sequences A list of sequences of states.
+#' @return A list giving the processes.
+#' 
+#' @noRd
+#' 
+getProcesses <- function(sequences) {
+    .Call(`_SMM_getProcesses`, sequences)
+}
+
+#' Give the values of the counting processes Nij, Ni, Nj...
+#' 
+#' @param Jm A list of sequences of states.
+#' @param Lm A list of sojourn time processes.
+#' @param s Cardinal of the state space S.
+#' @param kmax Maximum length of the sojourn times.
+#' @return A list giving the counting processes.
+#' 
+#' @noRd
+#' 
+getCountingProcesses <- function(Jm, Lm, s, kmax) {
+    .Call(`_SMM_getCountingProcesses`, Jm, Lm, s, kmax)
+}
+
+#' Give the values of the counting processes (cf. article 
+#' Exact MLE and asymptotic properties for nonparametric semi-Markov models)
+#' 
+#' @param Ym A list of sequences of states.
+#' @param Um A list of backward recurrence time processes.
+#' @param s Cardinal of the state space S.
+#' @param kmax Maximum length of the sojourn times.
+#' @return A list giving the counting processes.
+#' 
+#' @noRd
+#' 
+getCountingNiuj <- function(Ym, Um, s, kmax) {
+    .Call(`_SMM_getCountingNiuj`, Ym, Um, s, kmax)
+}
+
+#' Give the values of the kernel q (cf. Proposition 3.1 article 
+#' Exact MLE and asymptotic properties for nonparametric semi-Markov models)
+#' 
+#' @param p A cube representing the transition matrix of the chain (Y, U).
+#' @return A cube giving the MLE of the kernel q.
+#' 
+#' @noRd
+#' 
+computeKernelNonParamEndcensoring <- function(p) {
+    .Call(`_SMM_computeKernelNonParamEndcensoring`, p)
+}
+

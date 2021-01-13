@@ -490,7 +490,7 @@ loglik.smmparametric <- function(x, sequences) {
   }
   
   
-  sequences <- processes(sequences = sequences, states = x$states)
+  sequences <- processes(sequences = sequences, states = x$states, verbose = FALSE)
   kmax <- sequences$kmax
   
   type.sojourn <- x$type.sojourn
@@ -525,13 +525,13 @@ loglik.smmparametric <- function(x, sequences) {
     if (cens.beg || cens.end) {# Censoring
       
       # Contribution of the first right censored time to the loglikelihood
-      Fbar <- .get.Fbar.smmparametric(x = , k = kmax)
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbijk <- sequences$counting$Nbijk
       maskNbijk <- Nbijk != 0 & Fbar != 0
       
       # Contribution of the last right censored time to the loglikelihood
-      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x = x, k = kmax), MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
       
       Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbarj != 0

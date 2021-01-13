@@ -2,7 +2,6 @@
   
   s <- processes$s
   states <- processes$states
-  L <- processes$L
   Ym <- processes$Ym
   Um <- processes$Um
   kmax <- processes$kmax
@@ -10,15 +9,15 @@
   Nstart <- counting$Nstarti
 
   
-  # Computation of Niujv
-  Niujv <- .getCountingNiujv(Ym, Um, s, kmax)
-  Niu <- apply(Niujv, c(1, 2), sum)
+  Ym <- lapply(Ym, function(x) x - 1)
+  Niuj <- getCountingNiuj(Ym, Um, s, kmax)
+  Niu <- apply(Niuj, c(1, 2), sum)
   
-  phat <- Niujv / array(Niu, c(s, kmax, s, kmax))
+  phat <- Niuj / array(Niu, c(s, kmax, s))
   phat[is.na(phat)] <- 0
   
-  # Computation of q
-  q <- .computeKernelNonParamEndcensoring(phat)
+  q <- computeKernelNonParamEndcensoring(phat)
+  q <- q[, , -1]
   
   ptrans <- rowSums(q, dims = 2)
   

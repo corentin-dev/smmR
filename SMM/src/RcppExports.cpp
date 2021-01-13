@@ -16,9 +16,76 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// getChain
+arma::vec getChain(arma::vec J, arma::vec T);
+RcppExport SEXP _SMM_getChain(SEXP JSEXP, SEXP TSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type J(JSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type T(TSEXP);
+    rcpp_result_gen = Rcpp::wrap(getChain(J, T));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getProcesses
+List getProcesses(List sequences);
+RcppExport SEXP _SMM_getProcesses(SEXP sequencesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type sequences(sequencesSEXP);
+    rcpp_result_gen = Rcpp::wrap(getProcesses(sequences));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getCountingProcesses
+List getCountingProcesses(List& Jm, List& Lm, arma::uword& s, arma::uword& kmax);
+RcppExport SEXP _SMM_getCountingProcesses(SEXP JmSEXP, SEXP LmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List& >::type Jm(JmSEXP);
+    Rcpp::traits::input_parameter< List& >::type Lm(LmSEXP);
+    Rcpp::traits::input_parameter< arma::uword& >::type s(sSEXP);
+    Rcpp::traits::input_parameter< arma::uword& >::type kmax(kmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCountingProcesses(Jm, Lm, s, kmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getCountingNiuj
+arma::cube getCountingNiuj(List& Ym, List& Um, arma::uword& s, arma::uword& kmax);
+RcppExport SEXP _SMM_getCountingNiuj(SEXP YmSEXP, SEXP UmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List& >::type Ym(YmSEXP);
+    Rcpp::traits::input_parameter< List& >::type Um(UmSEXP);
+    Rcpp::traits::input_parameter< arma::uword& >::type s(sSEXP);
+    Rcpp::traits::input_parameter< arma::uword& >::type kmax(kmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCountingNiuj(Ym, Um, s, kmax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// computeKernelNonParamEndcensoring
+arma::cube computeKernelNonParamEndcensoring(arma::cube& p);
+RcppExport SEXP _SMM_computeKernelNonParamEndcensoring(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube& >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(computeKernelNonParamEndcensoring(p));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
+    {"_SMM_getChain", (DL_FUNC) &_SMM_getChain, 2},
+    {"_SMM_getProcesses", (DL_FUNC) &_SMM_getProcesses, 1},
+    {"_SMM_getCountingProcesses", (DL_FUNC) &_SMM_getCountingProcesses, 4},
+    {"_SMM_getCountingNiuj", (DL_FUNC) &_SMM_getCountingNiuj, 4},
+    {"_SMM_computeKernelNonParamEndcensoring", (DL_FUNC) &_SMM_computeKernelNonParamEndcensoring, 1},
     {NULL, NULL, 0}
 };
 

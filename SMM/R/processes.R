@@ -4,11 +4,12 @@
 #' 
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
+#' @param verbose Boolean. If TRUE, messages are generated.
 #' @return An object of class S3 `processes`.
 #'
 #' @noRd
 #' 
-processes <- function(sequences, states) {
+processes <- function(sequences, states, verbose = TRUE) {
   
   #############################
   # Checking parameters
@@ -29,33 +30,37 @@ processes <- function(sequences, states) {
   # Get the processes
   #############################
   
-  kmax <- 0 # max(max_l(n_l))
+  numericSequences <- lapply(sequences, function(x) sapply(x, function(y) which(states == y) - 1, USE.NAMES = FALSE))
+  processes <- getProcesses(numericSequences) # Compute the processes
   
-  Ym <- list() # Semi-Markov chain
-  Jm <- list() # Successively visited states (coded with numbers)
-  Tm <- list() # Successive time points when state changes
-  Lm <- list() # Sojourn time
-  Um <- list() # Backward recurrence time
-  
-  for (l in 1:L) {
-    
-    processes <- .getProcesses(sequences[[l]], states) # Compute the processes
-    
-    # Allocate the processes
-    Ym[[l]] <- processes$Ym
-    Jm[[l]] <- processes$Jm
-    Tm[[l]] <- processes$Tm
-    Lm[[l]] <- processes$Lm
-    Um[[l]] <- processes$Um
-    kmax <- max(kmax, max(Lm[[l]]))
-  }
+  Ym <- lapply(processes$Ym, function(x) x + 1) # Semi-Markov chain
+  Jm <- lapply(processes$Jm, function(x) x + 1) # Successively visited states (coded with numbers)
+  Tm <- processes$Tm # Successive time points when state changes
+  Lm <- processes$Lm # Sojourn time
+  Um <- processes$Um # Backward recurrence time
+  kmax <- max(unlist(Lm))
   
   #############################
   # Get the counting processes
   #############################
   
-  counting <- .getCountingProcesses(Jm, Lm, s, kmax)
+  counting <- getCountingProcesses(lapply(Jm, function(x) x - 1), Lm, s, kmax)
   
+  if (verbose) {
+    indexdiag <- seq(1, s * s, by = s + 1)
+    Nij <- as.vector(counting$Nij)[-indexdiag]
+    statesi <- .row(c(s, s))[-indexdiag][which(Nij == 0)]
+    statesj <- .col(c(s, s))[-indexdiag][which(Nij == 0)]
+    
+    if ((length(statesi) != 0) |
+        (length(statesj) != 0)) {
+      message(
+        "Some transitions from state i to state j are not observed: ",
+        paste0(sapply(1:length(statesi), function(x)
+          paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", ")
+      )
+    }
+  }
   
   #############################
   # Create the object sequences
