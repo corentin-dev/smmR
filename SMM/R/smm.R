@@ -317,60 +317,10 @@ is.smm <- function(x) {
   
   if (var) {
     
-    u <- length(states)
-    indices_u <- which(x$states %in% states)
-    
     Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
-    mu <- .get.mu(x = x, klim = klim)[indices_u]
+    mu <- .get.mu(x = x, klim = klim)
     
-    
-    convolpsi <- array(data = 0, dim = c(u, u, u, u, k + 1)) # (i, j, m, r, k)
-    
-    part11 <- array(data = 0, dim = c(u, u, u, u, k + 1)) # (1 - H_{j}) * \psi_{im} * \psi_{rj}
-    part12 <- array(data = 0, dim = c(u, u, u, u, k + 1)) # [\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}]^2
-    part1 <- array(data = 0, dim = c(u, u, u, u, k + 1)) # [\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}]^2 * q_{mr}(k)
-    
-    part21 <- array(data = 0, dim = c(u, u, u, u, k + 1)) # (1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}
-    part22 <- array(data = 0, dim = c(u, u, u, k + 1)) # (i, j, m, k) \delta_{mj} \psi_{ij} * H_{m}(k)
-    
-    for (t in 0:k) {
-      
-      for (i in 1:u) {
-        
-        for (j in 1:u) {
-          
-          convolpsi[i, j, , , t + 1] <-
-            outer(
-              X = 1:u,
-              Y = 1:u,
-              FUN = function(m, r)
-                Reduce('+', lapply(
-                  X = 0:t,
-                  FUN = function(h)
-                    psi[i, m, h + 1] * psi[r, j, t - h + 1]
-                ))
-            )
-          
-          part11[i, j, , , t + 1] <- apply(X = convolpsi[i, j, , , 1:(t + 1)], MARGIN = c(1, 2), FUN = function(elt) Reduce('+', elt * (1 - H[j, j, (t + 1):1])))
-          
-          delta_mj <- ifelse(1:u == j, 1, 0)
-          
-          part12[i, j, , , t + 1] <- (delta_mj * Psi[i, j, t + 1] - part11[i, j, , , t + 1]) ^ 2
-          
-          part1[i, j, , , t + 1] <- apply(X = part12[i, j, , , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-          
-          part21[i, j, , , t + 1] <- apply(X = part11[i, j, , , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-          
-          part22[i, j, which(delta_mj != 0), t + 1] <- Reduce('+', psi[i, j, 1:(t + 1)] * H[delta_mj != 0, delta_mj != 0, (t + 1):1])
-          
-        }
-        
-      }
-    
-    }
-      
-    sigma2 <- apply(X = apply(part1, c(1, 2, 3, 5), sum) - 
-                      (part22 - apply(part21, c(1, 2, 3, 5), sum)) ^ 2, MARGIN = c(1, 2, 4), function(elt) sum(elt * mu))
+    sigma2 <- varP(mu, q, psi, Psi, H)
    
     return(list(p = p, sigma2 = sigma2))
      

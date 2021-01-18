@@ -14,7 +14,7 @@
   Niu <- apply(Niuj, c(1, 2), sum)
   
   phat <- Niuj / array(Niu, c(s, kmax, s))
-  phat[is.na(phat)] <- 0
+  phat[is.na(phat) | (phat < 0)] <- 0
   
   q <- computeKernelNonParamEndcensoring(phat)
   q <- q[, , -1]
@@ -27,32 +27,35 @@
   if (type.sojourn == "fij") {
     
     f <- q / array(ptrans, c(s, s, kmax))
-    f[which(is.na(f))] <- 0
+    f[is.na(f) | (f < 0)] <- 0
     f <- f / array(apply(f, c(1, 2), sum), c(s, s, kmax)) # Renormalize f
-    f[which(is.na(f))] <- 0
     f[, , dim(f)[3]] <- 1 - apply(f[, , -dim(f)[3]], c(1, 2), sum) # Renormalize f
     diag(f[, , dim(f)[3]]) <- 0
+    f[is.na(f) | (f < 0)] <- 0
     
   } else if (type.sojourn == "fi") {
     
     f <- apply(q, c(1, 3), sum)
-    f[which(is.na(f))] <- 0
+    f[is.na(f) | (f < 0)] <- 0
     f <- f / apply(f, 1, sum) # Renormalize f
     f[, ncol(f)] <- 1 - apply(f[, -ncol(f)], 1, sum) # Renormalize f
+    f[is.na(f) | (f < 0)] <- 0
     
   } else if (type.sojourn == "fj") {
     
     f <- apply(q, c(2, 3), sum) / apply(ptrans, 2, sum)
-    f[which(is.na(f))] <- 0
+    f[is.na(f) | (f < 0)] <- 0
     f <- f / apply(f, 1, sum) # Renormalize f
     f[, ncol(f)] <- 1 - apply(f[, -ncol(f)], 1, sum) # Renormalize f
+    f[is.na(f) | (f < 0)] <- 0
     
   } else if (type.sojourn == "f") {
     
     f <- apply(q, 3, sum) / s
-    f[which(is.na(f))] <- 0
+    f[is.na(f) | (f < 0)] <- 0
     f <- f / sum(f) # Renormalize f
     f[length(f)] <- 1 - sum(f[-length(f)]) # Renormalize f
+    f[is.na(f) | (f < 0)] <- 0
     
   }
   

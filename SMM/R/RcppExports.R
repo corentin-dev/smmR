@@ -182,3 +182,19 @@ matrixConvolution <- function(A, B) {
     .Call(`_SMM_matrixConvolution`, A, B)
 }
 
+#' Compute the variance of the estimator of the transition function P 
+#'   (See equation (4.29), p.91)
+#'   
+#'   @details The decomposition of the variance is as follows: 
+#'     \deqn{\sigma_{P}^{2}(i, j, k)) = \sum_{m = 1}^{s} \mu_{mm} \left\{ \underbrace{\sum_{r = 1}^{s} \underbrace{\left[\delta_{mj}\Psi_{ij} - \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj}}_{\text{part11}} \right]^2}_{\text{part12}} * \ q_{mr}(k)}_{\text{part1}} - \left[ \underbrace{\delta_{mj} \psi_{ij} * H_{m}(k)}_{\text{part22}} - \underbrace{\sum_{r = 1}^{s} (1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}}_{\text{part21}} \right]^{2}(k) \right\}}
+#'   
+#' @return A cube of dimension \eqn{(S, S, k + 1)} giving the values of the 
+#'   variances for each transition from \eqn{i} to \eqn{j} and each time 
+#'   horizon \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+varP <- function(mu, q, psi, Psi, H) {
+    .Call(`_SMM_varP`, mu, q, psi, Psi, H)
+}
+

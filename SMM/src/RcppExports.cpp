@@ -150,6 +150,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// varP
+arma::cube varP(arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, arma::cube& H);
+RcppExport SEXP _SMM_varP(SEXP muSEXP, SEXP qSEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type q(qSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type Psi(PsiSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type H(HSEXP);
+    rcpp_result_gen = Rcpp::wrap(varP(mu, q, psi, Psi, H));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
@@ -163,6 +178,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SMM_simulateNonParam", (DL_FUNC) &_SMM_simulateNonParam, 7},
     {"_SMM_convolution", (DL_FUNC) &_SMM_convolution, 2},
     {"_SMM_matrixConvolution", (DL_FUNC) &_SMM_matrixConvolution, 2},
+    {"_SMM_varP", (DL_FUNC) &_SMM_varP, 5},
     {NULL, NULL, 0}
 };
 

@@ -649,3 +649,99 @@ arma::cube matrixConvolution(arma::cube& A, arma::cube& B) {
 
 
 
+//' Compute the variance of the estimator of the transition function P 
+//'   (See equation (4.29), p.91)
+//'   
+//'   @details The decomposition of the variance is as follows: 
+//'     \deqn{\sigma_{P}^{2}(i, j, k)) = \sum_{m = 1}^{s} \mu_{mm} \left\{ \underbrace{\sum_{r = 1}^{s} \underbrace{\left[\delta_{mj}\Psi_{ij} - \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj}}_{\text{part11}} \right]^2}_{\text{part12}} * \ q_{mr}(k)}_{\text{part1}} - \left[ \underbrace{\delta_{mj} \psi_{ij} * H_{m}(k)}_{\text{part22}} - \underbrace{\sum_{r = 1}^{s} (1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}}_{\text{part21}} \right]^{2}(k) \right\}}
+//'   
+//' @return A cube of dimension \eqn{(S, S, k + 1)} giving the values of the 
+//'   variances for each transition from \eqn{i} to \eqn{j} and each time 
+//'   horizon \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::cube varP(arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, arma::cube& H) {
+  
+  arma::uword s = psi.n_rows;
+  arma::uword k = psi.n_slices - 1;
+  
+  arma::vec convolpsi(k + 1, arma::fill::zeros);
+  arma::vec part11(k + 1, arma::fill::zeros); // (1 - H_{j}) * \psi_{im} * \psi_{rj}
+  arma::vec part12(k + 1, arma::fill::zeros); // \left[\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}\right]^2
+  arma::vec part1(k + 1, arma::fill::zeros); // \sum_{r = 1}^{s} \left[\delta_{mj}\Psi_{ij} - (1 - H_{j}) * \psi_{im} * \psi_{rj}\right]^2 * q_{mr}(k)
+  
+  arma::vec part21(k + 1, arma::fill::zeros); // \sum_{r = 1}^{s} (1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}
+  arma::vec part22(k + 1, arma::fill::zeros); // \delta_{mj} \psi_{ij} * H_{m}(k)
+  
+  arma::vec part1bis(k + 1, arma::fill::zeros);
+  arma::vec part2bis(k + 1, arma::fill::zeros);
+  
+  
+  arma::cube sigma2_i_j_k(size(psi), arma::fill::zeros);
+  
+  
+  arma::vec bar_H_j(k + 1, arma::fill::zeros);
+  arma::vec Psi_i_j(k + 1, arma::fill::zeros);
+  arma::vec psi_i_j(k + 1, arma::fill::zeros);
+  arma::vec psi_i_m(k + 1, arma::fill::zeros);
+  arma::vec psi_r_j(k + 1, arma::fill::zeros);
+  arma::vec q_m_r(k + 1, arma::fill::zeros);
+  arma::vec H_m(k + 1, arma::fill::zeros);
+  int delta_m_j;
+  
+  for (arma::uword i = 0; i < s; i++) {
+    
+    for (arma::uword j = 0; j < s; j++) {
+      
+      bar_H_j = 1 - H.tube(j, j);
+      Psi_i_j = Psi.tube(i, j);
+      psi_i_j = psi.tube(i, j);
+      
+      part1bis.zeros();
+      part2bis.zeros();
+      
+      for (arma::uword m = 0; m < s; m++) {
+        
+        psi_i_m = psi.tube(i, m);
+        H_m = H.tube(m, m);
+        
+        if (m == j) {
+          delta_m_j = 1;
+        } else {
+          delta_m_j = 0;
+        }
+        
+        part1.zeros();
+        part21.zeros();
+        
+        for (arma::uword r = 0; r < s; r++) {
+          
+          psi_r_j = psi.tube(r, j);
+          q_m_r = q.tube(m, r);
+          
+          convolpsi = convolution(psi_i_m, psi_r_j);
+          
+          part11 = convolution(bar_H_j, convolpsi);
+          part12 = arma::square(delta_m_j * Psi_i_j - part11);
+          part1 += convolution(part12, q_m_r);
+          
+          part21 += convolution(part11, q_m_r);
+          
+        }
+        
+        part22 = delta_m_j * convolution(psi_i_j, H_m);
+        
+        part1bis += mu(m) * part1;
+        part2bis += mu(m) * arma::square(part22 - part21);
+        
+      }
+      
+      sigma2_i_j_k.tube(i, j) = part1bis - part2bis;
+      
+    }
+  }
+  
+  return sigma2_i_j_k;
+}
