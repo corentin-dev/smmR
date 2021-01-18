@@ -570,3 +570,82 @@ List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::ve
   return sequences;
   
 }
+
+
+
+
+
+//' Discrete-time convolution product of \eqn{f} and \eqn{g} 
+//'   (See definition 2.2 p. 20)
+//' 
+//' @param f A vector giving the values of the function \eqn{f} for each 
+//'   \eqn{k \in \mathbb{N}}.
+//' @param g A vector giving the values of the function \eqn{g} for each 
+//'   \eqn{k \in \mathbb{N}}.
+//'   
+//' @return A vector giving the values of the discrete-time convolution of 
+//'   \eqn{f} and \eqn{g} for each \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::vec convolution(arma::vec& f, arma::vec& g) {
+  
+  arma::uword k = f.n_elem - 1;
+  
+  arma::vec conv(k + 1, arma::fill::zeros);
+  
+  for (arma::uword l = 0; l <= k; l++) {
+    conv(l) = sum(reverse(f.rows(0, l)) % g.rows(0, l));
+  }
+  
+  return conv;
+  
+}
+
+
+
+
+
+//' Discrete-time matrix convolution product 
+//'   (See definition 3.5 p. 48)
+//' 
+//' @param A A cube of dimension \eqn{(S, S, k + 1)}.
+//' @param B A cube of dimension \eqn{(S, S, k + 1)}.
+//'   
+//' @return A cube of dimension \eqn{(S, S, k + 1)} giving the discrete-time 
+//'   matrix convolution product for each \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::cube matrixConvolution(arma::cube& A, arma::cube& B) {
+  
+  // ###########################################################
+  // ###########################################################
+  // A and B must be of dimension (S, S, k + 1) where:
+  //   - S represents the cardinal of the state space E;
+  //   - k represents the time horizon;
+  // 
+  // Return: Cube C which is the matrix convolution product 
+  //  A * B for each m, m = 0,..., k
+  // ###########################################################
+  // ###########################################################
+  
+  arma::uword k = A.n_slices - 1;
+  
+  arma::cube C(arma::size(A), arma::fill::zeros);
+  
+  for (arma::uword m = 0; m <= k; m++) {
+    for (arma::uword l = 0; l <= m; l++) {
+      C.slice(m) += A.slice(m - l) * B.slice(l);
+    }
+  }
+  
+  return C;
+}
+
+
+
+
+

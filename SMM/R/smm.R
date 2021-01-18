@@ -304,12 +304,7 @@ is.smm <- function(x) {
   H1 <- H[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   B <- array(data = diag(nrow(H1)), dim = dim(H1)) - H1
   
-  p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1)) # (S, S, k + 1)
-  p[, , 1] <- diag(nrow(psi)) # k = 0
-  
-  for (t in 1:k) {
-    p[, , t + 1] <- .matrixConvolve(psi[, , 1:(t + 1), drop = FALSE], B[, , 1:(t + 1), drop = FALSE])
-  }
+  p <- matrixConvolution(psi, B)
   
   
   ###########################################################
@@ -413,12 +408,7 @@ is.smm <- function(x) {
   H <- .get.H(q = qy)
   B <- array(data = diag(nrow(H)), dim = dim(H)) - H
   
-  p <- array(data = 0, dim = c(nrow(psi), ncol(psi), k + 1)) # (U + 1, U + 1, k + 1)
-  p[, , 1] <- diag(nrow(psi)) # k = 0
-  
-  for (t in 1:k) {
-    p[, , t + 1] <- .matrixConvolve(psi[, , 1:(t + 1), drop = FALSE], B[, , 1:(t + 1), drop = FALSE])
-  }
+  p <- matrixConvolution(psi, B)
   
   return(p)
   

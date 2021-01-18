@@ -150,3 +150,35 @@ simulateNonParam <- function(seed, nsim, init, ptrans, distr, censBeg = FALSE, c
     .Call(`_SMM_simulateNonParam`, seed, nsim, init, ptrans, distr, censBeg, censEnd)
 }
 
+#' Discrete-time convolution product of \eqn{f} and \eqn{g} 
+#'   (See definition 2.2 p. 20)
+#' 
+#' @param f A vector giving the values of the function \eqn{f} for each 
+#'   \eqn{k \in \mathbb{N}}.
+#' @param g A vector giving the values of the function \eqn{g} for each 
+#'   \eqn{k \in \mathbb{N}}.
+#'   
+#' @return A vector giving the values of the discrete-time convolution of 
+#'   \eqn{f} and \eqn{g} for each \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+convolution <- function(f, g) {
+    .Call(`_SMM_convolution`, f, g)
+}
+
+#' Discrete-time matrix convolution product 
+#'   (See definition 3.5 p. 48)
+#' 
+#' @param A A cube of dimension \eqn{(S, S, k + 1)}.
+#' @param B A cube of dimension \eqn{(S, S, k + 1)}.
+#'   
+#' @return A cube of dimension \eqn{(S, S, k + 1)} giving the discrete-time 
+#'   matrix convolution product for each \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+matrixConvolution <- function(A, B) {
+    .Call(`_SMM_matrixConvolution`, A, B)
+}
+
