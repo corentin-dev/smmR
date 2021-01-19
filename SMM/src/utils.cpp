@@ -855,3 +855,111 @@ arma::vec varR(arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& ps
   
   return sigma2_k;
 }
+
+
+
+
+
+//' Compute the variance of the estimator of the availability A
+//'   (See equation (5.34), p.118)
+//'   
+//'   @details The decomposition of the variance is as follows: 
+//'     \deqn{\sigma_{A}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \underbrace{\sum_{j = 1}^{s} \left( \underbrace{D_{ij} * q_{ij}}_{\text{part22}} - \underbrace{\mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}}
+//'   
+//'     \deqn{D_{ij} := \sum_{n = 1}^{s} \sum_{r \in U} \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}
+//'   
+//' @return A vector giving the values of the variance of the availability for 
+//'   each time horizon \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::vec varA(arma::uvec& indices_u, arma::vec& alpha, arma::vec& mu, arma::cube& q, 
+               arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q) {
+  
+  arma::uword u = indices_u.n_elem;
+  arma::uword s = psi.n_rows;
+  arma::uword k = psi.n_slices - 1;
+  
+  arma::vec convolpsi(k + 1, arma::fill::zeros);
+  arma::vec d_i_j(k + 1, arma::fill::zeros);
+  
+  arma::vec part11(k + 1, arma::fill::zeros); // \left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}
+  arma::vec part1(k + 1, arma::fill::zeros); // \sum_{j = 1}^{s} \left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)
+  
+  arma::vec part21(k + 1, arma::fill::zeros); // \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \psi_{ti} * Q_{ij}
+  arma::vec part22(k + 1, arma::fill::zeros); // D_{ij} * q_{ij}
+  arma::vec part2(k + 1, arma::fill::zeros); // \sum_{j = 1}^{s} \left( D_{ij} * q_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \psi_{ti} * Q_{ij} \right)
+  
+  
+  arma::vec sigma2_k(k + 1, arma::fill::zeros);
+  
+  
+  arma::vec q_i_j(k + 1, arma::fill::zeros);
+  arma::vec Q_i_j(k + 1, arma::fill::zeros);
+  arma::vec psi_n_i(k + 1, arma::fill::zeros);
+  arma::vec psi_j_r(k + 1, arma::fill::zeros);
+  arma::vec bar_H_r(k + 1, arma::fill::zeros);
+  arma::vec Psi_t_i(k + 1, arma::fill::zeros);
+  arma::vec psi_t_i(k + 1, arma::fill::zeros);
+  
+  for (arma::uword i = 0; i < s; i++) {
+    
+    part1.zeros();
+    part2.zeros();
+    
+    for (arma::uword j = 0; j < s; j++) {
+      
+      q_i_j = q.tube(i, j);
+      Q_i_j = Q.tube(i, j);
+      
+      d_i_j.zeros();
+      
+      for (arma::uword n = 0; n < s; n++) {
+        
+        psi_n_i = psi.tube(n, i);
+        
+        for (arma::uword r = 0; r < u; r++) {
+          
+          psi_j_r = psi.tube(j, indices_u(r));
+          bar_H_r = 1 - H.tube(indices_u(r), indices_u(r));
+          
+          convolpsi = convolution(psi_n_i, psi_j_r);
+          
+          d_i_j += alpha(n) * convolution(convolpsi, bar_H_r);
+          
+        }
+      }
+      
+      part11.zeros();
+      part21.zeros();
+      
+      arma::uvec i_in_U = arma::find(indices_u == i, 1, "first");
+      
+      if (i_in_U.n_elem > 0) {
+        
+        for (arma::uword t = 0; t < s; t++) {
+          
+          Psi_t_i = Psi.tube(t, i);
+          psi_t_i = psi.tube(t, i);
+          
+          part11 += alpha(t) * Psi_t_i;
+          part21 += alpha(t) * convolution(psi_t_i, Q_i_j);
+          
+        }
+      }
+      
+      part11 = arma::square(d_i_j - part11);
+      part1 += convolution(part11, q_i_j);
+      
+      part22 = convolution(d_i_j, q_i_j);
+      part2 += part22 - part21;
+      
+    }
+    
+    sigma2_k += mu(i) * (part1 - arma::square(part2));
+    
+  }
+  
+  return sigma2_k;
+}

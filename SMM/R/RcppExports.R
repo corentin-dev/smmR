@@ -219,3 +219,20 @@ varR <- function(alpha1, mu1, qy, psi, Psi, H, Q) {
     .Call(`_SMM_varR`, alpha1, mu1, qy, psi, Psi, H, Q)
 }
 
+#' Compute the variance of the estimator of the availability A
+#'   (See equation (5.34), p.118)
+#'   
+#'   @details The decomposition of the variance is as follows: 
+#'     \deqn{\sigma_{A}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \underbrace{\sum_{j = 1}^{s} \left( \underbrace{D_{ij} * q_{ij}}_{\text{part22}} - \underbrace{\mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}}
+#'   
+#'     \deqn{D_{ij} := \sum_{n = 1}^{s} \sum_{r \in U} \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}
+#'   
+#' @return A vector giving the values of the variance of the availability for 
+#'   each time horizon \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+varA <- function(indices_u, alpha, mu, q, psi, Psi, H, Q) {
+    .Call(`_SMM_varA`, indices_u, alpha, mu, q, psi, Psi, H, Q)
+}
+

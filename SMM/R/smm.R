@@ -731,7 +731,12 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   ###########################################################
   
   if (var) {
-  
+    
+    u <- length(upstates)
+    indices_u <- which(x$states %in% upstates) - 1
+    
+    alpha <- x$init
+    
     q <- .get.q(x = x, k = k)
     Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
     
@@ -741,68 +746,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
     H <- .get.H(q = q)
     mu <- .get.mu(x = x, klim = klim)
     
-    u <- length(upstates)
-    indices_u <- which(x$states %in% upstates)
-    
-    
-    indicator <- matrix(data = 1:x$s %in% indices_u, nrow = x$s, ncol = x$s) # indicator matrix \mathbb{1}_{i \in U}
-    
-    convolpsi <- array(data = 0, dim = c(x$s, x$s, x$s, u, k + 1)) # (i, j, n, r, k)
-    
-    partdij <- array(data = 0, dim = c(x$s, x$s, x$s, u, k + 1)) # \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}
-    dij <- array(data = 0, dim = c(x$s, x$s, k + 1))
-    
-    part11 <- array(data = 0, dim = c(x$s, x$s, k + 1))
-    part1 <- array(data = 0, dim = c(x$s, x$s, k + 1))
-    
-    part21 <- array(data = 0, dim = c(x$s, x$s, x$s, k + 1)) # (t, i, j, k)
-    part22 <- array(data = 0, dim = c(x$s, x$s, k + 1))
-    
-    part2 <- array(data = 0, dim = c(x$s, x$s, k + 1))
-    
-    for (t in 0:k) {
-      
-      for (i in 1:x$s) {
-        
-        for (j in 1:x$s) {
-          
-          convolpsi[i, j, , , t + 1] <- outer(X = 1:x$s, Y = 1:u, FUN = function(n, r)
-            Reduce('+', lapply(
-              X = 0:t,
-              FUN = function(h) psi[n, i, h + 1] * psi[j, indices_u[r], t - h + 1]))
-          )
-          
-          for (r in 1:u) {
-            for (n in 1:x$s) {
-              
-              partdij[i, j, n, r, t + 1] <- sum(convolpsi[i, j, n, r, 1:(t + 1)] * (1 - H[indices_u[r], indices_u[r], (t + 1):1]))
-              partdij[i, j, n, r, t + 1] <- partdij[i, j, n, r, t + 1] * x$init[n]
-            }
-          }
-          
-          dij[, , t + 1] <- apply(partdij[, , , , t + 1], c(1, 2), sum)
-          
-          for (r in 1:x$s) {
-            part21[r, i, j, t + 1] <- sum(psi[r, i, 1:(t + 1)] * Q[i, j, (t + 1):1])
-          }
-          
-        }
-      }
-      
-      part11[, , t + 1] <- (dij[, , t + 1] - indicator * (t(Psi[, , t + 1]) %*% x$init %*% t(rep.int(times = x$s, x = 1)))) ^ 2
-      part1[, , t + 1] <- apply(X = part11[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-      
-      if (t > 0) {
-        part22[, , t + 1] <- apply(X = dij[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-      }
-      
-      part2[, , t + 1] <- part22[, , t + 1] - indicator * apply(part21[, , , t + 1], c(2, 3), function(elt) elt %*% x$init)
-      
-    }
-    
-    sigma2 <-
-      apply(apply(part1, c(1, 3), sum) - (apply(part2, c(1, 3), sum)) ^ 2, c(2), function(elt)
-        sum(elt * mu))
+    sigma2 <- varA(indices_u, alpha, mu, q, psi, Psi, H, Q)
     
     return(list(avail = avail, sigma2 = sigma2))
   
