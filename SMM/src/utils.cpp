@@ -745,3 +745,113 @@ arma::cube varP(arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, 
   
   return sigma2_i_j_k;
 }
+
+
+
+
+
+//' Compute the variance of the estimator of the reliability R 
+//'   (See equation (5.29), p.116)
+//'   
+//'   @details Be careful, in the formula (5.29), we use \eqn{q_{Y}} 
+//'     (See proposition 5.1 p.105-106) instead of \eqn{q}, and every others 
+//'     quantities such as \eqn{\psi}, \eqn{\Psi},\dots derive from \eqn{q_{Y}}.
+//'     
+//'   The decomposition of the variance is as follows: 
+//'     \deqn{\sigma_{R}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \underbrace{\sum_{j = 1}^{s} \left( \underbrace{D^{U}_{ij} * q_{ij}}_{\text{part22}} - \mathbb{1}_{i \in U} \underbrace{\sum_{t \in U} \alpha_{t} \psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}}
+//'   
+//'     \deqn{D^{U}_{ij} := \sum_{n \in U} \sum_{r \in U} \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}
+//'   
+//' @return A vector giving the values of the variance of the reliability for 
+//'   each time horizon \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::vec varR(arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& psi, 
+               arma::cube& Psi, arma::cube& H, arma::cube& Q) {
+  
+  arma::uword u = psi.n_rows - 1;
+  arma::uword k = psi.n_slices - 1;
+  
+  arma::vec convolpsi(k + 1, arma::fill::zeros);
+  arma::vec d_u_i_j(k + 1, arma::fill::zeros);
+  
+  arma::vec part11(k + 1, arma::fill::zeros); // \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}
+  arma::vec part1(k + 1, arma::fill::zeros); // \sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)
+  
+  arma::vec part21(k + 1, arma::fill::zeros); // \sum_{t \in U} \alpha_{t} \psi_{ti} * Q_{ij}
+  arma::vec part22(k + 1, arma::fill::zeros); // D^{U}_{ij} * q_{ij}
+  arma::vec part2(k + 1, arma::fill::zeros); // \sum_{j = 1}^{s} \left( D^{U}_{ij} * q_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \psi_{ti} * Q_{ij}\right)
+  
+  
+  arma::vec sigma2_k(k + 1, arma::fill::zeros);
+  
+  
+  arma::vec q_i_j(k + 1, arma::fill::zeros);
+  arma::vec Q_i_j(k + 1, arma::fill::zeros);
+  arma::vec psi_n_i(k + 1, arma::fill::zeros);
+  arma::vec psi_j_r(k + 1, arma::fill::zeros);
+  arma::vec bar_H_r(k + 1, arma::fill::zeros);
+  arma::vec Psi_t_i(k + 1, arma::fill::zeros);
+  arma::vec psi_t_i(k + 1, arma::fill::zeros);
+  
+  for (arma::uword i = 0; i < u; i++) {
+    
+    part1.zeros();
+    part2.zeros();
+    
+    for (arma::uword j = 0; j <= u; j++) {
+      
+      q_i_j = qy.tube(i, j);
+      Q_i_j = Q.tube(i, j);
+      
+      d_u_i_j.zeros();
+      
+      for (arma::uword n = 0; n < u; n++) {
+        
+        psi_n_i = psi.tube(n, i);
+        
+        for (arma::uword r = 0; r < u; r++) {
+          
+          psi_j_r = psi.tube(j, r);
+          bar_H_r = 1 - H.tube(r, r);
+          
+          convolpsi = convolution(psi_n_i, psi_j_r);
+          
+          d_u_i_j += alpha1(n) * convolution(convolpsi, bar_H_r);
+          
+        }
+      }
+      
+      part11.zeros();
+      part21.zeros();
+      part22.zeros();
+      
+      if (i < u) {
+        
+        for (arma::uword t = 0; t < u; t++) {
+          
+          Psi_t_i = Psi.tube(t, i);
+          psi_t_i = psi.tube(t, i);
+          
+          part11 += alpha1(t) * Psi_t_i;
+          
+          part21 += alpha1(t) * convolution(psi_t_i, Q_i_j);
+        }
+      }
+      
+      part11 = arma::square(d_u_i_j - part11);
+      part1 += convolution(part11, q_i_j);
+      
+      part22 = convolution(d_u_i_j, q_i_j);
+      part2 += part22 - part21;
+      
+    }
+    
+    sigma2_k += mu1(i) * (part1 - arma::square(part2));
+    
+  }
+  
+  return sigma2_k;
+}

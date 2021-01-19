@@ -493,76 +493,15 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   ###########################################################
   
   if (var) {
- 
-    u <- length(upstates)
     
     q <- .get.qy(x = x, k =  k, upstates = upstates)
     Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
-    
     psi <- .get.psi(q = q)
     Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
-    
     H <- .get.H(q)
+    mu1 <- .get.mu(x = x, klim = klim)[which(x$states %in% upstates)]
     
-    mu <- .get.mu(x = x, klim = klim)
-
-
-    indicator <- matrix(data = 1:(u + 1) %in% 1:u, nrow = u + 1, ncol = u + 1) # indicator matrix \mathbb{1}_{i \in U}
-        
-    convolpsi <- array(data = 0, dim = c(u + 1, u + 1, u + 1, u + 1, k + 1)) # (i, j, n, r, k)
-    
-    partduij <- array(data = 0, dim = c(u + 1, u + 1, u, u, k + 1)) # # \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}
-    duij <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    
-    part11 <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    part1 <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    
-    part21 <- array(data = 0, dim = c(u, u + 1, u + 1, k + 1)) # (t, i, j, k)
-    part22 <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    
-    part2 <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    
-    for (t in 0:k) {
-      
-      for (i in 1:(u + 1)) {
-        
-        for (j in 1:(u + 1)) {
-          
-          convolpsi[i, j, , , t + 1] <- outer(X = 1:(u + 1), Y = 1:(u + 1), FUN = function(n, r)
-            Reduce('+', lapply(
-              X = 0:t,
-              FUN = function(h) psi[n, i, h + 1] * psi[j, r, t - h + 1]))
-          )
-          
-          for (r in 1:u) {
-            for (n in 1:u) {
-              partduij[i, j, n, r, t + 1] <- sum(convolpsi[i, j, n, r, 1:(t + 1)] * (1 - H[r, r, (t + 1):1]))
-              partduij[i, j, n, r, t + 1] <- partduij[i, j, n, r, t + 1] * alpha1[n]
-            }
-          }
-          
-          duij[, , t + 1] <- apply(partduij[, , , , t + 1], c(1, 2), sum)
-          
-          
-          for (r in 1:u) {
-            part21[r, i, j, t + 1] <- sum(psi[r, i, 1:(t + 1)] * Q[i, j, (t + 1):1])
-          }
-          
-        }
-      }
-      
-      part11[, , t + 1] <- (duij[, , t + 1] - indicator * (t(Psi[, , t + 1]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1)))) ^ 2
-      part1[, , t + 1] <- apply(X = part11[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-      
-      part22[, , t + 1] <- apply(X = duij[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum)
-      # part2[, , t + 1,] <- part22[, , t + 1] - indicator * apply(part21[, , , t + 1], c(2, 3), function(elt) elt %*% alpha1)
-      part2[, , t + 1] <- part22[, , t + 1] - indicator * drop(apply(part21[, , , t + 1, drop = FALSE], c(2, 3, 4), function(elt) elt %*% alpha1))
-      
-    }
-    
-    sigma2 <-
-      apply(apply(part1[1:u, , , drop = FALSE], c(1, 3), sum) - (apply(part2[1:u, , , drop = FALSE], c(1, 3), sum)) ^ 2, 2, function(elt)
-        sum(elt * mu[which(x$states %in% upstates)]))
+    sigma2 <- varR(alpha1, mu1, q, psi, Psi, H, Q)
     
     return(list(reliab = reliab, sigma2 = sigma2))
     

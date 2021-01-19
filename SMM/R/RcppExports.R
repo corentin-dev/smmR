@@ -198,3 +198,24 @@ varP <- function(mu, q, psi, Psi, H) {
     .Call(`_SMM_varP`, mu, q, psi, Psi, H)
 }
 
+#' Compute the variance of the estimator of the reliability R 
+#'   (See equation (5.29), p.116)
+#'   
+#'   @details Be careful, in the formula (5.29), we use \eqn{q_{Y}} 
+#'     (See proposition 5.1 p.105-106) instead of \eqn{q}, and every others 
+#'     quantities such as \eqn{\psi}, \eqn{\Psi},\dots derive from \eqn{q_{Y}}.
+#'     
+#'   The decomposition of the variance is as follows: 
+#'     \deqn{\sigma_{R}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \underbrace{\sum_{j = 1}^{s} \left( \underbrace{D^{U}_{ij} * q_{ij}}_{\text{part22}} - \mathbb{1}_{i \in U} \underbrace{\sum_{t \in U} \alpha_{t} \psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}}
+#'   
+#'     \deqn{D^{U}_{ij} := \sum_{n \in U} \sum_{r \in U} \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}
+#'   
+#' @return A vector giving the values of the variance of the reliability for 
+#'   each time horizon \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+varR <- function(alpha1, mu1, qy, psi, Psi, H, Q) {
+    .Call(`_SMM_varR`, alpha1, mu1, qy, psi, Psi, H, Q)
+}
+
