@@ -200,6 +200,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// varBMP
+arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q);
+RcppExport SEXP _SMM_varBMP(SEXP reliabSEXP, SEXP alpha1SEXP, SEXP mu1SEXP, SEXP qySEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec& >::type reliab(reliabSEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type alpha1(alpha1SEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type mu1(mu1SEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type qy(qySEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type psi(psiSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type Psi(PsiSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type H(HSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type Q(QSEXP);
+    rcpp_result_gen = Rcpp::wrap(varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
@@ -216,6 +234,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SMM_varP", (DL_FUNC) &_SMM_varP, 5},
     {"_SMM_varR", (DL_FUNC) &_SMM_varR, 7},
     {"_SMM_varA", (DL_FUNC) &_SMM_varA, 8},
+    {"_SMM_varBMP", (DL_FUNC) &_SMM_varBMP, 8},
     {NULL, NULL, 0}
 };
 

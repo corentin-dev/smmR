@@ -963,3 +963,143 @@ arma::vec varA(arma::uvec& indices_u, arma::vec& alpha, arma::vec& mu, arma::cub
   
   return sigma2_k;
 }
+
+
+
+
+
+//' Compute the variance of the BMP-failure rate \eqn{\lambda}
+//'   (See equation (5.35), p.119)
+//'   
+//'   @details Be careful, in the formula (5.29), we use \eqn{q_{Y}} 
+//'     (See proposition 5.1 p.105-106) instead of \eqn{q}, and every others 
+//'     quantities such as \eqn{\psi}, \eqn{\Psi},\dots derive from \eqn{q_{Y}}.
+//'     
+//'   The decomposition of the variance is as follows: 
+//'     \deqn{\sigma_{1}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ R^{2}(k) \sum_{j = 1}^{s} \underbrace{\left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k - 1) + R^{2}(k - 1) \underbrace{\sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)}_{\text{part1}} - T^{2}(k) + 2 R(k - 1) R(k) \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+} D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} \right ) \right]}_{\text{part21}} * q_{ij}(k - 1)}_{\text{part2}} \right\}}
+//'   
+//'     \deqn{T_{i}(k) := \sum_{j = 1}^{s} \left[ R(k) D^{U}_{ij} * q_{ij}(k - 1) - R(k - 1) D^{U}_{ij} * q_{ij}(k) - R(k) \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} * Q_{ij}(k - 1) + R(k - 1) \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} * Q_{ij}(k) \right]}
+//'   
+//' @return A vector giving the values of the variance of BMP-failure 
+//'   rate for each time horizon \eqn{k \in \mathbb{N}}.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, 
+                 arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q) {
+  
+  arma::uword u = psi.n_rows - 1;
+  arma::uword k = psi.n_slices - 1;
+  
+  arma::vec convolpsi(k + 1, arma::fill::zeros);
+  arma::vec d_u_i_j(k + 1, arma::fill::zeros);
+  
+  arma::vec part11(k + 1, arma::fill::zeros); // \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}
+  arma::vec part1(k + 1, arma::fill::zeros); // \sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)
+  
+  arma::vec part21(k, arma::fill::zeros); // \left[ \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+} D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} \right ) \right]
+  arma::vec part2(k, arma::fill::zeros); // \sum_{j = 1}^{s} \left[ \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+} D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} \right ) \right] * q_{ij}(k - 1)
+  
+  
+  arma::vec partT1(k + 1, arma::fill::zeros); // D^{U}_{ij} * q_{ij}(k)
+  arma::vec partT2(k + 1, arma::fill::zeros); // \sum_{t \in U} \alpha_{t} \psi_{ti} * Q_{ij}(k)
+  arma::vec T(k, arma::fill::zeros);
+  
+  
+  arma::vec sigma2_1_k(k, arma::fill::zeros);
+  arma::vec sigma2_k(k, arma::fill::zeros);
+  arma::vec sigma2(k + 1, arma::fill::zeros);
+  
+  
+  arma::vec temp(k, arma::fill::zeros);
+  arma::vec q_i_j(k + 1, arma::fill::zeros);
+  arma::vec Q_i_j(k + 1, arma::fill::zeros);
+  arma::vec psi_n_i(k + 1, arma::fill::zeros);
+  arma::vec psi_j_r(k + 1, arma::fill::zeros);
+  arma::vec bar_H_r(k + 1, arma::fill::zeros);
+  arma::vec Psi_t_i(k + 1, arma::fill::zeros);
+  arma::vec alpha_Psi_t_i(k + 1, arma::fill::zeros); // \sum_{t \in U} alpha_{t} \Psi_{ti}
+  arma::vec psi_t_i(k + 1, arma::fill::zeros);
+  
+  for (arma::uword i = 0; i < u; i++) {
+    
+    T.zeros();
+    part1.zeros();
+    part2.zeros();
+    
+    for (arma::uword j = 0; j <= u; j++) {
+      
+      q_i_j = qy.tube(i, j);
+      
+      Q_i_j = Q.tube(i, j);
+      
+      d_u_i_j.zeros();
+      
+      for (arma::uword n = 0; n < u; n++) {
+        
+        psi_n_i = psi.tube(n, i);
+        
+        for (arma::uword r = 0; r < u; r++) {
+          
+          psi_j_r = psi.tube(j, r);
+          bar_H_r = 1 - H.tube(r, r);
+          
+          convolpsi = convolution(psi_n_i, psi_j_r);
+          
+          d_u_i_j += alpha1(n) * convolution(convolpsi, bar_H_r);
+          
+        }
+      }
+      
+      
+      alpha_Psi_t_i.zeros();
+      partT2.zeros();
+      
+      if (i < u) {
+        
+        for (arma::uword t = 0; t < u; t++) {
+          
+          Psi_t_i = Psi.tube(t, i);
+          psi_t_i = psi.tube(t, i);
+          
+          alpha_Psi_t_i += alpha1(t) * Psi_t_i; // \sum_{t \in U} alpha_{t} \Psi_{ti}
+          
+          partT2 += alpha1(t) * convolution(psi_t_i, Q_i_j);
+          
+        }
+      }
+      
+      
+      partT1 = convolution(d_u_i_j, q_i_j);
+      T += reliab.subvec(1, k) % partT1.subvec(0, k - 1) - reliab.subvec(0, k - 1) % partT1.subvec(1, k) - reliab.subvec(1, k) % partT2.subvec(0, k - 1) + reliab.subvec(0, k - 1) % partT2.subvec(1, k);
+      
+      part11 = arma::square(d_u_i_j - alpha_Psi_t_i);
+      part1 += convolution(part11, q_i_j);
+      
+      part21 = d_u_i_j.subvec(0, k - 1) % alpha_Psi_t_i.subvec(1, k) + \
+        d_u_i_j.subvec(1, k) % alpha_Psi_t_i.subvec(0, k - 1) -        \
+        d_u_i_j.subvec(1, k) % d_u_i_j.subvec(0, k - 1) -              \
+        alpha_Psi_t_i.subvec(0, k - 1) % alpha_Psi_t_i.subvec(1, k);
+      
+      temp = q_i_j.subvec(0, k - 1);
+      part2 += convolution(part21, temp);
+      
+    }
+    
+    sigma2_1_k += mu1(i) * (arma::square(reliab.subvec(1, k)) % part1.subvec(0, k - 1) + \
+      arma::square(reliab.subvec(0, k - 1)) % part1.subvec(1, k) - arma::square(T) +     \
+      2 * reliab.subvec(0, k - 1) % reliab.subvec(1, k) % part2);
+    
+    temp = reliab.subvec(0, k - 1);
+    arma::uvec ids = arma::find(temp > 0);
+    sigma2_k.elem(ids) = sigma2_1_k.elem(ids) / arma::pow(temp.elem(ids), 4.0);
+    
+    arma::uvec ids2 = arma::find(sigma2_k < 0);
+    sigma2_k.elem(ids2).fill(0);
+    
+  }
+  
+  sigma2.subvec(1, k) = sigma2_k;
+  return sigma2;
+}

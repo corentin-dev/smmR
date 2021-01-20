@@ -841,136 +841,20 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000)
     lbda[j] <- ifelse(reliab[j - 1] != 0, 1 - reliab[j] / reliab[j - 1], 0)
   }
   
-  ###########################################################
-  # Compute the variance (Theorem 5.4. equation (5.35), p.119)
-  # 
-  # Be careful: 
-  # 
-  # In the formula (5.35), we use q_{Y} (Proposition 5.1 p.105-106) instead 
-  # of q, and every others quantities such as \psi, \Psi,\dots derive from q_{Y}
-  # 
-  # 
-  # The decomposition of the variance is as follows:
-  # 
-  # 
-  # 
-  # D^{U}_{ij} := \underbrace{\sum_{n \in U} \sum_{r \in U} \underbrace{\alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}_{partduij}}_{duij}
-  # 
-  ###########################################################
-  
   if (var) {
     
     alpha1 <- x$init[which(x$states %in% upstates)]
-    u <- length(upstates)
+    mu1 <- .get.mu(x = x, klim = klim)[which(x$states %in% upstates)]
     
-    q <- .get.qy(x = x, k =  k, upstates = upstates)
-    Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
+    qy <- .get.qy(x = x, k =  k, upstates = upstates)
+    Q <- aperm(apply(qy, c(1, 2), cumsum), c(2, 3, 1))
     
-    psi <- .get.psi(q = q)
+    psi <- .get.psi(q = qy)
     Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
     
-    H <- .get.H(q)
+    H <- .get.H(qy)
     
-    mu <- .get.mu(x = x, klim = klim)
-    
-    
-    indicator <- matrix(data = 1:(u + 1) %in% 1:u, nrow = u + 1, ncol = u + 1) # indicator matrix \mathbb{1}_{i \in U}
-    
-    convolpsi <- array(data = 0, dim = c(u + 1, u + 1, u + 1, u + 1, k + 1)) # (i, j, n, r, k)
-    
-    partduij <- array(data = 0, dim = c(u + 1, u + 1, u, u, k + 1)) # # \alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}
-    duij <- array(data = 0, dim = c(u + 1, u + 1, k + 1))
-    
-    part11 <- array(data = 0, dim = c(u + 1, u + 1, k + 1)) # \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}
-    part1 <- matrix(data = 0, nrow = u + 1, ncol = k + 1) # \sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k - 1)
-    
-    part2 <- matrix(data = 0, nrow = u + 1, ncol = k + 1) # \sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)
-
-    # T
-    T <- matrix(data = 0, nrow = u + 1, ncol = k + 1)
-    partT11 <- array(data = 0, dim = c(u, u + 1, u + 1, k + 1)) # (t, i, j, k) \psi_{ti} * Q_{ij}(k - 1)
-    partT22 <- array(data = 0, dim = c(u, u + 1, u + 1, k + 1)) # (t, i, j, k) \psi_{ti} * Q_{ij}(k)
-    partT1 <- array(data = 0, dim = c(u + 1, u + 1, k + 1)) # \mathbb{1}_{i \in U} \sum_{t \in U} \psi_{ti} * Q_{ij}(k - 1)
-    partT2 <- array(data = 0, dim = c(u + 1, u + 1, k + 1)) # \mathbb{1}_{i \in U} \sum_{t \in U} \psi_{ti} * Q_{ij}(k)
-    
-    
-    part31 <- array(data = 0, dim = c(u + 1, u + 1, k + 1)) # \left [  \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi^{+}_{ti} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+}D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi^{+}_{ti} \right ) \right ]
-    part3 <- matrix(data = 0, nrow = u + 1, ncol = k + 1) # \sum_{j = 1}^{s} \left [  \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi^{+}_{ti} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+}D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi^{+}_{ti} \right ) \right ] * q_{ij}(k - 1)
-    
-    sigma2_1 <- rep.int(x = 0, times = k + 1)
-    sigma2 <- rep.int(x = 0, times = k + 1)
-    
-    
-    for (t in 0:k) {
-      
-      for (i in 1:(u + 1)) {
-        
-        for (j in 1:(u + 1)) {
-          
-          convolpsi[i, j, , , t + 1] <- outer(X = 1:(1 + u), Y = 1:(1 + u), FUN = function(n, r)
-            Reduce('+', lapply(
-              X = 0:t,
-              FUN = function(h) psi[n, i, h + 1] * psi[j, r, t - h + 1]))
-          )
-          
-          for (r in 1:u) {
-            for (n in 1:u) {
-              partduij[i, j, n, r, t + 1] <- sum(convolpsi[i, j, n, r, 1:(t + 1)] * (1 - H[r, r, (t + 1):1]))
-              partduij[i, j, n, r, t + 1] <- partduij[i, j, n, r, t + 1] * alpha1[n]
-            }
-          }
-          
-          for (r in 1:u) {
-            if (t >= 1) {
-              partT11[r, i, j, t + 1] <- sum(psi[r, i, 1:t] * Q[i, j, t:1])
-            }
-            partT22[r, i, j, t + 1] <- sum(psi[r, i, 1:(t + 1)] * Q[i, j, (t + 1):1])
-          }
-        }
-      }
-      
-      duij[, , t + 1] <- apply(partduij[, , , , t + 1], c(1, 2), sum)
-      
-      part11[, , t + 1] <- (duij[, , t + 1] - indicator * (t(Psi[, , t + 1]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1)))) ^ 2
-      
-      if (t >= 1) {
-        part1[, t + 1] <- apply(apply(X = part11[, , 1:t] * q[, , t:1], MARGIN = c(1, 2), sum), 1, sum)
-      }
-      
-      part2[, t + 1] <- apply(apply(X = part11[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum), 1, sum)
-      
-      # partT1[, , t + 1] <- indicator * apply(partT11[, , , t + 1], c(2, 3), function(elt) elt %*% alpha1)
-      # partT2[, , t + 1] <- indicator * apply(partT22[, , , t + 1], c(2, 3), function(elt) elt %*% alpha1)
-      partT1[, , t + 1] <- indicator * drop(apply(partT11[, , , t + 1, drop = FALSE], c(2, 3, 4), function(elt) elt %*% alpha1))
-      partT2[, , t + 1] <- indicator * drop(apply(partT22[, , , t + 1, drop = FALSE], c(2, 3, 4), function(elt) elt %*% alpha1))
-      
-      
-      
-      if (t >= 1) {
-        T[, t + 1] <- apply(reliab[t + 1] * apply(X = duij[, , 1:t] * q[, , t:1], MARGIN = c(1, 2), sum) -
-                              reliab[t] * apply(X = duij[, , 1:(t + 1)] * q[, , (t + 1):1], MARGIN = c(1, 2), sum) -
-                              reliab[t + 1] * partT1[, , t + 1] + reliab[t] * partT2[, , t + 1], 1, sum)
-      }
-      
-      if (t >= 1) {
-        
-        part31[, , t] <- indicator * duij[, , t] * (t(Psi[, , t + 1]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1))) +
-          indicator * duij[, , t + 1] * (t(Psi[, , t]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1))) -
-          duij[, , t + 1] * duij[, , t] -
-          indicator * (t(Psi[, , t]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1))) * (t(Psi[, , t + 1]) %*% c(alpha1, 0) %*% t(rep.int(times = u + 1, x = 1)))
-        
-      }
-      
-      if (t >= 1) {
-        part3[ , t + 1] <- apply(apply(X = part31[, , 1:t] * q[, , t:1], MARGIN = c(1, 2), sum), 1, sum)
-      }
-      
-      if (t > 1) {
-        sigma2_1[t + 1] <- (reliab[t + 1] ^ 2 * part1[, t + 1] + reliab[t] ^ 2 * part2[, t + 1] - T[, t + 1] ^ 2 + 2 * reliab[t] * reliab[t + 1] * part3[, t + 1])[1:u, drop = FALSE] %*% mu[which(x$states %in% upstates)]
-        sigma2[t + 1] <- (1 / reliab[t] ^ 4) * sigma2_1[t + 1]
-      }
-      
-    }
+    sigma2 <- varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q)
     
     return(list(lbda = lbda, sigma2 = sigma2))
     

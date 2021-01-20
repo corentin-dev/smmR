@@ -236,3 +236,24 @@ varA <- function(indices_u, alpha, mu, q, psi, Psi, H, Q) {
     .Call(`_SMM_varA`, indices_u, alpha, mu, q, psi, Psi, H, Q)
 }
 
+#' Compute the variance of the BMP-failure rate \eqn{\lambda}
+#'   (See equation (5.35), p.119)
+#'   
+#'   @details Be careful, in the formula (5.29), we use \eqn{q_{Y}} 
+#'     (See proposition 5.1 p.105-106) instead of \eqn{q}, and every others 
+#'     quantities such as \eqn{\psi}, \eqn{\Psi},\dots derive from \eqn{q_{Y}}.
+#'     
+#'   The decomposition of the variance is as follows: 
+#'     \deqn{\sigma_{1}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ R^{2}(k) \sum_{j = 1}^{s} \underbrace{\left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k - 1) + R^{2}(k - 1) \underbrace{\sum_{j = 1}^{s} \left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2} * q_{ij}(k)}_{\text{part1}} - T^{2}(k) + 2 R(k - 1) R(k) \underbrace{\sum_{j = 1}^{s} \underbrace{\left[ \mathbb{1}_{i \in U} D^{U}_{ij} \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} + \mathbb{1}_{i \in U} (D^{U}_{ij})^{+} \sum_{t \in U} \alpha_{t} \Psi_{ti} - (D^{U}_{ij})^{+} D^{U}_{ij} - \mathbb{1}_{i \in U} \left( \sum_{t \in U} \alpha_{t} \Psi_{ti} \right ) \left( \sum_{t \in U} \alpha_{t} \Psi_{ti}^{+} \right ) \right]}_{\text{part21}} * q_{ij}(k - 1)}_{\text{part2}} \right\}}
+#'   
+#'     \deqn{T_{i}(k) := \sum_{j = 1}^{s} \left[ R(k) D^{U}_{ij} * q_{ij}(k - 1) - R(k - 1) D^{U}_{ij} * q_{ij}(k) - R(k) \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} * Q_{ij}(k - 1) + R(k - 1) \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} * Q_{ij}(k) \right]}
+#'   
+#' @return A vector giving the values of the variance of BMP-failure 
+#'   rate for each time horizon \eqn{k \in \mathbb{N}}.
+#' 
+#' @noRd
+#' 
+varBMP <- function(reliab, alpha1, mu1, qy, psi, Psi, H, Q) {
+    .Call(`_SMM_varBMP`, reliab, alpha1, mu1, qy, psi, Psi, H, Q)
+}
+
