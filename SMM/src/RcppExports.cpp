@@ -218,6 +218,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// varMTTF
+arma::vec varMTTF(arma::uvec& indices_u, arma::uvec& indices_d, arma::vec& m, arma::vec& mu, arma::mat& p, arma::cube& q);
+RcppExport SEXP _SMM_varMTTF(SEXP indices_uSEXP, SEXP indices_dSEXP, SEXP mSEXP, SEXP muSEXP, SEXP pSEXP, SEXP qSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::uvec& >::type indices_u(indices_uSEXP);
+    Rcpp::traits::input_parameter< arma::uvec& >::type indices_d(indices_dSEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type m(mSEXP);
+    Rcpp::traits::input_parameter< arma::vec& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type q(qSEXP);
+    rcpp_result_gen = Rcpp::wrap(varMTTF(indices_u, indices_d, m, mu, p, q));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
@@ -235,6 +251,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SMM_varR", (DL_FUNC) &_SMM_varR, 7},
     {"_SMM_varA", (DL_FUNC) &_SMM_varA, 8},
     {"_SMM_varBMP", (DL_FUNC) &_SMM_varBMP, 8},
+    {"_SMM_varMTTF", (DL_FUNC) &_SMM_varMTTF, 6},
     {NULL, NULL, 0}
 };
 

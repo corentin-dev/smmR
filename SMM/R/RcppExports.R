@@ -257,3 +257,18 @@ varBMP <- function(reliab, alpha1, mu1, qy, psi, Psi, H, Q) {
     .Call(`_SMM_varBMP`, reliab, alpha1, mu1, qy, psi, Psi, H, Q)
 }
 
+#' Compute the variance of the mean time to failure (MTTF)
+#'   (See Votsi & A. Brouste (2019): Confidence interval for the 
+#'   mean time to failure in semi-Markov models: an application to 
+#'   wind energy production, Journal of Applied Statistics, 
+#'   DOI: 10.1080/02664763.2019.1566449)
+#'   
+#' @return A vector giving the values of the variances of the 
+#'   mean time to failure for each upstate.
+#' 
+#' @noRd
+#' 
+varMTTF <- function(indices_u, indices_d, m, mu, p, q) {
+    .Call(`_SMM_varMTTF`, indices_u, indices_d, m, mu, p, q)
+}
+

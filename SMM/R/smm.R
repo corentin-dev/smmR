@@ -1043,26 +1043,15 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   if (var) {
     
     u <- length(upstates)
-    indices_u <- which(x$states %in% upstates)
+    indices_u <- which(x$states %in% upstates) - 1
+    indices_d <- which(!(x$states %in% upstates)) - 1
+    
+    m <- meanSojournTimes(x = x, klim = klim)
+    mu <- .get.mu(x = x, klim = klim)
     
     q <- .get.q(x = x, k = klim)
-    q11 <- q[which(x$states %in% upstates), which(x$states %in% upstates), 2:(klim + 1), drop = FALSE]
-    mu <- .get.mu(x = x, klim = klim)
-    m <- meanSojournTimes(x = x, klim = klim)
     
-    Qml <- apply(q, 2, function(elt) rowSums(elt * t(sapply(m, function(x) 0:klim - x))))
-    a <- solve(diag(nrow(p11)) - p11)
-    
-    etal <- rep.int(x = 0, times = x$s)
-    etal[indices_u] <- a %*% m1
-    
-    etildal <- p11 %*% a %*% m1
-    
-    hik <- t(apply(X = q, MARGIN = c(1, 3), sum))[2:(klim + 1), which(x$states %in% upstates)]
-    sigma2_m1 <- colSums(sapply(m1, function(x) (1:klim - x) ^ 2) * hik)
-    
-    sigma2 <- as.vector(a ^ 2 %*% (mu[which(x$states %in% upstates)] * (sigma2_m1 + apply(x$ptrans[indices_u, ] * sapply(etal, function(x) x - etildal) ^ 2, 1, sum) + 2 * Qml[indices_u, ] %*% etal)))
-    names(sigma2) <- upstates
+    sigma2 <- varMTTF(indices_u, indices_d, m, mu, x$ptrans, q)
     
     return(list(mttf = mttf, sigma2 = sigma2))
     

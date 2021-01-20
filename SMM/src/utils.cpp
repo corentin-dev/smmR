@@ -1103,3 +1103,87 @@ arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cub
   sigma2.subvec(1, k) = sigma2_k;
   return sigma2;
 }
+
+
+
+
+
+//' Compute the variance of the mean time to failure (MTTF)
+//'   (See Votsi & A. Brouste (2019): Confidence interval for the 
+//'   mean time to failure in semi-Markov models: an application to 
+//'   wind energy production, Journal of Applied Statistics, 
+//'   DOI: 10.1080/02664763.2019.1566449)
+//'   
+//' @return A vector giving the values of the variances of the 
+//'   mean time to failure for each upstate.
+//' 
+//' @noRd
+//' 
+// [[Rcpp::export]]
+arma::vec varMTTF(arma::uvec& indices_u, arma::uvec& indices_d, arma::vec& m, arma::vec& mu, arma::mat& p, arma::cube& q) {
+  
+  arma::uword u = indices_u.n_elem;
+  arma::uword s = p.n_rows;
+  arma::uword klim = q.n_slices;
+  
+  arma::vec m1 = m.elem(indices_u);
+  arma::vec mu1 = mu.elem(indices_u);
+  arma::mat p11 = p.submat(indices_u, indices_u);
+  
+  arma::vec sigma2m(s, arma::fill::zeros);
+  
+  arma::vec temp(s, arma::fill::zeros);
+  arma::mat q_slice(s, s, arma::fill::zeros);
+  arma::mat Q(s, s, arma::fill::zeros);
+  
+  arma::mat a(u, u, arma::fill::eye);
+  arma::vec eta(u, arma::fill::zeros);
+  arma::vec etatilde(u, arma::fill::zeros);
+  
+  arma::vec sigma2(u, arma::fill::zeros);
+  
+  for (arma::uword t = 0; t < klim; t++) {
+    
+    temp = t - m;
+    q_slice = q.slice(t);
+    
+    Q += temp % q_slice.each_col();
+    
+    sigma2m += arma::square(temp) % arma::sum(q_slice, 1);
+    
+  }
+  
+  a -= p11;
+  a = inv(a);
+  
+  eta = a * m1;
+  etatilde = p11 * a * m1;
+  
+  
+  arma::mat part1(u, s, arma::fill::zeros);
+  arma::vec part2(u, arma::fill::zeros);
+  arma::vec part3(u, arma::fill::zeros);
+  
+  part2 = 2 * Q.submat(indices_u, indices_u) * eta;
+  
+  for (arma::uword m = 0; m < u; m++) {
+    
+    for (arma::uword l = 0; l < s; l++) {
+      
+      if (l < u) {
+        part1(m, l) = std::pow(eta(l) - etatilde(m), 2.0) * p(indices_u(m), indices_u(l));
+      } else {
+        part1(m, l) = std::pow(0 - etatilde(m), 2.0) * p(indices_u(m), indices_d(l - u));
+      }
+      
+    }
+    
+  }
+  
+  part3 = mu1 % (sigma2m.elem(indices_u) + arma::sum(part1, 1) + part2);
+  
+  sigma2 = arma::square(a) * part3;
+  
+  return sigma2;
+  
+}
