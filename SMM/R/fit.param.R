@@ -9,7 +9,7 @@
   
   if (type.sojourn == "fij") {
     
-    if (cens.end) {# We can't decompose the loglikelihood as a sum of optimization problems
+    if (cens.end) {# We can't decompose the log-likelihood as a sum of optimization problems
       
       ptrans <- matrix(0, nrow = s, ncol = s)
       param <- array(data = NA, dim = c(s, s, 2))
@@ -76,7 +76,7 @@
     
   } else if (type.sojourn == "fj") {
     
-    if (cens.end) {# We can't decompose the loglikelihood as a sum of optimization problems
+    if (cens.end) {# We can't decompose the log-likelihood as a sum of optimization problems
       
       estparam <- .fit.param.fj.endcensoring(counting, s, kmax, distr, cens.beg)
       ptrans <- estparam$ptrans

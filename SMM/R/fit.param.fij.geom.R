@@ -3,7 +3,7 @@
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- sum(counting$Nijk[i, j, ]) / sum(1:kmax * counting$Nijk[i, j, ])
   
-  if (cens.beg) {# censoring at the beginning
+  if (cens.beg) {# Censoring at the beginning
     
     loglik <- function(par) {
       

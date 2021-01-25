@@ -131,7 +131,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   }
   
   if (!((dim(ptrans)[1] == s) && (dim(ptrans)[2] == s))) {
-    stop("The size of the matrix ptrans must be equal to sxs")
+    stop("The dimension of the matrix ptrans must be equal to (s, s)")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
@@ -153,11 +153,11 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   #############################
   
   if (type.sojourn == "fij" && !(is.array(distr) && !is.matrix(distr))) {
-    stop("distr must be an array of size SxSxKmax since type.sojourn == \"fij\"")
+    stop("distr must be an array of dimension (s, s, kmax) since type.sojourn == \"fij\"")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !is.matrix(distr)) {
-    stop("distr must be a matrix of size SxKmax since type.sojourn == \"fi\" or \"fj\"")
+    stop("distr must be a matrix of dimension (s, kmax) since type.sojourn == \"fi\" or \"fj\"")
   }
   
   if (type.sojourn == "f" && !is.vector(distr)) {
@@ -166,11 +166,11 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   
   
   if (type.sojourn == "fij" && !(dim(distr)[1] == s && dim(distr)[2] == s)) {
-    stop("distr must be an array of size SxSxKmax since type.sojourn == \"fij\"")
+    stop("distr must be an array of dimension (s, s, kmax) since type.sojourn == \"fij\"")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(dim(distr)[1] == s)) {
-    stop("distr must be a matrix of size SxKmax since type.sojourn == \"fi\" or \"fj\"")
+    stop("distr must be a matrix of dimension (s, kmax) since type.sojourn == \"fi\" or \"fj\"")
   }
   
   if (!all(distr >= 0) | !all(distr <= 1)) {
@@ -319,7 +319,7 @@ loglik.smmnonparametric <- function(x, sequences) {
   cens.end <- x$cens.end
   
   #############################
-  # Let's compute the loglikelihood
+  # Let's compute the log-likelihood
   #############################
   
   init <- x$init # Initial distribution
@@ -333,7 +333,7 @@ loglik.smmnonparametric <- function(x, sequences) {
     maskNij <- Nij != 0 & pij != 0
     
     # Contribution of the initial distribution and 
-    # the transition matrix to the loglikelihood
+    # the transition matrix to the log-likelihood
     loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij]))
     

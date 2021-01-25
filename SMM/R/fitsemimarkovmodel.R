@@ -200,7 +200,7 @@ fitsemimarkovmodel <-
   if (!(length(distr) == 1 && all(distr == "nonparametric"))) {
 
     if (type.sojourn == "fij" && !(is.matrix(distr))) {
-      stop("distr must be a matrix of size sxs since type.sojourn == \"fij\"")
+      stop("distr must be a matrix of dimension (s, s) since type.sojourn == \"fij\"")
     }
 
     if ((type.sojourn == "fi" || type.sojourn == "fj") && !is.vector(distr)) {
@@ -213,7 +213,7 @@ fitsemimarkovmodel <-
 
 
     if (type.sojourn == "fij" && !(dim(distr)[1] == s && dim(distr)[2] == s)) {
-      stop("distr must be a matrix of size sxs since type.sojourn == \"fij\"")
+      stop("distr must be a matrix of dimension (s, s) since type.sojourn == \"fij\"")
     }
 
     if ((type.sojourn == "fi" || type.sojourn == "fj") && !(length(distr) == s)) {

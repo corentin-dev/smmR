@@ -62,7 +62,7 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   }
   
   if (!((dim(ptrans)[1] == s ^ k) && (dim(ptrans)[2] == s))) {
-    stop("The size of the matrix ptrans must be equal to (s ^ k)xs")
+    stop("The dimension of the matrix ptrans must be equal to (s ^ k, s)")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {

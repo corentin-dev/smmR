@@ -23,7 +23,7 @@
     mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
 
-  } else if (cens.beg && !cens.end) {# censoring at the beginning
+  } else if (cens.beg && !cens.end) {# Censoring at the beginning
     
     loglik <- function(par) {
       
@@ -43,7 +43,7 @@
     mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
-  } else if (cens.beg && cens.end) {# censoring at the beginningand at the end
+  } else if (cens.beg && cens.end) {# Censoring at the beginning and at the end
     
     loglik <- function(par) {
       

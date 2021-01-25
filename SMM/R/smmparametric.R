@@ -175,7 +175,7 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   }
   
   if (!((dim(ptrans)[1] == s) && (dim(ptrans)[2] == s))) {
-    stop("The size of the matrix ptrans must be equal to sxs")
+    stop("The dimension of the matrix ptrans must be equal to (s, s)")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
@@ -197,11 +197,11 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   #############################
   
   if (type.sojourn == "fij" && !(is.matrix(distr) && (is.array(param) && !is.matrix(param)))) {
-    stop("distr must be a matrix of size sxs and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
+    stop("distr must be a matrix of dimension (s, s) and param must be an array of dimension (s, s, 2) since type.sojourn == \"fij\"")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(is.vector(distr) && is.matrix(param))) {
-    stop("distr must be a vector of length s and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
+    stop("distr must be a vector of length s and param must be a matrix of dimension (s, 2) since type.sojourn == \"fi\" or \"fj\"")
   }
   
   if (type.sojourn == "f" && !((length(distr) == 1) && is.vector(param))) {
@@ -210,11 +210,11 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   
   
   if (type.sojourn == "fij" && !((dim(distr)[1] == s && dim(distr)[2] == s) && (dim(param)[1] == s && dim(param)[2] == s))) {
-    stop("distr must be a matrix of size sxs and param must be an array of size SxSx2 since type.sojourn == \"fij\"")
+    stop("distr must be a matrix of dimension (s, s) and param must be an array of dimension (s, s, 2) since type.sojourn == \"fij\"")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !((length(distr) == s) && (dim(param)[1] == s && dim(param)[2] == 2))) {
-    stop("distr must be a vector of length s and param must be a matrix of size Sx2 since type.sojourn == \"fi\" or \"fj\"")
+    stop("distr must be a vector of length s and param must be a matrix of dimension (s, 2) since type.sojourn == \"fi\" or \"fj\"")
   }
   
   
@@ -498,7 +498,7 @@ loglik.smmparametric <- function(x, sequences) {
   cens.end <- x$cens.end
   
   #############################
-  # Let's compute the loglikelihood
+  # Let's compute the log-likelihood
   #############################
   
   init <- x$init # Initial distributiob
@@ -524,13 +524,13 @@ loglik.smmparametric <- function(x, sequences) {
     
     if (cens.beg || cens.end) {# Censoring
       
-      # Contribution of the first right censored time to the loglikelihood
+      # Contribution of the first right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbijk <- sequences$counting$Nbijk
       maskNbijk <- Nbijk != 0 & Fbar != 0
       
-      # Contribution of the last right censored time to the loglikelihood
+      # Contribution of the last right censored time to the log-likelihood
       Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
       
       Neik <- sequences$counting$Neik
@@ -553,7 +553,7 @@ loglik.smmparametric <- function(x, sequences) {
     
     if (cens.beg || cens.end) {# Censoring
       
-      # Contribution of the first and last right censored time to the loglikelihood
+      # Contribution of the first and last right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbik <- sequences$counting$Nbik
@@ -579,13 +579,13 @@ loglik.smmparametric <- function(x, sequences) {
     
     if (cens.beg || cens.end) {
       
-      # Contribution of the first right censored time to the loglikelihood
+      # Contribution of the first right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbjk <- sequences$counting$Nbjk
       maskNbjk <- Nbjk != 0 & Fbar != 0
       
-      # Contribution of the last right censored time to the loglikelihood
+      # Contribution of the last right censored time to the log-likelihood
       Fbarj <- pij %*% Fbar
       
       Neik <- sequences$counting$Neik
@@ -608,7 +608,7 @@ loglik.smmparametric <- function(x, sequences) {
     
     if (cens.beg || cens.end) {# Censoring
       
-      # Contribution of the first and last right censored time to the loglikelihood
+      # Contribution of the first and last right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
       
       Nbk <- sequences$counting$Nbk

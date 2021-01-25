@@ -124,52 +124,6 @@ is.smm <- function(x) {
   
 }
 
-# # Method to compute the value of psi (estimator p.53 (3.16))
-# #' @export
-# .get.psi <- function(x, k, states = x$states) {
-# 
-#   q <- .get.q(x = x, k = k)[which(x$states %in% states), which(x$states %in% states), ,  drop = FALSE]
-# 
-#   psi <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1)) # (S, S, k + 1)
-#   psi[, , 1] <- diag(x = 1, nrow = nrow(q), ncol = ncol(q)) # k = 0
-# 
-#   for (j in 1:k) {
-# 
-#     psi[, , j + 1] <-
-#       -Reduce('+', lapply(
-#         X = 0:(j - 1),
-#         FUN = function(l)
-#           psi[, , l + 1] %*% (-q[, , j - l + 1])
-#       ))
-#   }
-# 
-#   return(psi)
-# 
-# }
-
-# # Method to compute the value of psi (estimator p.53 (3.16))
-# #' @export
-# .get.psiy <- function(x, k, downstates = x$states) {
-# 
-#   q <- .get.qy(x = x, k = k, downstates = downstates)
-# 
-#   psi <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1)) # (S, S, k + 1)
-#   psi[, , 1] <- diag(x = 1, nrow = nrow(q), ncol = ncol(q)) # k = 0
-# 
-#   for (j in 1:k) {
-# 
-#     psi[, , j + 1] <-
-#       -Reduce('+', lapply(
-#         X = 0:(j - 1),
-#         FUN = function(l)
-#           psi[, , l + 1] %*% (-q[, , j - l + 1])
-#       ))
-#   }
-# 
-#   return(psi)
-# 
-# }
-
 #' Method to compute the value of \eqn{\psi}
 #'
 #' @description Method to compute the value of \eqn{\psi}
@@ -202,42 +156,6 @@ is.smm <- function(x) {
   return(psi)
   
 }
-
-# # Method to compute the value of H (definition p.46 (Definition 3.4))
-# #' @export
-# .get.H <- function(x, k) {
-#   
-#   q <- .get.q(x = x, k = k)
-#   
-#   hik <- apply(X = q, MARGIN = c(1, 3), sum)
-#   Hik <- t(apply(X = hik, MARGIN = 1, cumsum))
-#   
-#   H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
-#   
-#   for (j in 1:(k + 1)) {
-#     H[, , j] <- diag(Hik[, j])
-#   }
-#   
-#   return(H)
-# }
-
-# # Method to compute the value of H (definition p.46 (Definition 3.4))
-# #' @export
-# .get.Hy <- function(x, k, downstates = x$states) {
-#   
-#   q <- .get.qy(x = x, k = k, downstates = downstates)
-#   
-#   hik <- apply(X = q, MARGIN = c(1, 3), sum)
-#   Hik <- t(apply(X = hik, MARGIN = 1, cumsum))
-#   
-#   H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
-#   
-#   for (j in 1:(k + 1)) {
-#     H[, , j] <- diag(Hik[, j])
-#   }
-#   
-#   return(H)
-# }
 
 #' Method to compute the value of \eqn{H}
 #'
@@ -308,11 +226,7 @@ is.smm <- function(x) {
   
   
   ###########################################################
-  # Compute the variance (equation (4.29), p.91)
-  # The decomposition of the variance is as follows:
-  #
-  # \sigma_{P}^{2}(i, j, k)) = \sum_{m = 1}^{s} \mu_{mm} \left\{ \sum_{r = 1}^{s} \underbrace{\underbrace{\left[\delta_{mj}\Psi_{ij} - \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj}}_{\text{part11}} \right]^2}_{\text{part12}} * \ q_{mr}(k)}_{\text{part1}} - \left[ \underbrace{\delta_{mj} \psi_{ij} * H_{m}(k)}_{\text{part22}} - \sum_{r = 1}^{s} \underbrace{(1 - H_{j}) * \psi_{im} * \psi_{rj} * q_{mr}}_{\text{part21}} \right]^{2}(k) \right\}
-  #
+  # Compute the variance (See equation (4.29), p.91)
   ###########################################################
   
   if (var) {
@@ -476,20 +390,7 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   
   
   ###########################################################
-  # Compute the variance (equation (5.29), p.116)
-  # 
-  # Be careful: 
-  # 
-  # In the formula (5.29), we use q_{Y} (Proposition 5.1 p.105-106) instead 
-  # of q, and every others quantities such as \psi, \Psi,\dots derive from q_{Y}
-  # 
-  # 
-  # The decomposition of the variance is as follows:
-  # 
-  # \sigma_{R}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \sum_{j = 1}^{s} \underbrace{\underbrace{\left[ D^{U}_{ij} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \sum_{j = 1}^{s} \underbrace{\left( \underbrace{D^{U}_{ij} * q_{ij}}_{\text{part22}} - \mathbb{1}_{i \in U} \sum_{t \in U} \alpha_{t} \underbrace{\psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}
-  # 
-  # D^{U}_{ij} := \underbrace{\sum_{n \in U} \sum_{r \in U} \underbrace{\alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}_{partduij}}_{duij}
-  # 
+  # Compute the variance (See equation (5.29), p.116)
   ###########################################################
   
   if (var) {
@@ -721,13 +622,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
             rowSums(t(x$init[which(x$states %in% upstates)]) %*% y))
   
   ###########################################################
-  # Compute the variance (Theorem 5.2. equation (5.34), p.118)
-  # The decomposition of the variance is as follows:
-  #
-  # \sigma_{A}^{2}(k) = \sum_{i = 1}^{s} \mu_{ii} \left\{ \sum_{j = 1}^{s} \underbrace{\underbrace{\left[ D_{ij} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \Psi_{ti} \right]^{2}}_{\text{part11}} * q_{ij}(k)}_{\text{part1}} - \left[ \sum_{j = 1}^{s} \underbrace{\left( \underbrace{D_{ij} * q_{ij}}_{\text{part22}} - \mathbb{1}_{i \in U} \sum_{t = 1}^{s} \alpha_{t} \underbrace{\psi_{ti} * Q_{ij}}_{\text{part21}} \right)}_{\text{part2}} \right]^{2}(k) \right\}
-  #
-  # D_{ij} := \underbrace{\sum_{n = 1}^{s} \sum_{r \in U} \underbrace{\alpha_{n} \psi_{ni} * \psi_{jr} * (\text{I} - diag(\text{Q.1}))_{rr}}_{partdij}}_{dij}
-  # 
+  # Compute the variance (See equation (5.34), p.118)
   ###########################################################
   
   if (var) {
@@ -841,6 +736,10 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000)
     lbda[j] <- ifelse(reliab[j - 1] != 0, 1 - reliab[j] / reliab[j - 1], 0)
   }
   
+  ###########################################################
+  # Compute the variance (See equation (5.35), p.119)
+  ###########################################################
+  
   if (var) {
     
     alpha1 <- x$init[which(x$states %in% upstates)]
@@ -893,15 +792,6 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000)
 #' @export
 #'
 failureRateRG <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
-  
-  # reliab <- reliability(x = x, k = k, upstates = upstates)
-  # 
-  # r <- rep.int(0, k + 1)
-  # r[1] <- ifelse(reliab[1] != 0, -log(reliab[1]), 0) # k = 0
-  # 
-  # for (j in 2:(k + 1)) {
-  #   r[j] <- ifelse(reliab[j - 1] != 0, -log(reliab[j] / reliab[j - 1]), 0)
-  # }
   
   lbda <- failureRateBMP(x = x, k = k, upstates = upstates, var = var, klim = klim)
   
@@ -1032,10 +922,8 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   m1 <- meanSojournTimes(x = x, states = upstates, klim = klim)
   
   if (length(m1) != 1) {
-    # mttf <- as.numeric(t(x$init) %*% solve(diag(nrow(p11)) - p11) %*% m1)
     mttf <- as.vector(solve(diag(nrow(p11)) - p11) %*% m1)
   } else {
-    # mttf <- as.numeric(t(x$init) %*% solve(diag(nrow(p11)) - p11) * m1)
     mttf <- as.vector(solve(diag(nrow(p11)) - p11) * m1)
   }
   names(mttf) <- upstates
