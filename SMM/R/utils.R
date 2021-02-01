@@ -67,7 +67,6 @@
 .limitDistribution <- function(q = q, ptrans = ptrans) {
   
   kmax <- dim(q)[3]
-  s <- dim(ptrans)[1]
   
   fik <- apply(q, c(1, 3), sum)
   mi <- apply(fik, 1, function(x) sum((1:kmax) * x))

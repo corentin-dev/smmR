@@ -28,10 +28,10 @@ is.smm <- function(x) {
 
 #' Method to get the semi-Markov kernel \eqn{q}
 #'
-#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}
-#'   (Theorem 4.2 p.82).
+#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
 #' 
-#' @param x An object of class `smm`.
+#' @param x An object inheriting from the S3 class `smm` (an object of class
+#'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
 #' @param k A positive integer giving the time horizon.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
 #' @param klim Optional. The time horizon used to approximate the series in the
@@ -41,15 +41,16 @@ is.smm <- function(x) {
 #'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
 #'   following components:
 #'   \itemize{
-#'    \item{q: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
+#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
 #'      between 0 and `k`;}
 #'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
 #'  }
 #'
-#' @noRd
-.get.q <- function(x, k, var = FALSE, klim = 10000) {
-  UseMethod(".get.q", x)
+#' @export
+#' 
+getKernel <- function(x, k, var = FALSE, klim = 10000) {
+  UseMethod("getKernel", x)
 }
 
 #' Method to get the semi-Markov kernel \eqn{q_{Y}}
@@ -68,7 +69,7 @@ is.smm <- function(x) {
   
   u <- length(upstates)
   
-  q <- .get.q(x = x, k = k)
+  q <- getKernel(x = x, k = k)
   
   q11 <- q[which(x$states %in% upstates), which(x$states %in% upstates), , drop = FALSE]
   q12 <- q[which(x$states %in% upstates), which(!(x$states %in% upstates)), , drop = FALSE]
@@ -103,13 +104,13 @@ is.smm <- function(x) {
 
 #' Method to get the mean recurrence times \eqn{\mu}
 #'
-#' @description Method to get the mean recurrence times \eqn{\mu}
-#'   (Proposition 3.6 p.57).
+#' @description Method to get the mean recurrence times \eqn{\mu}.
 #' 
-#' @param x An object of class `smm`.
-#' @param klim Optional. The time horizon used to approximate the series in the
-#'   computation of the mean sojourn times vector 
-#'   \eqn{(m_i)_{i \in [1,\dots,S]}}.
+#' @param x An object inheriting from the S3 class `smm` (an object of class
+#'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes][meanSojournTimes] function).
 #' @return A vector giving the mean recurrence time 
 #'   \eqn{(\mu_{i})_{i \in [1,\dots,S]}}.
 #'
@@ -130,7 +131,7 @@ is.smm <- function(x) {
 #'   (estimator p.53 (3.16)).
 #' 
 #' @param q An array giving the values of the kernel for a giving time horizon 
-#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `.get.q` 
+#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `getKernel` 
 #'   or `.get.qy`).
 #' @return An array giving the value of \eqn{\psi(k)} at each time between 0 
 #'   and `k`.
@@ -162,7 +163,7 @@ is.smm <- function(x) {
 #' @description Method to compute the value of \eqn{H} (Definition 3.4 p.46).
 #' 
 #' @param q An array giving the values of the kernel for a giving time horizon 
-#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `.get.q` 
+#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `getKernel` 
 #'   or `.get.qy`).
 #' @return An array giving the value of \eqn{H(k)} at each time between 0 
 #'   and `k`.
@@ -213,7 +214,7 @@ is.smm <- function(x) {
   # Compute P, the transition function
   ###########################################################
   
-  q <- .get.q(x = x, k = k)
+  q <- getKernel(x = x, k = k)
   q11 <- q[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   
   psi <- .get.psi(q = q11)
@@ -627,12 +628,11 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   
   if (var) {
     
-    u <- length(upstates)
     indices_u <- which(x$states %in% upstates) - 1
     
     alpha <- x$init
     
-    q <- .get.q(x = x, k = k)
+    q <- getKernel(x = x, k = k)
     Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
     
     psi <- .get.psi(q = q)
@@ -811,12 +811,10 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) 
 
 #' Mean Sojourn Times Function
 #'
-#' @description Consider a system \eqn{S_{ystem}} starting to work at time 
-#'   \eqn{k = 0}. The mean time to failure (MTTF) is defined as the mean 
-#'   lifetime.
+#' @description The mean sojourn time is the mean time spent in each state.
 #'
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
-#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
+#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
 #'   
 #'   We are interested in investigating the mean sojourn times of a 
 #'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
@@ -825,11 +823,13 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) 
 #'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 #'   
 #'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
-#'   state changes in \eqn{(Z_{n})_{n \in N}} occur.
+#'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
+#'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
+#'   these time points.
 #'   
 #'   The mean sojourn times vector is defined as follows:
 #'   
-#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{n \geq 0} (1 - H_{j}(n)),\ i \in E}
+#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
 #'   
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
@@ -844,7 +844,7 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) 
 #'
 meanSojournTimes <- function(x, states = x$states, klim = 10000) {
   
-  q <- .get.q(x = x, k = klim)
+  q <- getKernel(x = x, k = klim)
   H1 <- .get.H(q)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   
   if (dim(H1)[1] != 1) {
@@ -930,14 +930,13 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   
   if (var) {
     
-    u <- length(upstates)
     indices_u <- which(x$states %in% upstates) - 1
     indices_d <- which(!(x$states %in% upstates)) - 1
     
     m <- meanSojournTimes(x = x, klim = klim)
     mu <- .get.mu(x = x, klim = klim)
     
-    q <- .get.q(x = x, k = klim)
+    q <- getKernel(x = x, k = klim)
     
     sigma2 <- varMTTF(indices_u, indices_d, m, mu, x$ptrans, q)
     

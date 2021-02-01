@@ -286,7 +286,7 @@ is.smmparametric <- function(x) {
   inherits(x, "smmparametric")
 }
 
-# Method used to compute the semi-Markov kernel q (see method .get.q.smmparametric)
+# Method used to compute the semi-Markov kernel q (see method getKernel.smmparametric)
 .get.fijk.smmparametric <- function(x, k) {
   
   s <- x$s
@@ -312,25 +312,25 @@ is.smmparametric <- function(x) {
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
-      f[j, ] <- ddweibull(1:k, q = param1[j], beta = param2[j], zero = FALSE)
+      f[j, ] <- ddweibull(x = 1:k, q = param1[j], beta = param2[j], zero = FALSE)
     }
   }
   if ("geom" %in% x$distr) {
     indices <- which(x$distr == "geom")
     for (j in indices) {
-      f[j, ] <- dgeom(0:(k - 1), prob = param1[j])
+      f[j, ] <- dgeom(x = 0:(k - 1), prob = param1[j])
     }
   }
   if ("nbinom" %in% x$distr) {
     indices <- which(x$distr == "nbinom")
     for (j in indices) {
-      f[j, ] <- dnbinom(0:(k - 1), size = param1[j], prob = param2[j])
+      f[j, ] <- dnbinom(x = 0:(k - 1), size = param1[j], prob = param2[j])
     }
   }
   if ("pois" %in% x$distr) {
     indices <- which(x$distr == "pois")
     for (j in indices) {
-      f[j, ] <- dpois(0:(k - 1), lambda = param1[j])
+      f[j, ] <- dpois(x = 0:(k - 1), lambda = param1[j])
     }
   }
   if ("unif" %in% x$distr) {
@@ -343,12 +343,12 @@ is.smmparametric <- function(x) {
   if (x$type.sojourn == "fij") {
     fijk <- array(f, c(s, s, k))
   } else if (x$type.sojourn == "fi") {
-    f <- rep(as.vector(t(f)), each = s)
+    f <- rep(as.vector(f), each = s)
     fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
     fk <- array(as.vector(t(fmat)), c(s, s, k))
     fijk <- apply(X = fk, MARGIN =  c(1, 3), FUN =  t)
   } else if (x$type.sojourn == "fj") {
-    f <- rep(as.vector(t(f)), each = s)
+    f <- rep(as.vector(f), each = s)
     fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
     fijk <- array(as.vector(t(fmat)), c(s, s, k))
   } else {
@@ -440,8 +440,29 @@ is.smmparametric <- function(x) {
   
 }
 
-# Method to get the semi-Markov kernel q
-.get.q.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
+#' Method to get the semi-Markov kernel \eqn{q}
+#'
+#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
+#' 
+#' @param x An object of class [smmparametric][smmparametric].
+#' @param k A positive integer giving the time horizon.
+#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param klim Optional. The time horizon used to approximate the series in the
+#'   computation of the mean recurrence times vector for the asymptotic 
+#'   variance.
+#' @return An array giving the value of \eqn{q_{ij}(k)} at each time between 0 
+#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
+#'   following components:
+#'   \itemize{
+#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
+#'      between 0 and `k`;}
+#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
+#'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
+#'  }
+#'
+#' @export
+#' 
+getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
   
   q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
@@ -453,7 +474,7 @@ is.smmparametric <- function(x) {
     mu <- .get.mu(x = x, klim = klim)
     sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
-    return(list(q = q, sigma2 = sigma2))
+    return(list(x = q, sigma2 = sigma2))
     
   } else {
     
@@ -531,7 +552,7 @@ loglik.smmparametric <- function(x, sequences) {
       maskNbijk <- Nbijk != 0 & Fbar != 0
       
       # Contribution of the last right censored time to the log-likelihood
-      Fbarj <- t(apply(X = apply(X = .get.q.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      Fbarj <- t(apply(X = apply(X = getKernel.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
       
       Neik <- sequences$counting$Neik
       maskNeik <- Neik != 0 & Fbarj != 0

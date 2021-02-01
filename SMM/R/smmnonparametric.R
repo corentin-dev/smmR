@@ -245,8 +245,29 @@ is.smmnonparametric <- function(x) {
   inherits(x, "smmnonparametric")
 }
 
-# Method to get the semi-Markov kernel q
-.get.q.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
+#' Method to get the semi-Markov kernel \eqn{q}
+#'
+#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
+#' 
+#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param k A positive integer giving the time horizon.
+#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param klim Optional. The time horizon used to approximate the series in the
+#'   computation of the mean recurrence times vector for the asymptotic 
+#'   variance.
+#' @return An array giving the value of \eqn{q_{ij}(k)} at each time between 0 
+#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
+#'   following components:
+#'   \itemize{
+#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
+#'      between 0 and `k`;}
+#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
+#'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
+#'  }
+#'
+#' @export
+#' 
+getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
   q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
@@ -271,7 +292,7 @@ is.smmnonparametric <- function(x) {
     mu <- .get.mu(x = x, klim = klim)
     sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
-    return(list(q = q, sigma2 = sigma2))
+    return(list(x = q, sigma2 = sigma2))
     
   } else {
     
@@ -383,9 +404,6 @@ loglik.smmnonparametric <- function(x, sequences) {
     
     phat <- Niujv / array(Niu, c(s, kmax, s, kmax))
     phat[is.na(phat)] <- 0
-    
-    # Computation of q
-    q <- computeKernelNonParamEndcensoring(phat)
     
     piujv <-
       apply(

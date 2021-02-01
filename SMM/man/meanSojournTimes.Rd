@@ -21,9 +21,7 @@ A vector of length \eqn{\textrm{card}(E)} giving the values of the
 mean sojourn times for each state \eqn{i \in E}.
 }
 \description{
-Consider a system \eqn{S_{ystem}} starting to work at time
-\eqn{k = 0}. The mean time to failure (MTTF) is defined as the mean
-lifetime.
+The mean sojourn time is the mean time spent in each state.
 }
 \details{
 Consider a system (or a component) \eqn{S_{ystem}} whose possible
@@ -36,9 +34,11 @@ semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given
 at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 
 Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when
-state changes in \eqn{(Z_{n})_{n \in N}} occur.
+state changes in \eqn{(Z_{n})_{n \in N}} occur and let also
+\eqn{J = (J_{n})_{n \in N}} denote the successively visited states at
+these time points.
 
 The mean sojourn times vector is defined as follows:
 
-\deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{n \geq 0} (1 - H_{j}(n)),\ i \in E}
+\deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
 }

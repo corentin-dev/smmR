@@ -2,7 +2,6 @@
   
   states <- sequences$states
   s <- sequences$s
-  L <- sequences$L
   kmax <- sequences$kmax
   counting <- sequences$counting
   
@@ -151,7 +150,7 @@
   if (init.estim == "mle") {
     estimate$init <- counting$Nstarti / sum(counting$Nstarti)
   } else {# init.estim == "stationary"
-    q <- .get.q(estimate, kmax)
+    q <- getKernel(estimate, kmax)
     estimate$init <- .limitDistribution(q = q, ptrans = estimate$ptrans)
   }
   

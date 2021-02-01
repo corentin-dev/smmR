@@ -32,7 +32,7 @@
     if ((distr[1] == "unif") && (distr[2] == "unif")) {
       
       for (j in 1:s) {
-        param[j, ] <- .fit.param.fj.unif(counting, j)
+        param[j, ] <- .fit.param.fj.unif(counting, j, kmax)
       }
       
       ##########################################################
@@ -42,7 +42,7 @@
       
       for (j in 1:s) {
         if (distr[j] == "unif") {
-          param[j, ] <- .fit.param.fj.unif(counting, j)  
+          param[j, ] <- .fit.param.fj.unif(counting, j, kmax)
         } else {
           
           if (cens.beg) {

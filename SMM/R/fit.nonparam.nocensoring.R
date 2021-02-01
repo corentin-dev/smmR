@@ -2,7 +2,6 @@
   
   s <- processes$s
   states <- processes$states
-  L <- processes$L
   kmax <- processes$kmax
   counting <- processes$counting
   

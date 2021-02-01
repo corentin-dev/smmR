@@ -127,10 +127,7 @@ loglik.markovmodel <- function(x, sequences) {
   }
   
   s <- length(x$states)
-  
-  
   nbseq <- length(sequences) # Number of sequences
-  vect.sequences <- c()
   
   # Count the number of transitions from i to j in k steps
   Nijl <- array(0, c(s ^ x$k, s, nbseq))
