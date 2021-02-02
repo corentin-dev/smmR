@@ -502,8 +502,8 @@ loglik.smmparametric <- function(x, sequences) {
   # Checking parameters sequences and states
   #############################
   
-  if (!is.list(sequences)) {
-    stop("The parameter sequences should be a list")
+  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+    stop("The parameter sequences should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% x$states)) {

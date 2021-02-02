@@ -697,8 +697,23 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   
 #'   \deqn{\lambda(k) := P(T_{D} = k | T_{D} \geq k)}
 #'   
+#'   We can rewrite it as follows :
+#'   
+#'   \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
+#'   
 #'   The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
 #'   with \eqn{R} being the reliability function.
+#'   
+#'   The calculation of the reliability \eqn{R} involves the computation of 
+#'   many convolutions. It implies that the computation error, may be higher 
+#'   (in value) than the "true" reliability itself for reliability close to 0.
+#'   In order to avoid inconsistent values of the BMP-failure rate, we use the 
+#'   following formula:
+#'   
+#'   \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \geq \epsilon;\ \lambda(k) = 0, \textrm{otherwise}}
+#'   
+#'   with \eqn{\epsilon}, the threshold, the parameter `epsilon` in the 
+#'   function `failureRateBMP`.
 #'   
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
@@ -706,6 +721,8 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   BMP-Failure Rate should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param epsilon Value of the reliability above which the latter is supposed 
+#'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the
 #'   computation of the mean recurrence times vector for the asymptotic 
 #'   variance.
@@ -721,13 +738,14 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'
 #' @export
 #'
-failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
   
   ###########################################################
   # Compute \lambda, the BMP-failure rate
   ###########################################################
   
   reliab <- reliability(x = x, k = k, upstates = upstates)
+  reliab[reliab < epsilon] <- 0
   
   lbda <- rep.int(0, k + 1)
   lbda[1] <- 1 - reliab[1] # k = 0
@@ -770,12 +788,29 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000)
 #' @description Discrete-time adapted failure rate, proposed by Roy and Gupta (1992).
 #'   We call it the RG-failure rate and denote it by \eqn{r(k),\ k \in N}.
 #' 
+#' @details Expressing \eqn{r(k)} in terms of the reliability \eqn{R} we obtain 
+#'   that the RG-failure rate function for a discrete-time system is given by:
+#'   
+#'   \deqn{r(k) = - \ln \frac{R(k)}{R(k - 1)},\ \textrm{if } k \geq 1;\ r(k) = - \ln R(0),\ \textrm{if } k = 0}
+#'   
+#'   for \eqn{R(k) \neq 0}. If \eqn{R(k) = 0}, we set \eqn{r(k) := 0}.
+#'   
+#'   Note that the RG-failure rate is related to the BMP-failure rate 
+#'   (see [failureRateBMP] function) by:
+#'   
+#'   \deqn{r(k) = - \ln (1 - \lambda(k)),\ k \in N}
+#'   
+#'   The computation of the RG-failure rate is based on the [failureRateBMP] 
+#'   function (See [failureRateBMP] for details about the parameter `epsilon`).
+#' 
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   RG-Failure Rate should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param epsilon Value of the reliability above which the latter is supposed 
+#'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the
 #'   computation of the mean recurrence times vector for the asymptotic 
 #'   variance.
@@ -791,9 +826,9 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, klim = 10000)
 #'
 #' @export
 #'
-failureRateRG <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
   
-  lbda <- failureRateBMP(x = x, k = k, upstates = upstates, var = var, klim = klim)
+  lbda <- failureRateBMP(x = x, k = k, upstates = upstates, var = var, epsilon = epsilon, klim = klim)
   
   if (var) {
     

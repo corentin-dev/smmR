@@ -4,7 +4,14 @@
 \alias{failureRateRG}
 \title{RG-Failure Rate Function}
 \usage{
-failureRateRG(x, k, upstates = x$states, var = FALSE, klim = 10000)
+failureRateRG(
+  x,
+  k,
+  upstates = x$states,
+  var = FALSE,
+  epsilon = 0.001,
+  klim = 10000
+)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -16,6 +23,9 @@ RG-Failure Rate should be computed.}
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
 \item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
+
+\item{epsilon}{Value of the reliability above which the latter is supposed
+to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean recurrence times vector for the asymptotic
@@ -35,4 +45,20 @@ RG-Failure Rate for the period \eqn{[0,\dots,k]};}
 \description{
 Discrete-time adapted failure rate, proposed by Roy and Gupta (1992).
 We call it the RG-failure rate and denote it by \eqn{r(k),\ k \in N}.
+}
+\details{
+Expressing \eqn{r(k)} in terms of the reliability \eqn{R} we obtain
+that the RG-failure rate function for a discrete-time system is given by:
+
+\deqn{r(k) = - \ln \frac{R(k)}{R(k - 1)},\ \textrm{if } k \geq 1;\ r(k) = - \ln R(0),\ \textrm{if } k = 0}
+
+for \eqn{R(k) \neq 0}. If \eqn{R(k) = 0}, we set \eqn{r(k) := 0}.
+
+Note that the RG-failure rate is related to the BMP-failure rate
+(see \link{failureRateBMP} function) by:
+
+\deqn{r(k) = - \ln (1 - \lambda(k)),\ k \in N}
+
+The computation of the RG-failure rate is based on the \link{failureRateBMP}
+function (See \link{failureRateBMP} for details about the parameter \code{epsilon}).
 }

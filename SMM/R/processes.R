@@ -15,8 +15,8 @@ processes <- function(sequences, states, verbose = TRUE) {
   # Checking parameters
   #############################
   
-  if (!is.list(sequences)) {
-    stop("The parameter sequences should be a list")
+  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+    stop("The parameter sequences should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% states)) {

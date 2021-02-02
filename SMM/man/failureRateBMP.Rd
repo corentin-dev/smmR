@@ -4,7 +4,14 @@
 \alias{failureRateBMP}
 \title{BMP-Failure Rate Function}
 \usage{
-failureRateBMP(x, k, upstates = x$states, var = FALSE, klim = 10000)
+failureRateBMP(
+  x,
+  k,
+  upstates = x$states,
+  var = FALSE,
+  epsilon = 0.001,
+  klim = 10000
+)
 }
 \arguments{
 \item{x}{An object inheriting from the S3 class \code{smm} (an object of class
@@ -16,6 +23,9 @@ BMP-Failure Rate should be computed.}
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
 \item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
+
+\item{epsilon}{Value of the reliability above which the latter is supposed
+to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean recurrence times vector for the asymptotic
@@ -76,6 +86,21 @@ For a discrete-time semi-Markov system, the failure rate at time
 
 \deqn{\lambda(k) := P(T_{D} = k | T_{D} \geq k)}
 
+We can rewrite it as follows :
+
+\deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
+
 The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
 with \eqn{R} being the reliability function.
+
+The calculation of the reliability \eqn{R} involves the computation of
+many convolutions. It implies that the computation error, may be higher
+(in value) than the "true" reliability itself for reliability close to 0.
+In order to avoid inconsistent values of the BMP-failure rate, we use the
+following formula:
+
+\deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \geq \epsilon;\ \lambda(k) = 0, \textrm{otherwise}}
+
+with \eqn{\epsilon}, the threshold, the parameter \code{epsilon} in the
+function \code{failureRateBMP}.
 }
