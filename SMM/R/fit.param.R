@@ -149,11 +149,16 @@
   # Inital distribution
   if (init.estim == "mle") {
     estimate$init <- counting$Nstarti / sum(counting$Nstarti)
-  } else {# init.estim == "stationary"
+  } else if (init.estim == "limit") {
     q <- getKernel(estimate, kmax)
     estimate$init <- .limitDistribution(q = q, ptrans = estimate$ptrans)
+  } else if (init.estim == "freq") {
+    estimate$init <- counting$Ni / counting$N
+  } else {# init.estim == "unif"
+    estimate$init <- rep.int(x = 1 / s, times = s)
   }
   
+  estimate$init <- estimate$init / sum(estimate$init)
   names(estimate$init) <- colnames(estimate$ptrans)
   
   return(estimate)

@@ -76,9 +76,15 @@
   # Initial distribution
   if (init.estim == "mle") {
     init <- Nstart / sum(Nstart)
-  } else {# init.estim == "stationary"
+  } else if (init.estim == "limit") {
     init <- .limitDistribution(q = q, ptrans = p)
+  } else if (init.estim == "freq") {
+    init <- counting$Ni / counting$N
+  } else {# init.estim == "unif"
+    init <- rep.int(x = 1 / s, times = s)
   }
+  
+  init <- init / sum(init)
 
   estimate <-
     smmnonparametric(

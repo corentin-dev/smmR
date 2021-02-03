@@ -8,7 +8,7 @@
 #' distributions are considered (see below).
 #'
 #' The difference between the Markov model and the semi-Markov model concerns 
-#' the modelisation of the sojourn time. With a Markov chain, the sojourn time 
+#' the modeling of the sojourn time. With a Markov chain, the sojourn time 
 #' distribution is modeled by a Geometric distribution (in discrete time). 
 #' With a semi-Markov chain, the sojourn time can be any arbitrary distribution.
 #' In this package, the available distribution for a semi-Markov model are :
@@ -28,7 +28,8 @@
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
 #'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
 #'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
-#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "laws" in the non-parametric case.
+#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
+#'      \eqn{f} is specified by the argument `param` in the parametric case.
 #'  }
 #'
 #' In this package we can choose differents types of sojourn time. 

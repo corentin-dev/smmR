@@ -87,19 +87,6 @@ is.markovmodel <- function(x) {
   inherits(x, "markovmodel")
 }
 
-# Method to compute the stationary distribution of the Markov model x
-.stationary.distribution.markovmodel <- function(x) {
-  
-  m <- dim(x$ptrans)[1] # Number of states
-  
-  A <- t(x$ptrans) - diag(1, m, m)
-  A[m, ] <- 1
-  b <- c(rep(0, (m - 1)), 1)
-  statlaw <- solve(A, b)
-  
-  return(statlaw)
-}
-
 #' Loglikelihood
 #'
 #' @description Computation of the loglikelihood for a semi-Markov model

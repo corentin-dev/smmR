@@ -1,48 +1,68 @@
-#' Estimation of a k-th order Markov chain
+#' Maximum Likelihood Estimation (MLE) of a k-th order Markov chain
 #'
-#' @description Estimation of the transition matrix and initial law of a k-th 
-#'   order Markov chain starting from one or several sequences.
+#' @description Maximum Likelihood Estimation of the transition matrix and 
+#'   initial distribution of a k-th order Markov chain starting from one or 
+#'   several sequences.
 #'
 #' @details Let \eqn{X_1, X_2, ..., X_n} be a trajectory of length \eqn{n} of 
 #'   the Markov chain \eqn{X = (X_m)_{m \in N}} of order \eqn{k = 1} with 
 #'   transition matrix \eqn{p_{trans}(i,j) = P(X_{m+1} = j | X_m = i)}. The 
-#'   estimation of the transition matrix is \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}, 
-#'   where \eqn{N_{ij}} is the number of transitions from state \eqn{i} to state 
-#'   \eqn{j} and \eqn{N_{i.}} is the number of transition from state \eqn{i} 
-#'   to any state. For \eqn{k > 1} we have similar expressions.
+#'   maximum likelihood estimation of the transition matrix is 
+#'   \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}, where \eqn{N_{ij}}
+#'   is the number of transitions from state \eqn{i} to state \eqn{j} and 
+#'   \eqn{N_{i.}} is the number of transition from state \eqn{i} to any state. 
+#'   For \eqn{k > 1} we have similar expressions.
 #'
 #'  The initial distribution of a k-th order Markov chain is defined as 
-#'  \eqn{\mu_i = P(X_1 = i)}. Three methods are proposed for the estimation
+#'  \eqn{\mu_i = P(X_1 = i)}. Five methods are proposed for the estimation
 #'  of the latter :
 #'  \describe{
-#'    \item{Estimation based on the Maximum Likelihood Estimator:}{
-#'      The Maximum Likelihood Estimator for the initial distribution. The 
-#'      formula is: \eqn{\widehat{\mu_i} = \frac{Nstart_i}{L}}, where 
-#'      \eqn{Nstart_i} is the number of occurences of the word \eqn{i} (of 
-#'      length \eqn{k}) at the beginning of each sequence and \eqn{L} is the 
-#'      number of sequences. This estimator is reliable when the number of 
-#'      sequences \eqn{L} is high.}
-#'    \item{Estimation based on the frequency:}{The initial distribution is 
-#'      estimated by taking the frequences of the words of length `k` for all 
-#'      sequences. The formula is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where 
-#'      \eqn{N_i} is the number of occurences of the word \eqn{i} (of length \eqn{k}) 
-#'      in the sequences and \eqn{N} is the sum of the lengths of the sequences.}
-#'    \item{Estimation based on the product of the frequences of each state:}{
-#'      The initial distribution is estimated by using the product of the 
-#'      frequences of each state (for all the sequences) in the word of length
-#'      \eqn{k}.}
+#'    \item{Maximum Likelihood Estimator: }{The Maximum Likelihood Estimator 
+#'      for the initial distribution. The formula is: 
+#'      \eqn{\widehat{\mu_i} = \frac{Nstart_i}{L}}, where \eqn{Nstart_i} is 
+#'      the number of occurences of the word \eqn{i} (of length \eqn{k}) at 
+#'      the beginning of each sequence and \eqn{L} is the number of sequences. 
+#'      This estimator is reliable when the number of sequences \eqn{L} is high.}
+#'    \item{Stationary distribution: }{The stationary distribution is used as 
+#'      a surrogate of the initial distribution. If the order of the markov 
+#'      chain is more than one, the transition matrix is converted into a 
+#'      square block matrix in order to estimate the stationary distribution.
+#'      This method may take time if the order of the Markov chain is high 
+#'      (more than three (3)).}
+#'    \item{Frequencies of each word: }{The initial distribution is estimated 
+#'      by taking the frequencies of the words of length `k` for all sequences.
+#'      The formula is \eqn{\widehat{\mu_i} = \frac{N_i}{N}}, where \eqn{N_i} 
+#'      is the number of occurences of the word \eqn{i} (of length \eqn{k}) in 
+#'      the sequences and \eqn{N} is the sum of the lengths of the sequences.}
+#'    \item{Product of the frequencies of each state: }{The initial distribution 
+#'      is estimated by using the product of the frequencies of each state 
+#'      (for all the sequences) in the word of length \eqn{k}.}
+#'    \item{Uniform distribution: }{The initial probability of each state is 
+#'       equal to \eqn{1 / s}, with \eqn{s}, the number of states.}
 #'  }
 #'
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
 #' @param k Order of the Markov chain.
-#' @param init.estim Optional. Method used to estimate the initial distribution.
-#'   If `init.estim = "mle"`, then the classical Maximum Likelihood Estimator 
-#'   is used, if `init.estim = "freq"`, then, the initial distribution `init` 
-#'   is estimated by taking the frequences of the words of length `k` for all 
-#'   sequences. If `init.estim = "prod"`, then, `init` is estimated by using 
-#'   the product of the frequences of each letter (for all the sequences) in 
-#'   the word of length `k`. See Details for the formulas.
+#' @param init.estim Optional. `init.estim` gives the method used to estimate 
+#'   the initial distribution. Various methods are proposed, the following are:
+#'   \itemize{
+#'     \item `init.estim = "mle"`: the classical Maximum Likelihood Estimator 
+#'       is used to estimate the initial distribution `init`;
+#'     \item `init.estim = "stationary"`: the initial distribution is replaced by 
+#'       the stationary distribution of the Markov chain (if the order of the 
+#'       markov chain is more than one, the transition matrix is converted 
+#'       into a square block matrix in order to estimate the stationary 
+#'       distribution);
+#'     \item `init.estim = "freq"`: the initial distribution is estimated by 
+#'       taking the frequencies of the words of length `k` for all sequences;
+#'     \item `init.estim = "prod"`: `init` is estimated by using the product 
+#'       of the frequencies of each letter (for all the sequences) in the word 
+#'       of length `k`;
+#'     \item `init.estim = "unif"`: the initial probability of each state is 
+#'       equal to \eqn{1 / s}, with \eqn{s} the number of states.
+#'   }
+#' 
 #' @return An object of class [markovmodel][markovmodel].
 #' 
 #' 
@@ -63,7 +83,8 @@
 #' 
 #' est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 #' 
-fitmarkovmodel <- function(sequences, states, k = 1, init.estim = c("mle", "freq", "prod")) {
+fitmarkovmodel <- function(sequences, states, k = 1, 
+                           init.estim = c("mle", "stationary", "freq", "prod", "unif")) {
   
   #############################
   # Checking parameters sequences and states
@@ -134,19 +155,29 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = c("mle", "freq
   # Compute the transition matrix
   ptrans <- Nij / tcrossprod(Ni, rep.int(1, s))
   ptrans[which(is.na(ptrans))] <- 0
+  ptrans <- .normalizePtrans(ptrans)
   
   if (init.estim == "mle") {
     Nstart <- as.vector(count(seq = unlist(lapply(sequences, function(x) x[1:k])), wordsize = k, by = k, alphabet = states))
     init <- Nstart / sum(Nstart)
+  } else if (init.estim == "stationary") {
+    if (k == 1) {
+      init <- .stationaryDistribution(ptrans = ptrans)
+    } else {
+      init <- .stationaryDistribution(ptrans = .blockMatrix(ptrans = ptrans))
+    }
   } else if (init.estim == "freq") {
     Nstart <- as.vector(count(seq = unlist(sequences), wordsize = k, alphabet = states))
     init <- Nstart / sum(Nstart)
-  } else {# init.estim == "prod"
+  } else if (init.estim == "prod") {
     Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states))
     prob <- Nstart / sum(Nstart)
-    
     init <- as.vector(.productProb(length = k, prob = prob))
+  } else {# init.estim == "unif"
+    init <- rep.int(x = 1 / (s ^ k), times = s ^ k)
   }
+  
+  init <- init / sum(init)
   
   estimate <- markovmodel(states = states, init = init, ptrans = ptrans, k = k)
   

@@ -56,9 +56,9 @@
   A <- t(ptrans) - diag(1, m, m)
   A[m, ] <- 1
   b <- c(rep(0, (m - 1)), 1)
-  statlaw <- solve(A, b)
+  statdistr <- solve(A, b)
   
-  return(statlaw)
+  return(statdistr)
 }
 
 ## __________________________________________________________
@@ -71,9 +71,9 @@
   fik <- apply(q, c(1, 3), sum)
   mi <- apply(fik, 1, function(x) sum((1:kmax) * x))
   
-  statlaw <- .stationaryDistribution(ptrans)
+  statdistr <- .stationaryDistribution(ptrans)
   
-  out <- statlaw * mi / sum(statlaw * mi)
+  out <- statdistr * mi / sum(statdistr * mi)
   
   return(out)
 }
@@ -105,4 +105,36 @@
   
   return(p)
   
+}
+
+## __________________________________________________________
+## Functions used to estimate the stationary distribution of 
+## a Markov chain higher than 1
+## __________________________________________________________
+.addZeros <- function(vector, alphaSize, n, index) {
+  modulo <- index %% n # Get line modulo
+  
+  if (modulo == 0) {
+    modulo <- n # Set modulo to |A|^order-1 if equal to 0
+  }
+
+  return(c(rep(0, alphaSize * (modulo - 1)), vector, rep(0, alphaSize * (n - modulo)))) # Add zeros to vector
+}
+
+.blockMatrix <- function(ptrans) {
+  
+  rwnms <- rownames(ptrans) # Get rownames
+  alphaSize <- ncol(ptrans) # Get states size |ptrans|
+  n <- nrow(ptrans) / alphaSize # Get |ptrans|^order-1
+  
+  # Overlap states in matrix
+  block <- sapply(1:nrow(ptrans), function(i, n, alphaSize, ptrans){
+    .addZeros(vector = ptrans[i,], n = n, alphaSize = alphaSize, index = i)
+  }, n = n, alphaSize = alphaSize, ptrans = ptrans)
+  
+  # Set dim names
+  rownames(block) <- rwnms
+  colnames(block) <- rwnms
+
+  return(t(block))
 }

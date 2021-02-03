@@ -8,7 +8,7 @@
 #' sojourn time distributions defined by the user.
 #'
 #' The difference between the Markov model and the semi-Markov model concerns 
-#' the modelisation of the sojourn time. With a Markov chain, the sojourn time 
+#' the modeling of the sojourn time. With a Markov chain, the sojourn time 
 #' distribution is modeled by a Geometric distribution (in discrete time). 
 #' With a semi-Markov chain, the sojourn time can be any arbitrary distribution.
 #' 

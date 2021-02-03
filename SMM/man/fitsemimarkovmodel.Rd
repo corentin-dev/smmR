@@ -2,14 +2,14 @@
 % Please edit documentation in R/fitsemimarkovmodel.R
 \name{fitsemimarkovmodel}
 \alias{fitsemimarkovmodel}
-\title{Estimation of a semi-Markov chain}
+\title{Maximum Likelihood Estimation (MLE) of a semi-Markov chain}
 \usage{
 fitsemimarkovmodel(
   sequences,
   states,
   type.sojourn = c("fij", "fi", "fj", "f"),
   distr = "nonparametric",
-  init.estim = c("mle", "stationary"),
+  init.estim = c("mle", "limit", "freq", "unif"),
   cens.beg = FALSE,
   cens.end = FALSE
 )
@@ -34,10 +34,18 @@ If the parametric estimation case is desired, \code{distr} should be:
 The distributions to be used in \code{distr} must be one of \code{"unif"}, \code{"geom"},
 \code{"pois"}, \code{"dweibull"}, \code{"nbinom"}.}
 
-\item{init.estim}{Optional. Method used to estimate the initial distribution.
-If \code{init.estim = "mle"}, then the classical Maximum Likelihood Estimator
-is used. If \code{init.estim = "stationary"}, then the initial distribution
-is replaced by the stationary distribution of the semi-Markov chains.}
+\item{init.estim}{Optional. \code{init.estim} gives the method used to estimate
+the initial distribution. Various methods are proposed, the following are:
+\itemize{
+\item \code{init.estim = "mle"}: the classical Maximum Likelihood Estimator
+is used to estimate the initial distribution \code{init};
+\item \code{init.estim = "limit"}: the initial distribution is replaced by
+the limit (stationary) distribution of the semi-Markov chain;
+\item \code{init.estim = "freq"}: the initial distribution is replaced by
+the frequencies of each state in the sequences;
+\item \code{init.estim = "unif"}: the initial probability of each state is
+equal to \eqn{1 / s}, with \eqn{s} the number of states.
+}}
 
 \item{cens.beg}{Optional. A logical value indicating whether or not
 sequences are censored at the beginning.}
@@ -51,10 +59,10 @@ object if \code{distr = "nonparametric"}, a \link{smmparametric}
 otherwise).
 }
 \description{
-Estimation of a semi-Markov chain starting from one or several
-sequences. This estimation can be parametric or non-parametric,
-non-censored, censored at the beginning and/or at the end of the
-sequence, with one or several trajectories. Several parametric
+Maximum Likelihood Estimation of a semi-Markov chain starting
+from one or several sequences. This estimation can be parametric or
+non-parametric, non-censored, censored at the beginning and/or at the end
+of the sequence, with one or several trajectories. Several parametric
 distributions are considered (Uniform, Geometric, Poisson, Discrete
 Weibull and Negative Binomial).
 }
@@ -66,7 +74,7 @@ sojourn time distributions defined by the user. For the parametric
 estimation, several discrete distributions are considered (see below).
 
 The difference between the Markov model and the semi-Markov model concerns
-the modelisation of the sojourn time. With a Markov chain, the sojourn time
+the modeling of the sojourn time. With a Markov chain, the sojourn time
 distribution is modeled by a Geometric distribution (in discrete time).
 With a semi-Markov chain, the sojourn time can be any arbitrary distribution.
 In this package, the available distribution for a semi-Markov model are :
@@ -90,21 +98,29 @@ We define :
 embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
 \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
 \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
-f is specified by the argument \code{param} in the parametric case and by
-\code{laws} in the non-parametric case.
+\eqn{f} is specified by the argument \code{param} in the parametric case
+and by \code{distr} in the non-parametric case.
 }
 
-The estimation of the transition matrix of the embedded Markov chain is
-\eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}.
+The maximum likelihood estimation of the transition matrix of the embedded
+Markov chain is \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}.
 
-The estimation of the initial law is the limit law if the number of sequences
-is less than 10xS, with s the length of the state space, else the estimation
-of the inital law is \eqn{\widehat{\mu_i} = \frac{N_i^l}{N^l}}, where
-\eqn{N_i^l} is the number of times the state i appears in all the sequences
-and \eqn{N^l} is the size of sequences.
-
-In the parametric case, the distribution of sojourn time is calculated with
-the estimated parameters.
+Five methods are proposed for the estimation of the initial distribution :
+\describe{
+\item{Maximum Likelihood Estimator: }{The Maximum Likelihood Estimator
+for the initial distribution. The formula is:
+\eqn{\widehat{\mu_i} = \frac{Nstart_i}{L}}, where \eqn{Nstart_i} is
+the number of occurences of the word \eqn{i} (of length \eqn{k}) at
+the beginning of each sequence and \eqn{L} is the number of sequences.
+This estimator is reliable when the number of sequences \eqn{L} is high.}
+\item{Limit (stationary) distribution: }{The limit (stationary)
+distribution of the semi-Markov chain is used as a surrogate of the
+initial distribution.}
+\item{Frequencies of each state: }{The initial distribution is replaced
+by taking the frequencies of each state in the sequences.}
+\item{Uniform distribution: }{The initial probability of each state is
+equal to \eqn{1 / s}, with \eqn{s}, the number of states.}
+}
 
 Note that \eqn{q_{ij}(k) = p_{trans}(i,j) \ f_{ij}(k)} in the general case
 (depending on the present state and on the next state). For particular cases,
