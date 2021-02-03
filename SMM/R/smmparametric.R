@@ -786,7 +786,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     param2 <- x$param[i, j, 2]
     dens <- x$distr[i, j]
     
-    ylab <- bquote(f["i = " ~ .(i) ~ ", j = " ~ .(j)])
+    ylab <- bquote(f["i=" ~ .(i) ~ ", j=" ~ .(j)](k))
     main <- paste0("Sojourn time density function for the \n current state i = ", i, " and the next state j = ", j)
     
   } else if (x$type.sojourn == "fj") {
@@ -794,7 +794,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     param2 <- x$param[j, 2]
     dens <- x$distr[j]
     
-    ylab <- bquote(f["i = " ~ .(j)])
+    ylab <- bquote(f["j=" ~ .(j)](k))
     main <- paste0("Sojourn time density function for the next state j = ", j)
     
   } else if (x$type.sojourn == "fi") {
@@ -802,7 +802,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     param2 <- x$param[i, 2]
     dens <- x$distr[i]
     
-    ylab <- bquote(f["i = " ~ .(i)])
+    ylab <- bquote(f["i=" ~ .(i)](k))
     main <- paste0("Sojourn time density function for the current state i = ", i)
     
   } else {
@@ -810,7 +810,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     param2 <- x$param[2]
     dens <- x$distr
     
-    ylab <- "f"
+    ylab <- bquote(f(k))
     main <- paste0("Sojourn time density function")
   }
   

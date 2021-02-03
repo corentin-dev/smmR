@@ -3,6 +3,7 @@ title: "Textile-Factory"
 output:
   rmarkdown::html_vignette:
     number_sections: true
+bibliography: smm.bib
 vignette: >
   %\VignetteIndexEntry{Textile-Factory}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,10 +22,6 @@ knitr::opts_chunk$set(
 	out.width = "65%",
 	par = TRUE
 )
-knit_hooks$set(par = function(before, options, envir)
-  { if (before && options$fig.show != "none") 
-       par(family = "sans", mar = c(4.1,4.1,1.1,1.1), mgp = c(3,1,0), tcl = -0.5)
-})
 ```
 
 ```{r, message = FALSE, echo = FALSE}
@@ -33,7 +30,8 @@ library(SMM)
 
 # Context
 
-Let's introduce a practical example where a semi-Markov modeling is appropriate. 
+Let's introduce a practical example where a semi-Markov modeling is 
+appropriate (this example is taken from the book **@BarbuLimnios2008**).
 Let $\mathcal{F}$ be a textile factory. To avoid river pollution, the factory 
 waste is treated in the unit \eqn{U} before being thrown in the river 
 $\mathcal{R}$. In order for the factory not to be stopped if a failure occurs 
@@ -173,7 +171,7 @@ factory <- smmparametric(states = states, init = alpha, ptrans = p,
                          type.sojourn = "fij", distr = distr, param = parameters)
 ```
 
-After that, we are able to simulate a sequence of sample sizes $M = 10000$:
+After that, we are able to simulate a sequence of sample sizes $M = 10,000$:
 
 ```{r}
 M <- 10000
@@ -187,11 +185,10 @@ seq <- simulate(object = factory, nsim = M)
 
 Thanks to the **SMM** package, we can estimate any Semi-Markov model with one 
 or several discrete sequences. In our case, we are going to introduce a 
-**parametric estimation**:
+**non-parametric estimation**:
 
 ```{r}
-estimate <- fitsemimarkovmodel(sequences = seq, states = states, 
-                          type.sojourn = "fij", distr = distr)
+estimate <- fitsemimarkovmodel(sequences = seq, states = states, type.sojourn = "fij")
 ```
 
 The estimate $\hat{p}$ of the transition matrix $p$ is:
@@ -200,11 +197,22 @@ The estimate $\hat{p}$ of the transition matrix $p$ is:
 print(x = estimate$ptrans, digits = 2)
 ```
 
-The estimates of the parameters are:
+We can also plot the estimated sojourn time densities. For example, let's 
+plot the sojourn time distribution $\hat{f}_{23}$:
 
 ```{r}
-print(x = estimate$param, digits = 2)
+par(mar = c(5.1, 4.1, 4.1, 2.1))
+plot(x = estimate, i = 2, j = 3, type = "l", col = "blue")
+
+lines(x = 1:estimate$kmax, y = ddweibull(x = 1:estimate$kmax, q = 0.5, beta = 0.7), 
+       col = "red", pch = "x")
+
+legend(x = "topright", 
+       legend = c("True value", "Estimate"), 
+       col = c("red", "blue"), lty = c(1, 1))
 ```
+
+<br />
 
 In the following sections, based on the estimated model, we are going to 
 compute some indicators such as the reliability, the availability, the 
@@ -230,13 +238,13 @@ downstates <- c("3") # Failure state of the semi-Markov system
 reliab <- reliability(x = factory, k = k, upstates = upstates, var = TRUE)
 
 level <- 0.95
-confInf <- reliab$reliab - sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- reliab$reliab + sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confInf <- reliab$x - sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- reliab$x + sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 0:k, y = reliab$reliab, type = "l", cex = 2.5, ylim = c(0, 1), 
-     col = "blue", xlab = "time", ylab = "reliability")
+plot(x = 0:k, y = reliab$x, type = "l", cex = 2.5, ylim = c(0, 1), 
+     col = "blue", main = "Reliability", xlab = "k", ylab = "R(k)")
 
 lines(x = confInf, lty = 4, col = "blue")
 lines(x = confSup, lty = 4, col = "blue")
@@ -259,13 +267,13 @@ $[0, k)$).
 avail <- availability(x = factory, k = k, upstates = upstates, var = TRUE)
 
 level <- 0.95
-confInf <- avail$avail - sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- avail$avail + sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confInf <- avail$x - sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- avail$x + sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 0:k, y = avail$avail, type = "l", cex = 2.5, ylim = c(0.95, 1), 
-     col = "blue", xlab = "time", ylab = "availability")
+plot(x = 0:k, y = avail$x, type = "l", cex = 2.5, ylim = c(0.95, 1), 
+     col = "blue", main = "Availability", xlab = "k", ylab = "A(k)")
 
 lines(x = confInf, lty = 4, col = "blue")
 lines(x = confSup, lty = 4, col = "blue")
@@ -277,31 +285,11 @@ legend(x = "topright",
 
 
 
-<!-- ## Maintainability -->
-
-<!-- For a reparable system $S_{ystem}$ for which the failure occurs at time  -->
-<!-- $k = 0$, its **maintainability** at time $k \in \mathbb{N}$ is the probability  -->
-<!-- that the system is repaired up to time $k$, given that it has failed at time  -->
-<!-- $k = 0$. -->
-
-<!-- ```{r} -->
-<!-- downstates <- c("3") # Failure state of the semi-Markov system -->
-<!-- maintain <- maintainability(x = factory, k = 300, downstates = c("3")) -->
-<!-- ``` -->
-
-<!-- ```{r} -->
-<!-- plot(x = 0:k, y = maintain, pch = ".", cex = 2.5, ylim = c(0, 1),  -->
-<!--      col = "blue", xlab = "time", ylab = "maintainability") -->
-<!-- ``` -->
-
-
-
-
 ## Failure Rates
 
 
 
-### BMP-Failure Rate
+### BMP-failure rate
 
 Consider a system $S_{ystem}$ starting to work at time $k = 0$. The 
 **BMP-failure rate** at time $k \in \mathbb{N}$ is the conditional probability 
@@ -312,13 +300,13 @@ worked until time $k - 1$.
 failureBMP <- failureRateBMP(x = factory, k = k, upstates = upstates, var = TRUE)
 
 level <- 0.95
-confInf <- failureBMP$lbda - sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- failureBMP$lbda + sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confInf <- failureBMP$x - sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- failureBMP$x + sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 0:k, y =  failureBMP$lbda, type = "l", cex = 2.5, ylim = c(0, 0.025), 
-     col = "blue", xlab = "time", ylab = "BMP Failure Rate")
+plot(x = 0:k, y =  failureBMP$x, type = "l", cex = 2.5, ylim = c(0, 0.025), 
+     col = "blue", main = "BMP-failure rate", xlab = "k", ylab = bquote(lambda(k)))
 
 lines(x = confInf, lty = 4, col = "blue")
 lines(x = confSup, lty = 4, col = "blue")
@@ -329,22 +317,24 @@ legend(x = "topright",
 
 
 
-### RG-Failure Rate
+### RG-failure rate
 
-Discrete-time adapted failure rate, proposed by Roy and Gupta (1992). We call 
-it the **RG-failure rate** and denote it by $r(k),\ k \in \mathbb{N}$.
+Discrete-time adapted failure rate, proposed by D. Roy and R. Gupta. 
+Classification of discrete lives. _Microelectronics Reliability_, 
+32(10):1459--1473, 1992. We call it the **RG-failure rate** and denote it by 
+$r(k),\ k \in \mathbb{N}$.
 
 ```{r}
 failureRG <- failureRateRG(x = factory, k = k, upstates = upstates, var = TRUE)
 
 level <- 0.95
-confInf <- failureRG$r - sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- failureRG$r + sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confInf <- failureRG$x - sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- failureRG$x + sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 0:k, y =  failureRG$r, type = "l", cex = 2.5, ylim = c(0, 0.025), 
-     col = "blue", xlab = "time", ylab = "RG Failure Rate")
+plot(x = 0:k, y =  failureRG$x, type = "l", cex = 2.5, ylim = c(0, 0.025), 
+     col = "blue", main = "RG-failure rate", xlab = "k", ylab = "r(k)")
 
 lines(x = confInf, lty = 4, col = "blue")
 lines(x = confSup, lty = 4, col = "blue")
@@ -360,7 +350,7 @@ legend(x = "topright",
 
 
 
-### Mean Time To Failure (MTTF)
+### Mean time to failure (MTTF)
 
 Consider a system $S_{ystem}$ starting to work at time $k = 0$. 
 The **mean time to failure** (MTTF) is defined as the mean lifetime.
@@ -369,29 +359,27 @@ The **mean time to failure** (MTTF) is defined as the mean lifetime.
 mttf <- mttf(x = factory, upstates = upstates, var = TRUE)
 
 level <- 0.95
-confInf <- mttf$mttf - sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- mttf$mttf + sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confInf <- mttf$x - sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+confSup <- mttf$x + sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
 ```
 
 ```{r}
-plot(x = 1:2, y = mttf$mttf, pch = "+", col = "red", axes = FALSE, 
-     xlab = "", ylab = "", xlim = c(0.5, 2.5), ylim = c(61, 72))
-axis(side = 2)
-axis(side = 1, at = c(1, 2), labels = c("state 1", "state 2"), lty = 0)
-segments(x0 = 1:2, y0 = mttf$mttf, y1 = confInf, lty = 4, col = "blue")
-segments(x0 = 1:2, y0 = mttf$mttf, y1 = confSup, lty = 4, col = "blue")
-legend(x = "topright", 
-       legend = c("True value", "95% confidence interval"), 
-       col = c("red", "blue"), lty = c(0, 4), pch = c("+", ""))
+print(rbind(confInf, mttf$x, confSup))
 ```
 
 
 
-### Mean Time To Repair (MTTR)
+### Mean time to repair (MTTR)
 
 Consider a system $S_{ystem}$ starting to fail at time $k = 0$. The 
 **mean time to repair (MTTR)** is defined as the mean of the repair duration.
 
 ```{r}
-mttr(x = factory, downstates = downstates)
+mttr(x = factory, downstates = downstates, var = TRUE)
 ```
+
+
+
+
+
+# References

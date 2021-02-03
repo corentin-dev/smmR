@@ -36,7 +36,7 @@ A vector of length \eqn{k + 1} giving the values of the BMP-Failure
 Rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
 a list containing the following components:
 \itemize{
-\item{lbda: }{a vector of length \eqn{k + 1} giving the values of the
+\item{x: }{a vector of length \eqn{k + 1} giving the values of the
 BMP-Failure Rate for the period \eqn{[0,\dots,k]};}
 \item{sigma2: }{a vector giving the asymptotic variance of the estimator
 \eqn{\sigma_{q}^{2}(k)}.}

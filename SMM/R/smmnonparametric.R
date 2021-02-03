@@ -181,7 +181,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     temp <- apply(distr, c(1, 2), sum)
     indexdiag <- seq(1, s * s, by = s + 1)
     
-    if (!(all(diag(temp == 0)) && (temp[-indexdiag] == 0 || temp[-indexdiag]  == 1))) {
+    if (!all(diag(temp) == 0, temp[-indexdiag] %in% c(0, 1))) {
       stop("distr is not a stochastic matrix")
     }
   }
@@ -573,19 +573,19 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   if (x$type.sojourn == "fij") {
     f <- x$distr[i, j, ]
-    ylab <- bquote(f["i = " ~ .(i) ~ ", j = " ~ .(j)])
+    ylab <- bquote(f["i=" ~ .(i) ~ ", j=" ~ .(j)](k))
     main <- paste0("Sojourn time density function for the \n current state i = ", i, " and the next state j = ", j)
   } else if (x$type.sojourn == "fi") {
     f <- x$distr[i, ]
-    ylab <- bquote(f["i = " ~ .(i)])
+    ylab <- bquote(f["i=" ~ .(i)](k))
     main <- paste0("Sojourn time density function for the current state i = ", i)
   } else if (x$type.sojourn == "fj") {
     f <- x$distr[j, ]
-    ylab <- bquote(f["i = " ~ .(j)])
+    ylab <- bquote(f["j=" ~ .(j)](k))
     main <- paste0("Sojourn time density function for the next state j = ", j)
   } else {
     f <- x$distr
-    ylab <- "f"
+    ylab <- bquote(f(k))
     main <- paste0("Sojourn time density function")
   }
   

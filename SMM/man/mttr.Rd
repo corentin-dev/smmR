@@ -24,7 +24,7 @@ If \code{var = FALSE}, a vector of length \eqn{\textrm{card}(D)} giving
 the values of the mean time to repair for each state \eqn{i \in D}. If
 \code{var = TRUE}, a list containing the following components:
 \itemize{
-\item{mttf: }{a vector of length \eqn{\textrm{card}(D)} giving the values
+\item{x: }{a vector of length \eqn{\textrm{card}(D)} giving the values
 of the mean time to repair for each state \eqn{i \in D}.}
 \item{sigma2: }{the variance of the estimator for each estimation of the
 mean time to failure;}

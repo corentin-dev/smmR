@@ -201,7 +201,7 @@ getKernel <- function(x, k, var = FALSE, klim = 10000) {
 #'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
 #'   following components:
 #'   \itemize{
-#'    \item{p: }{an array giving the value of \eqn{P_{ij}(k)} at each time 
+#'    \item{x: }{an array giving the value of \eqn{P_{ij}(k)} at each time 
 #'      between 0 and `k`;}
 #'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{P}^{2}(i, j, k)}.}
@@ -237,7 +237,7 @@ getKernel <- function(x, k, var = FALSE, klim = 10000) {
     
     sigma2 <- varP(mu, q, psi, Psi, H)
    
-    return(list(p = p, sigma2 = sigma2))
+    return(list(x = p, sigma2 = sigma2))
      
   } else {
     
@@ -335,7 +335,7 @@ getKernel <- function(x, k, var = FALSE, klim = 10000) {
 #'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
 #'   containing the following components:
 #'   \itemize{
-#'    \item{reliab: }{a vector of length \eqn{k + 1} giving the values of the 
+#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
 #'      reliability for the period \eqn{[0,\dots,k]};}
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(k)}.}
@@ -403,9 +403,9 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
     H <- .get.H(q)
     mu1 <- .get.mu(x = x, klim = klim)[which(x$states %in% upstates)]
     
-    sigma2 <- varR(alpha1, mu1, q, psi, Psi, H, Q)
+    sigma2 <- as.numeric(varR(alpha1, mu1, q, psi, Psi, H, Q))
     
-    return(list(reliab = reliab, sigma2 = sigma2))
+    return(list(x = reliab, sigma2 = sigma2))
     
   } else {
     
@@ -469,7 +469,7 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
 #'   containing the following components:
 #'   \itemize{
-#'    \item{reliab: }{a vector of length \eqn{k + 1} giving the values of the 
+#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
 #'      maintainability for the period \eqn{[0,\dots,k]};}
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(k)}.}
@@ -503,19 +503,17 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
     stop("Every element of downstates must be in states (U is a subet of E)")
   }
   
-  tmp <- reliability(x = x, k = k, upstates = downstates, var = var, klim = klim)
+  reliab <- reliability(x = x, k = k, upstates = downstates, var = var, klim = klim)
   
   if (var) {
     
-    maintain <- list(maintain = 1 - tmp$reliab, sigma2 = tmp$sigma2)
+    return(list(x = 1 - reliab$x, sigma2 = reliab$sigma2))
     
   } else {
     
-    maintain <- 1 - tmp
+    return(1 - reliab)
     
   }
-  
-  return(maintain)
   
 }
 
@@ -576,7 +574,7 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
 #'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
 #'   containing the following components:
 #'   \itemize{
-#'    \item{avail: }{a vector of length \eqn{k + 1} giving the values of the 
+#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
 #'      availability for the period \eqn{[0,\dots,k]};}
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(k)}.}
@@ -641,9 +639,9 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
     H <- .get.H(q = q)
     mu <- .get.mu(x = x, klim = klim)
     
-    sigma2 <- varA(indices_u, alpha, mu, q, psi, Psi, H, Q)
+    sigma2 <- as.numeric(varA(indices_u, alpha, mu, q, psi, Psi, H, Q))
     
-    return(list(avail = avail, sigma2 = sigma2))
+    return(list(x = avail, sigma2 = sigma2))
   
   } else {
     
@@ -730,7 +728,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   Rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
 #'   a list containing the following components:
 #'   \itemize{
-#'    \item{lbda: }{a vector of length \eqn{k + 1} giving the values of the 
+#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
 #'      BMP-Failure Rate for the period \eqn{[0,\dots,k]};}
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(k)}.}
@@ -771,9 +769,9 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
     
     H <- .get.H(qy)
     
-    sigma2 <- varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q)
+    sigma2 <- as.numeric(varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q))
     
-    return(list(lbda = lbda, sigma2 = sigma2))
+    return(list(x = lbda, sigma2 = sigma2))
     
   } else {
     
@@ -818,7 +816,7 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
 #'   Rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
 #'   a list containing the following components:
 #'   \itemize{
-#'    \item{lbda: }{a vector of length \eqn{k + 1} giving the values of the 
+#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
 #'      RG-Failure Rate for the period \eqn{[0,\dots,k]};}
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{q}^{2}(k)}.}
@@ -832,15 +830,13 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3
   
   if (var) {
     
-    r <- list(r = -log(1 - lbda$lbda), sigma2 = (1 / (1 - lbda$lbda) ^ 2) * lbda$sigma2)
+    return(list(x = -log(1 - lbda$x), sigma2 = (1 / (1 - lbda$x) ^ 2) * lbda$sigma2))
     
   } else {
     
-    r <- -log(1 - lbda)
+    return(-log(1 - lbda))
     
   }
-  
-  return(r)
   
 }
 
@@ -942,7 +938,7 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #'   the values of the mean time to failure for each state \eqn{i \in U}. If 
 #'   `var = TRUE`, a list containing the following components:
 #'   \itemize{
-#'    \item{mttf: }{a vector of length \eqn{\textrm{card}(U)} giving the values
+#'    \item{x: }{a vector of length \eqn{\textrm{card}(U)} giving the values
 #'      of the mean time to failure for each state \eqn{i \in U}.}
 #'    \item{sigma2: }{the variance of the estimator for each estimation of the 
 #'      mean time to failure;}
@@ -973,9 +969,9 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
     
     q <- getKernel(x = x, k = klim)
     
-    sigma2 <- varMTTF(indices_u, indices_d, m, mu, x$ptrans, q)
+    sigma2 <- as.numeric(varMTTF(indices_u, indices_d, m, mu, x$ptrans, q))
     
-    return(list(mttf = mttf, sigma2 = sigma2))
+    return(list(x = mttf, sigma2 = sigma2))
     
   } else {
     
@@ -1036,7 +1032,7 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
 #'   the values of the mean time to repair for each state \eqn{i \in D}. If 
 #'   `var = TRUE`, a list containing the following components:
 #'   \itemize{
-#'    \item{mttf: }{a vector of length \eqn{\textrm{card}(D)} giving the values
+#'    \item{x: }{a vector of length \eqn{\textrm{card}(D)} giving the values
 #'      of the mean time to repair for each state \eqn{i \in D}.}
 #'    \item{sigma2: }{the variance of the estimator for each estimation of the 
 #'      mean time to failure;}
