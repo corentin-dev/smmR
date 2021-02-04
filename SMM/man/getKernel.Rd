@@ -15,7 +15,8 @@ getKernel(x, k, var = FALSE, klim = 10000)
 \item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
-computation of the mean recurrence times vector for the asymptotic
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function) for the asymptotic
 variance.}
 }
 \value{

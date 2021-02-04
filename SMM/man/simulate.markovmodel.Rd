@@ -42,5 +42,5 @@ seq1[[1]][1:15]
 
 }
 \seealso{
-\link{fitmarkovmodel}, \link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
+\link{markovmodel}, \link{fitmarkovmodel}
 }

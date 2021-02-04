@@ -18,7 +18,7 @@ failureRateRG(
 \link{smmparametric} or \link{smmnonparametric}).}
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
-RG-Failure Rate should be computed.}
+RG-failure rate should be computed.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
@@ -28,22 +28,25 @@ RG-Failure Rate should be computed.}
 to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
-computation of the mean recurrence times vector for the asymptotic
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function) for the asymptotic
 variance.}
 }
 \value{
-A vector of length \eqn{k + 1} giving the values of the RG-Failure
-Rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
+A vector of length \eqn{k + 1} giving the values of the RG-failure
+rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
 a list containing the following components:
 \itemize{
 \item{x: }{a vector of length \eqn{k + 1} giving the values of the
-RG-Failure Rate for the period \eqn{[0,\dots,k]};}
+RG-failure rate for the period \eqn{[0,\dots,k]};}
 \item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{q}^{2}(k)}.}
+\eqn{\sigma_{r}^{2}(k)}.}
 }
 }
 \description{
-Discrete-time adapted failure rate, proposed by Roy and Gupta (1992).
+Discrete-time adapted failure rate, proposed by D. Roy and
+R. Gupta. Classification of discrete lives. Microelectronics Reliability,
+32(10):1459--1473, 1992.
 We call it the RG-failure rate and denote it by \eqn{r(k),\ k \in N}.
 }
 \details{

@@ -10,11 +10,11 @@
 \item{x}{An object of class \link{markovmodel}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-log-likelihood must be computed.}
+log-likelihood will be computed based on \code{x}.}
 }
 \value{
-A vector giving the value of the loglikelihood for each sequence.
+Value of the log-likelihood.
 }
 \description{
-Computation of the loglikelihood for a semi-Markov model
+Computation of the log-likelihood for a Markov model
 }

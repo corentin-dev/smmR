@@ -15,21 +15,21 @@ smmnonparametric(
 )
 }
 \arguments{
-\item{states}{Vector of state space of length s.}
+\item{states}{Vector of state space of length \eqn{s}.}
 
-\item{init}{Vector of initial distribution of length s.}
+\item{init}{Vector of initial distribution of length \eqn{s}.}
 
-\item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
-\eqn{J=(J_m)_{m}} of size sxs.}
+\item{ptrans}{Matrix of transition probabilities of the embedded Markov
+chain \eqn{J=(J_m)_{m}} of dimension \eqn{(s, s)}.}
 
 \item{type.sojourn}{Type of sojourn time (for more explanations, see Details).}
 
 \item{distr}{\itemize{
-\item Array of size SxSxKmax if \code{type.sojourn = "fij"};
-\item Matrix of size SxKmax if \code{type.sojourn = "fi"} or \code{"fj"};
-\item Vector of length kmax if the \code{type.sojourn = "f"}.
+\item Array of dimension \eqn{(s, s, kmax)} if \code{type.sojourn = "fij"};
+\item Matrix of dimension \eqn{(s, kmax)} if \code{type.sojourn = "fi"} or \code{"fj"};
+\item Vector of length \eqn{kmax} if the \code{type.sojourn = "f"}.
 }
-kmax is the maximum length of the sojourn times.}
+\eqn{kmax} is the maximum length of the sojourn times.}
 
 \item{cens.beg}{Optional. A logical value indicating whether or not
 sequences are censored at the beginning.}
@@ -59,10 +59,11 @@ We define :
 \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
 \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
 \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
-\item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "distr" in the non-parametric case.
+\item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
+f is specified by the argument \code{distr} in the non-parametric case.
 }
 
-In this package we can choose differents types of sojourn time.
+In this package we can choose different types of sojourn time.
 Four options are available for the sojourn times:
 \itemize{
 \item depending on the present state and on the next state (\eqn{f_{ij}});
@@ -71,13 +72,13 @@ Four options are available for the sojourn times:
 \item depending neither on the current, nor on the next state (\eqn{f}).
 }
 
-Let define kmax the maximum length of the sojourn times.
-If  \code{type.sojourn = "fij"}, \code{distr} is an array of size SxSxKmax.
-If \code{type.sojourn = "fi"} or \code{"fj"}, \code{distr} must be a matrix of size SxKmax.
-If \code{type.sojourn = "f"}, \code{distr} must be a vector of length kmax.
+Let define \eqn{kmax} the maximum length of the sojourn times.
+If  \code{type.sojourn = "fij"}, \code{distr} is an array of dimension \eqn{(s, s, kmax)}.
+If \code{type.sojourn = "fi"} or \code{"fj"}, \code{distr} must be a matrix of dimension \eqn{(s, kmax)}.
+If \code{type.sojourn = "f"}, \code{distr} must be a vector of length \eqn{kmax}.
 
-If the sequence is censored at the beginning and at the end, \code{cens.beg}
-must be equal to \code{TRUE} and \code{cens.end} must be equal to \code{TRUE} too.
+If the sequence is censored at the beginning and/or at the end, \code{cens.beg}
+must be equal to \code{TRUE} and/or \code{cens.end} must be equal to \code{TRUE}.
 All the sequences must be censored in the same way.
 }
 \examples{

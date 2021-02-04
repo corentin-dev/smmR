@@ -10,10 +10,10 @@
 \item{x}{An object of class \link{markovmodel}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-BIC criterion must be computed.}
+BIC will be computed based on \code{x}.}
 }
 \value{
-A numeric value giving the value of the BIC.
+Value of the BIC.
 }
 \description{
 Computation of the Bayesian Information Criterion.

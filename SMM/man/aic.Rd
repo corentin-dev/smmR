@@ -7,10 +7,10 @@
 aic(x, sequences)
 }
 \arguments{
-\item{x}{An object for which the logikelihood can be computed.}
+\item{x}{An object for which the log-likelihood can be computed.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-AIC criterion must be computed.}
+AIC will be computed based on \code{x}.}
 }
 \value{
 Value of the AIC.

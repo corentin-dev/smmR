@@ -13,8 +13,8 @@
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 
+#' @seealso [smmparametric], [smmnonparametric], [fitsemimarkovmodel]
 #' 
-#' @seealso [smmnonparametric], [fitsemimarkovmodel]
 #' @export
 #'
 #' @examples 

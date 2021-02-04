@@ -2,20 +2,20 @@
 % Please edit documentation in R/loglik.R
 \name{loglik}
 \alias{loglik}
-\title{Loglikelihood}
+\title{Log-likelihood Function}
 \usage{
 loglik(x, sequences)
 }
 \arguments{
-\item{x}{An object for which the logikelihood can be computed.}
+\item{x}{An object for which the log-likelihood can be computed.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-log-likelihood must be computed.}
+log-likelihood will be computed based on \code{x}.}
 }
 \value{
-Value of the loglikelihood for each sequence.
+Value of the log-likelihood.
 }
 \description{
-Generic function computing the loglikelihood of the model \code{x},
+Generic function computing the log-likelihood of the model \code{x},
 with the list of sequences \code{sequences}.
 }

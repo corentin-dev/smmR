@@ -5,12 +5,11 @@
 #' @param states Vector of state space of length s.
 #' @param k Order of the Markov chain.
 #' @param init Vector of initial distribution of length s ^ k.
-#' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
-#'   \eqn{J=(J_m)_{m}} of size sxs.
+#' @param ptrans Matrix of transition probabilities of dimension \eqn{(s, s)}.
 #' @return An object of class [markovmodel][markovmodel].
 #' 
+#' @seealso [simulate.markovmodel], [fitmarkovmodel]
 #' 
-#' @seealso [simulate], [fitmarkovmodel], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
 #' @export
 #'
 markovmodel <- function(states, init, ptrans, k = 1) {
@@ -89,13 +88,12 @@ is.markovmodel <- function(x) {
 
 #' Loglikelihood
 #'
-#' @description Computation of the loglikelihood for a semi-Markov model
+#' @description Computation of the log-likelihood for a Markov model
 #'
-#' @param x An object of class [markovmodel][markovmodel].
+#' @param x An object of class [markovmodel].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   log-likelihood must be computed.
-#' @return A vector giving the value of the loglikelihood for each sequence.
-#' 
+#'   log-likelihood will be computed based on `x`.
+#' @return Value of the log-likelihood.
 #' 
 #' @export
 #'
@@ -152,11 +150,10 @@ loglik.markovmodel <- function(x, sequences) {
 #'
 #' @description Computation of the Akaike Information Criterion.
 #'
-#' @param x An object of class [markovmodel][markovmodel].
+#' @param x An object of class [markovmodel].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   AIC criterion must be computed.
-#' @return A numeric value giving the value of the AIC.
-#' 
+#'   AIC will be computed based on `x`.
+#' @return Value of the AIC.
 #' 
 #' @export
 #'
@@ -176,11 +173,10 @@ aic.markovmodel <- function(x, sequences) {
 #'
 #' @description Computation of the Bayesian Information Criterion.
 #'
-#' @param x An object of class [markovmodel][markovmodel].
+#' @param x An object of class [markovmodel].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   BIC criterion must be computed.
-#' @return A numeric value giving the value of the BIC.
-#' 
+#'   BIC will be computed based on `x`.
+#' @return Value of the BIC.
 #' 
 #' @export
 #'

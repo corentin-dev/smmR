@@ -16,27 +16,27 @@ smmparametric(
 )
 }
 \arguments{
-\item{states}{Vector of state space of length s.}
+\item{states}{Vector of state space of length \eqn{s}.}
 
-\item{init}{Vector of initial distribution of length s.}
+\item{init}{Vector of initial distribution of length \eqn{s}.}
 
-\item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
-\eqn{J=(J_m)_{m}} of size sxs.}
+\item{ptrans}{Matrix of transition probabilities of the embedded Markov
+chain \eqn{J=(J_m)_{m}} of dimension \eqn{(s, s)}.}
 
 \item{type.sojourn}{Type of sojourn time (for more explanations, see Details).}
 
 \item{distr}{\itemize{
-\item Matrix of distributions of size sxs if \code{type.sojourn = "fij"};
-\item Vector of distributions of size s if \code{type.sojourn = "fi"} or \verb{"fj};
+\item Matrix of distributions of dimension \eqn{(s, s)} if \code{type.sojourn = "fij"};
+\item Vector of distributions of length \eqn{s} if \code{type.sojourn = "fi"} or \verb{"fj};
 \item A distribution if \code{type.sojourn = "f"}.
 }
 where the distributions to be used can be one of \code{unif}, \code{geom}, \code{pois}, \code{dweibull} or \code{nbinom}.}
 
 \item{param}{Parameters of sojourn time distributions:
 \itemize{
-\item Array of distribution parameters of size SxSx2
+\item Array of distribution parameters of dimension \eqn{(s, s, 2)}
 (2 corresponds to the maximal number of distribution parameters) if \code{type.sojourn = "fij"};
-\item Matrix of distribution parameters of size Sx2 if \code{type.sojourn = "fi"} or \code{"fj"};
+\item Matrix of distribution parameters of dimension \eqn{(s, 2)} if \code{type.sojourn = "fi"} or \code{"fj"};
 \item Vector of distribution parameters of length 2 if \code{type.sojourn = "f"}.
 }
 
@@ -87,7 +87,7 @@ We define :
 \eqn{f} is specified by the argument \code{param} in the parametric case.
 }
 
-In this package we can choose differents types of sojourn time.
+In this package we can choose different types of sojourn time.
 Four options are available for the sojourn times:
 \itemize{
 \item depending on the present state and on the next state (\eqn{f_{ij}});
@@ -96,9 +96,9 @@ Four options are available for the sojourn times:
 \item depending neither on the current, nor on the next state (\eqn{f}).
 }
 
-If  \code{type.sojourn = "fij"}, \code{distr} is a matrix of size sxs (e.g., if the
-row 1 of the 2nd column is \code{"pois"}, that is to say we go from the first
-state to the second state following a Poisson distribution).
+If  \code{type.sojourn = "fij"}, \code{distr} is a matrix of dimension \eqn{(s, s)}
+(e.g., if the row 1 of the 2nd column is \code{"pois"}, that is to say we go from
+the first state to the second state following a Poisson distribution).
 If \code{type.sojourn = "fi"} or \code{"fj"}, \code{distr} must be a vector (e.g., if the
 first element of vector is \code{"geom"}, that is to say we go from the first
 state to any state according to a Geometric distribution).
@@ -109,8 +109,8 @@ a Negative Binomial distribution).
 For the non-parametric case, \code{distr} is equal to \code{"nonparametric"} whatever
 type of sojourn time given.
 
-If the sequence is censored at the beginning and at the end, \code{cens.beg}
-must be equal to \code{TRUE} and \code{cens.end} must be equal to \code{TRUE} too.
+If the sequence is censored at the beginning and/or at the end, \code{cens.beg}
+must be equal to \code{TRUE} and/or \code{cens.end} must be equal to \code{TRUE}.
 All the sequences must be censored in the same way.
 }
 \examples{

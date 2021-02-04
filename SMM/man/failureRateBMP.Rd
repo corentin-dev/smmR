@@ -18,7 +18,7 @@ failureRateBMP(
 \link{smmparametric} or \link{smmnonparametric}).}
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
-BMP-Failure Rate should be computed.}
+BMP-failure rate should be computed.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
@@ -28,18 +28,19 @@ BMP-Failure Rate should be computed.}
 to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
-computation of the mean recurrence times vector for the asymptotic
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function) for the asymptotic
 variance.}
 }
 \value{
-A vector of length \eqn{k + 1} giving the values of the BMP-Failure
-Rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
+A vector of length \eqn{k + 1} giving the values of the BMP-failure
+rate for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE},
 a list containing the following components:
 \itemize{
 \item{x: }{a vector of length \eqn{k + 1} giving the values of the
-BMP-Failure Rate for the period \eqn{[0,\dots,k]};}
+BMP-failure rate for the period \eqn{[0,\dots,k]};}
 \item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{q}^{2}(k)}.}
+\eqn{\sigma_{\lambda}^{2}(k)}.}
 }
 }
 \description{
@@ -91,7 +92,8 @@ We can rewrite it as follows :
 \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
 
 The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
-with \eqn{R} being the reliability function.
+with \eqn{R} being the reliability function (see \link{reliability}
+function).
 
 The calculation of the reliability \eqn{R} involves the computation of
 many convolutions. It implies that the computation error, may be higher

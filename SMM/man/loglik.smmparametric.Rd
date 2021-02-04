@@ -2,7 +2,7 @@
 % Please edit documentation in R/smmparametric.R
 \name{loglik.smmparametric}
 \alias{loglik.smmparametric}
-\title{Loglikelihood}
+\title{Log-likelihood Function}
 \usage{
 \method{loglik}{smmparametric}(x, sequences)
 }
@@ -10,11 +10,11 @@
 \item{x}{An object of class \link{smmparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-log-likelihood must be computed.}
+log-likelihood will be computed based on \code{x}.}
 }
 \value{
-Value of the loglikelihood.
+Value of the log-likelihood.
 }
 \description{
-Computation of the loglikelihood for a semi-Markov model
+Computation of the log-likelihood for a semi-Markov model
 }

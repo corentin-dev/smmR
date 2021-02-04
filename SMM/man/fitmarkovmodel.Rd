@@ -99,5 +99,5 @@ est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 
 }
 \seealso{
-\link{markovmodel}, \link{simulate}, \link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
+\link{markovmodel}, \link{simulate.markovmodel}
 }

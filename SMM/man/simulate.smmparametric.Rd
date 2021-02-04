@@ -74,5 +74,5 @@ seq1[[1]][1:15]
 
 }
 \seealso{
-\link{smmnonparametric}, \link{fitsemimarkovmodel}
+\link{smmparametric}, \link{smmnonparametric}, \link{fitsemimarkovmodel}
 }

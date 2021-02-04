@@ -19,15 +19,18 @@
 #' With a semi-Markov chain, the sojourn time can be any arbitrary distribution.
 #' In this package, the available distribution for a semi-Markov model are :
 #'  \itemize{
-#'    \item Uniform: \eqn{f(x) = \frac{1}{n}} for \eqn{1 \le x \le n};
-#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^{x - 1}} for \eqn{x = 1, 2,\ldots,n}, \eqn{0 < \theta \le 1}, \eqn{\theta} is the probability of success;
-#'    \item Poisson: \eqn{f(x) = \frac{\lambda^x exp(-\lambda)}{x!}} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{\lambda > 0};
+#'    \item Uniform: \eqn{f(x) = \frac{1}{n}} for \eqn{1 \le x \le n}. \eqn{n} is the parameter;
+#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^{x - 1}} for \eqn{x = 1, 2,\ldots,n}, \eqn{0 < \theta \le 1}, \eqn{\theta} is the probability of success.
+#'      \eqn{\theta} is the parameter;
+#'    \item Poisson: \eqn{f(x) = \frac{\lambda^x exp(-\lambda)}{x!}} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{\lambda > 0}.
+#'      \eqn{\lambda} is the parameter;
 #'    \item Discrete Weibull of type 1: \eqn{f(x)=q^{(x-1)^{\beta}}-q^{x^{\beta}}}, \eqn{x = 1, 2,\ldots,n}, 
-#'      with \eqn{q}, the first parameter and \eqn{\beta} the second parameter;
+#'      with \eqn{0 < q < 1}, the first parameter and \eqn{\beta > 0} the second parameter.
+#'      \eqn{(q, \beta)} are the parameters;
 #'    \item Negative binomial: \eqn{f(x)=\frac{\Gamma(x+\alpha)}{\Gamma(\alpha) x!} p^{\alpha} (1 - p)^x}, 
 #'      for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{\Gamma} is the Gamma function, 
 #'      \eqn{\alpha} is the parameter of overdispersion and \eqn{p} is the 
-#'      probability of success, \eqn{0 < p < 1};
+#'      probability of success, \eqn{0 < p < 1}. \eqn{(\alpha, p)} are the parameters;
 #'    \item Non-parametric.
 #'  }
 #'  
@@ -79,21 +82,21 @@
 #'   \item depending neither on the current, nor on the next state (`f`).
 #' }
 #' 
-#' If  `type.sojourn = "fij"`, `distr` is a matrix of size sxs (e.g., if the 
-#' row 1 of the 2nd column is `"pois"`, that is to say we go from the first 
-#' state to the second state following a Poisson distribution).
+#' If  `type.sojourn = "fij"`, `distr` is a matrix of dimension \eqn{(s, s)} 
+#' (e.g., if the 1st element of the 2nd column is `"pois"`, that is to say we 
+#' go from the first state to the second state following a Poisson distribution).
 #' If `type.sojourn = "fi"` or `"fj"`, `distr` must be a vector (e.g., if the 
-#' first element of vector is `"geom"`, that is to say we go from the first 
-#' state to any state according to a Geometric distribution).
+#' first element of vector is `"geom"`, that is to say we go from (or to) the 
+#' first state to (or from) any state according to a Geometric distribution).
 #' If `type.sojourn = "f"`, `distr` must be one of `"unif"`, `"geom"`, `"pois"`, 
 #' `"dweibull"`, `"nbinom"` (e.g., if `distr` is equal to `"nbinom"`, that is 
-#' to say that the sojourn times when going from any state to any state follows 
-#' a Negative Binomial distribution).
+#' to say that the sojourn time when going from one state to another state 
+#' follows a Negative Binomial distribution).
 #' For the non-parametric case, `distr` is equal to `"nonparametric"` whatever 
 #' type of sojourn time given.
 #' 
-#' If the sequence is censored at the beginning and at the end, `cens.beg` 
-#' must be equal to `TRUE` and `cens.end` must be equal to `TRUE` too. 
+#' If the sequence is censored at the beginning and/or at the end, `cens.beg` 
+#' must be equal to `TRUE` and/or `cens.end` must be equal to `TRUE`. 
 #' All the sequences must be censored in the same way.
 #'
 #' @param sequences A list of vectors representing the sequences.
@@ -104,8 +107,8 @@
 #'   
 #'   If the parametric estimation case is desired, `distr` should be:
 #'   \itemize{
-#'     \item A matrix of distributions of size sxs if `type.sojourn = "fij"`;
-#'     \item A vector of distributions of size s if `type.sojourn = "fi"` or `"fj"`;
+#'     \item A matrix of distributions of dimension \eqn{(s, s)} if `type.sojourn = "fij"`;
+#'     \item A vector of distributions of length \eqn{s} if `type.sojourn = "fi"` or `"fj"`;
 #'     \item A distribution if `type.sojourn = "f"`.
 #'   }
 #'   
@@ -127,15 +130,16 @@
 #'   sequences are censored at the beginning.
 #' @param cens.end Optional. A logical value indicating whether or not 
 #'   sequences are censored at the end.
-#' @return Returns an object of class smm (a [smmnonparametric][smmnonparametric] 
-#'   object if `distr = "nonparametric"`, a [smmparametric][smmparametric] 
+#' @return Returns an object of class smm (a [smmnonparametric] 
+#'   object if `distr = "nonparametric"`, a [smmparametric] 
 #'   otherwise).
 #' 
-#' 
-#' @seealso [smmnonparametric], [smmparametric], [simulate.smmparametric]
+#' @seealso [smmnonparametric], [smmparametric], [simulate.smmnonparametric],
+#'   [simulate.smmparametric], [plot.smmparametric], [plot.smmnonparametric]
+#'   
 #' @export
 #'
-#' @examples 
+#' @examples
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)
 #' 

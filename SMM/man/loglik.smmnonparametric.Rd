@@ -2,7 +2,7 @@
 % Please edit documentation in R/smmnonparametric.R
 \name{loglik.smmnonparametric}
 \alias{loglik.smmnonparametric}
-\title{Loglikelihood}
+\title{Log-likelihood Function}
 \usage{
 \method{loglik}{smmnonparametric}(x, sequences)
 }
@@ -10,11 +10,11 @@
 \item{x}{An object of class \link{smmnonparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-log-likelihood must be computed.}
+log-likelihood will be computed based on \code{x}.}
 }
 \value{
-Value of the loglikelihood.
+Value of the log-likelihood.
 }
 \description{
-Computation of the loglikelihood for a semi-Markov model
+Computation of the log-likelihood for a semi-Markov model
 }

@@ -17,10 +17,11 @@
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
 #'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
 #'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
-#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, f is specified by the argument "param" in the parametric case and by "distr" in the non-parametric case.
+#'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )}, 
+#'      f is specified by the argument `distr` in the non-parametric case.
 #'  }
 #'
-#' In this package we can choose differents types of sojourn time.
+#' In this package we can choose different types of sojourn time.
 #' Four options are available for the sojourn times:
 #' \itemize{
 #'   \item depending on the present state and on the next state (\eqn{f_{ij}});
@@ -29,35 +30,35 @@
 #'   \item depending neither on the current, nor on the next state (\eqn{f}).
 #' }
 #' 
-#' Let define kmax the maximum length of the sojourn times.
-#' If  `type.sojourn = "fij"`, `distr` is an array of size SxSxKmax.
-#' If `type.sojourn = "fi"` or `"fj"`, `distr` must be a matrix of size SxKmax.
-#' If `type.sojourn = "f"`, `distr` must be a vector of length kmax.
+#' Let define \eqn{kmax} the maximum length of the sojourn times.
+#' If  `type.sojourn = "fij"`, `distr` is an array of dimension \eqn{(s, s, kmax)}.
+#' If `type.sojourn = "fi"` or `"fj"`, `distr` must be a matrix of dimension \eqn{(s, kmax)}.
+#' If `type.sojourn = "f"`, `distr` must be a vector of length \eqn{kmax}.
 #' 
-#' If the sequence is censored at the beginning and at the end, `cens.beg` 
-#' must be equal to `TRUE` and `cens.end` must be equal to `TRUE` too. 
+#' If the sequence is censored at the beginning and/or at the end, `cens.beg` 
+#' must be equal to `TRUE` and/or `cens.end` must be equal to `TRUE`. 
 #' All the sequences must be censored in the same way.
 #'
-#' @param states Vector of state space of length s.
-#' @param init Vector of initial distribution of length s.
-#' @param ptrans Matrix of transition probabilities of the embedded Markov chain 
-#'   \eqn{J=(J_m)_{m}} of size sxs.
+#' @param states Vector of state space of length \eqn{s}.
+#' @param init Vector of initial distribution of length \eqn{s}.
+#' @param ptrans Matrix of transition probabilities of the embedded Markov 
+#'   chain \eqn{J=(J_m)_{m}} of dimension \eqn{(s, s)}.
 #' @param type.sojourn Type of sojourn time (for more explanations, see Details).
 #' @param distr
 #'   \itemize{
-#'     \item Array of size SxSxKmax if `type.sojourn = "fij"`;
-#'     \item Matrix of size SxKmax if `type.sojourn = "fi"` or `"fj"`;
-#'     \item Vector of length kmax if the `type.sojourn = "f"`.
+#'     \item Array of dimension \eqn{(s, s, kmax)} if `type.sojourn = "fij"`;
+#'     \item Matrix of dimension \eqn{(s, kmax)} if `type.sojourn = "fi"` or `"fj"`;
+#'     \item Vector of length \eqn{kmax} if the `type.sojourn = "f"`.
 #'   }
-#'   kmax is the maximum length of the sojourn times.
+#'   \eqn{kmax} is the maximum length of the sojourn times.
 #' @param cens.beg Optional. A logical value indicating whether or not 
 #'   sequences are censored at the beginning.
 #' @param cens.end Optional. A logical value indicating whether or not 
 #'   sequences are censored at the end.
-#' @return Returns an object of class [smmnonparametric][smmnonparametric].
-#' 
+#' @return Returns an object of class [smmnonparametric].
 #' 
 #' @seealso [simulate], [fitsemimarkovmodel], [smmparametric]
+#' 
 #' @export
 #'
 #' @examples 
@@ -289,7 +290,7 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
   if (var) {
     
-    mu <- .get.mu(x = x, klim = klim)
+    mu <- meanRecurrenceTimes(x = x, klim = klim)
     sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
     
     return(list(x = q, sigma2 = sigma2))
@@ -302,15 +303,14 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
 }
 
-#' Loglikelihood
+#' Log-likelihood Function
 #'
-#' @description Computation of the loglikelihood for a semi-Markov model
+#' @description Computation of the log-likelihood for a semi-Markov model
 #'
-#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param x An object of class [smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   log-likelihood must be computed.
-#' @return Value of the loglikelihood.
-#' 
+#'   log-likelihood will be computed based on `x`.
+#' @return Value of the log-likelihood.
 #' 
 #' @export
 #'
@@ -456,11 +456,10 @@ loglik.smmnonparametric <- function(x, sequences) {
 #'
 #' @description Computation of the Akaike Information Criterion.
 #'
-#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param x An object of class [smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   AIC criterion must be computed.
+#'   AIC will be computed based on `x`.
 #' @return Value of the AIC.
-#' 
 #' 
 #' @export
 #'
@@ -480,11 +479,10 @@ aic.smmnonparametric <- function(x, sequences) {
 #'
 #' @description Computation of the Bayesian Information Criterion.
 #'
-#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param x An object of class [smmnonparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   BIC criterion must be computed.
+#'   BIC will be computed based on `x`.
 #' @return Value of the BIC.
-#' 
 #' 
 #' @export
 #'
@@ -508,7 +506,7 @@ bic.smmnonparametric <- function(x, sequences) {
 #'   distributions depending on the current state `i` and on the next state 
 #'   `j`.
 #'
-#' @param x An object of class [smmnonparametric][smmnonparametric].
+#' @param x An object of class [smmnonparametric].
 #' @param i An integer giving the current state in the following cases: 
 #'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
 #'   ignored.

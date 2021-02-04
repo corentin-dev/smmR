@@ -3,11 +3,10 @@
 #' @description Generic function computing the Bayesian Information Criterion 
 #'   of the model `x`, with the list of sequences `sequences`.
 #'
-#' @param x An object for which the logikelihood can be computed.
+#' @param x An object for which the log-likelihood can be computed.
 #' @param sequences A list of vectors representing the sequences for which the 
-#'   BIC criterion must be computed.
+#'   BIC will be computed based on `x`.
 #' @return Value of the BIC.
-#' 
 #' 
 #' @export
 #'

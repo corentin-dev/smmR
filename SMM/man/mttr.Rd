@@ -14,7 +14,8 @@ mttr(x, downstates = x$states, klim = 10000, var = FALSE)
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
-\link{meanSojournTimes} function).}
+\link{meanSojournTimes} function) for the asymptotic
+variance.}
 
 \item{var}{Optional. A logical value indicating whether or not the variance
 of the estimator should be computed.}
@@ -26,8 +27,8 @@ the values of the mean time to repair for each state \eqn{i \in D}. If
 \itemize{
 \item{x: }{a vector of length \eqn{\textrm{card}(D)} giving the values
 of the mean time to repair for each state \eqn{i \in D}.}
-\item{sigma2: }{the variance of the estimator for each estimation of the
-mean time to failure;}
+\item{sigma2: }{the variances of the estimator for each estimation of the
+mean time to repair \eqn{\sigma_{MTTR_{i}}^{2}(k)};}
 }
 }
 \description{

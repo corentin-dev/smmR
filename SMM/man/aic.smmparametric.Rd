@@ -10,7 +10,7 @@
 \item{x}{An object of class \link{smmparametric}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-AIC criterion must be computed.}
+AIC will be computed based on \code{x}.}
 }
 \value{
 Value of the AIC.

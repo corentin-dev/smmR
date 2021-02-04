@@ -14,7 +14,8 @@ mttf(x, upstates = x$states, klim = 10000, var = FALSE)
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
-\link{meanSojournTimes} function).}
+\link{meanSojournTimes} function) for the asymptotic
+variance.}
 
 \item{var}{Optional. A logical value indicating whether or not the variance
 of the estimator should be computed.}
@@ -24,10 +25,10 @@ If \code{var = FALSE}, a vector of length \eqn{\textrm{card}(U)} giving
 the values of the mean time to failure for each state \eqn{i \in U}. If
 \code{var = TRUE}, a list containing the following components:
 \itemize{
-\item{x: }{a vector of length \eqn{\textrm{card}(U)} giving the values
-of the mean time to failure for each state \eqn{i \in U}.}
-\item{sigma2: }{the variance of the estimator for each estimation of the
-mean time to failure;}
+\item{x: }{a vector of length \eqn{\textrm{card}(U) = s_{1}} giving
+the values of the mean time to failure for each state \eqn{i \in U}.}
+\item{sigma2: }{the variances of the estimator for each estimation of the
+mean time to failure \eqn{\sigma_{MTTF_{i}}^{2}(k)};}
 }
 }
 \description{

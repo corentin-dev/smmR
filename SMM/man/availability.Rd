@@ -19,7 +19,9 @@ availability should be computed.}
 of the estimator should be computed.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
-computation of the mean recurrence times vector for the asymptotic variance.}
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function) for the asymptotic
+variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the availability
@@ -29,7 +31,7 @@ containing the following components:
 \item{x: }{a vector of length \eqn{k + 1} giving the values of the
 availability for the period \eqn{[0,\dots,k]};}
 \item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{q}^{2}(k)}.}
+\eqn{\sigma_{A}^{2}(k)}.}
 }
 }
 \description{

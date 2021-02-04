@@ -11,8 +11,7 @@ markovmodel(states, init, ptrans, k = 1)
 
 \item{init}{Vector of initial distribution of length s ^ k.}
 
-\item{ptrans}{Matrix of transition probabilities of the embedded Markov chain
-\eqn{J=(J_m)_{m}} of size sxs.}
+\item{ptrans}{Matrix of transition probabilities of dimension \eqn{(s, s)}.}
 
 \item{k}{Order of the Markov chain.}
 }
@@ -23,5 +22,5 @@ An object of class \link{markovmodel}.
 Creates a model specification of a Markov model.
 }
 \seealso{
-\link{simulate}, \link{fitmarkovmodel}, \link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
+\link{simulate.markovmodel}, \link{fitmarkovmodel}
 }

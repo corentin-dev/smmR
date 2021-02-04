@@ -10,10 +10,10 @@
 \item{x}{An object of class \link{markovmodel}.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
-AIC criterion must be computed.}
+AIC will be computed based on \code{x}.}
 }
 \value{
-A numeric value giving the value of the AIC.
+Value of the AIC.
 }
 \description{
 Computation of the Akaike Information Criterion.

@@ -65,8 +65,8 @@
 #' 
 #' @return An object of class [markovmodel][markovmodel].
 #' 
+#' @seealso [markovmodel], [simulate.markovmodel]
 #' 
-#' @seealso [markovmodel], [simulate], [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
 #' @export
 #'
 #' @examples 

@@ -60,5 +60,5 @@ seq2[[1]][1:15]
 
 }
 \seealso{
-\link{smmparametric}, \link{fitsemimarkovmodel}
+\link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
 }

@@ -18,7 +18,8 @@ maintainability should be computed.}
 \item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
-computation of the mean recurrence times vector for the asymptotic
+computation of the mean sojourn times vector \eqn{m} (cf.
+\link{meanSojournTimes} function) for the asymptotic
 variance.}
 }
 \value{
@@ -29,7 +30,7 @@ containing the following components:
 \item{x: }{a vector of length \eqn{k + 1} giving the values of the
 maintainability for the period \eqn{[0,\dots,k]};}
 \item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{q}^{2}(k)}.}
+\eqn{\sigma_{M}^{2}(k)}.}
 }
 }
 \description{
@@ -62,9 +63,9 @@ instant \eqn{0} and the state of the system is given at each instant
 due to the mode of failure \eqn{j} or that the system is under the
 repairing mode \eqn{j}.
 
-Thus, we take \eqn{(\alpha_i)_{i \in U} = 0} and we denote by \eqn{T_U}
-the first hitting time of subset \eqn{U}, called the duration of repair or
-repair time, that is,
+Thus, we take \eqn{(\alpha_{i} := P(Z_{0} = i))_{i \in U} = 0} and we
+denote by \eqn{T_U} the first hitting time of subset \eqn{U}, called the
+duration of repair or repair time, that is,
 
 \deqn{T_U := \textrm{inf}\{ n \in N;\ Z_n \in U\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
 
