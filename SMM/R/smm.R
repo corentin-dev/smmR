@@ -381,11 +381,11 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   #############################
   
   if (!is.numeric(k)) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   if ((!((k >= 0) && ((k %% 1) == 0)))) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   #############################
@@ -393,11 +393,11 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   #############################
   
   if (!(is.vector(upstates) && (length(unique(upstates)) == length(upstates)))) {
-    stop("The subset of state space upstates is not a vector of unique elements")
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
   }
   
   if (!all(upstates %in% x$states)) {
-    stop("Every element of upstates must be in states (U is a subet of E)")
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
   
   
@@ -516,11 +516,11 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
   #############################
   
   if (!is.numeric(k)) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   if ((!((k >= 0) && ((k %% 1) == 0)))) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   #############################
@@ -528,11 +528,11 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
   #############################
   
   if (!(is.vector(downstates) && (length(unique(downstates)) == length(downstates)))) {
-    stop("The subset of state space downstates is not a vector of unique elements")
+    stop("The subset of state space 'downstates' is not a vector of unique elements")
   }
   
   if (!all(downstates %in% x$states)) {
-    stop("Every element of downstates must be in states (U is a subet of E)")
+    stop("Every element of 'downstates' must be in 'states' ('dowstates' is a subset of 'states')")
   }
   
   reliab <- reliability(x = x, k = k, upstates = downstates, var = var, klim = klim)
@@ -623,11 +623,11 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   #############################
   
   if (!is.numeric(k)) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   if ((!((k >= 0) && ((k %% 1) == 0)))) {
-    stop("k must be a positive integer")
+    stop("'k' must be a positive integer")
   }
   
   #############################
@@ -635,11 +635,11 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   #############################
   
   if (!(is.vector(upstates) && (length(unique(upstates)) == length(upstates)))) {
-    stop("The subset of state space upstates is not a vector of unique elements")
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
   }
   
   if (!all(upstates %in% x$states)) {
-    stop("Every element of upstates must be in states (U is a subet of E)")
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
   
   

@@ -100,7 +100,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   s <- length(states)
   
   if (!(is.vector(states) && (length(unique(states)) == s))) {
-    stop("The state space states is not a vector of unique elements")
+    stop("The state space 'states' is not a vector of unique elements")
   }
   
   #############################
@@ -108,15 +108,15 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   #############################
   
   if (!(is.vector(init) && (length(init) == s))) {
-    stop("init is not a vector of length s")
+    stop("'init' is not a vector of length s")
   }
   
   if (!(all(init >= 0) && all(init <= 1))) {
-    stop("Probabilities in init must be between [0, 1]")
+    stop("Probabilities in 'init' must be between [0, 1]")
   }
   
   if (!(sum(init) == 1)) {
-    stop("The sum of init is not equal to one")
+    stop("The sum of 'init' is not equal to one")
   }
   
   #############################
@@ -124,23 +124,23 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   #############################
   
   if (!is.matrix(ptrans)) {
-    stop("ptrans is not a matrix")
+    stop("'ptrans' is not a matrix")
   }
   
   if (!(all(ptrans >= 0) && all(ptrans <= 1))) {
-    stop("Probabilities in ptrans must be between [0, 1]")
+    stop("Probabilities in 'ptrans' must be between [0, 1]")
   }
   
   if (!((dim(ptrans)[1] == s) && (dim(ptrans)[2] == s))) {
-    stop("The dimension of the matrix ptrans must be equal to (s, s)")
+    stop("The dimension of the matrix 'ptrans' must be equal to (s, s)")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
-    stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
+    stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
   if (!all(diag(ptrans) == 0)) {
-    stop("All the diagonal elements of ptrans must be equal to 0 since transitions to the same state are not allowed")
+    stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
   }
   
   #############################
@@ -154,28 +154,28 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   #############################
   
   if (type.sojourn == "fij" && !(is.array(distr) && !is.matrix(distr))) {
-    stop("distr must be an array of dimension (s, s, kmax) since type.sojourn == \"fij\"")
+    stop("'distr' must be an array of dimension (s, s, kmax) since 'type.sojourn == \"fij\"'")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !is.matrix(distr)) {
-    stop("distr must be a matrix of dimension (s, kmax) since type.sojourn == \"fi\" or \"fj\"")
+    stop("'distr' must be a matrix of dimension (s, kmax) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
   }
   
   if (type.sojourn == "f" && !is.vector(distr)) {
-    stop("distr must be a vector of length kmax since type.sojourn == \"f\"")
+    stop("'distr' must be a vector of length kmax since 'type.sojourn == \"f\"'")
   }
   
   
   if (type.sojourn == "fij" && !(dim(distr)[1] == s && dim(distr)[2] == s)) {
-    stop("distr must be an array of dimension (s, s, kmax) since type.sojourn == \"fij\"")
+    stop("'distr' must be an array of dimension (s, s, kmax) since 'type.sojourn == \"fij\"'")
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(dim(distr)[1] == s)) {
-    stop("distr must be a matrix of dimension (s, kmax) since type.sojourn == \"fi\" or \"fj\"")
+    stop("'distr' must be a matrix of dimension (s, kmax) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
   }
   
   if (!all(distr >= 0) | !all(distr <= 1)) {
-    stop("Probabilities in distr must be between [0, 1]")
+    stop("Probabilities in 'distr' must be between [0, 1]")
   }
   
   if (type.sojourn == "fij") {
@@ -183,16 +183,16 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     indexdiag <- seq(1, s * s, by = s + 1)
     
     if (!all(diag(temp) == 0, temp[-indexdiag] %in% c(0, 1))) {
-      stop("distr is not a stochastic matrix")
+      stop("'distr' is not a stochastic matrix")
     }
   }
   
   if ((type.sojourn == "fi" | type.sojourn == "fj") && !(all(apply(distr, 1, sum) == 1))) {
-    stop("distr is not a stochastic matrix")
+    stop("'distr' is not a stochastic matrix")
   }
   
   if (type.sojourn == "f" && !(sum(distr) == 1)) {
-    stop("distr is not a stochastic matrix")
+    stop("'distr' is not a stochastic matrix")
   }
   
   #############################
@@ -200,7 +200,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   #############################
   
   if (!(is.logical(cens.beg) && is.logical(cens.end))) {
-    stop("cens.beg and cens.end must be TRUE or FALSE")
+    stop("'cens.beg' and 'cens.end' must be TRUE or FALSE")
   }
   
   if (type.sojourn == "fij") {
@@ -321,11 +321,11 @@ loglik.smmnonparametric <- function(x, sequences) {
   #############################
   
   if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter sequences should be a list of vectors")
+    stop("The parameter 'sequences' should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences sequences are not in the state space given by the model x")
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
   }
   
   
@@ -333,7 +333,7 @@ loglik.smmnonparametric <- function(x, sequences) {
   kmax <- sequences$kmax
   
   if (!(kmax == x$kmax)) {
-    stop("kmax of the given sequences is different from the kmax of the estimated SMM model")  
+    stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
   }
   
   type.sojourn <- x$type.sojourn
@@ -531,27 +531,27 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     if (x$type.sojourn == "fi") {
       
       if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
-        stop(paste0("i must be an integer between 1 and ", dim(x$distr)[1]))
+        stop(paste0("'i' must be an integer between 1 and ", dim(x$distr)[1]))
       }
       
     } else if (x$type.sojourn == "fj") {
       
       if (!((j > 0) & (j <= dim(x$distr)[1]) & ((j %% 1) == 0))) {
-        stop(paste0("j must be an integer between 1 and ", dim(x$distr)[1]))
+        stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[1]))
       }
       
     } else {
       
       if (i == j) {
-        stop(paste0("the conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist.")) 
+        stop(paste0("The conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist"))
       }
       
       if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
-        stop(paste0("i must be an integer between 1 and ", dim(x$distr)[1]))
+        stop(paste0("'i' must be an integer between 1 and ", dim(x$distr)[1]))
       }
       
       if (!((j > 0) & (j <= dim(x$distr)[2]) & ((j %% 1) == 0))) {
-        stop(paste0("j must be an integer between 1 and ", dim(x$distr)[2]))
+        stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[2]))
       }
       
     }
@@ -564,7 +564,7 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   if (!is.null(klim)) {
     if (!((klim > 0) && ((klim %% 1) == 0))) {
-      stop("klim must be a strictly positive integer")
+      stop("'klim' must be a strictly positive integer")
     }
   }
   

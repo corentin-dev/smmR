@@ -21,7 +21,7 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   s <- length(states)
   
   if (!(is.vector(states) && (length(unique(states)) == s))) {
-    stop("The state space states is not a vector of unique elements")
+    stop("The state space 'states' is not a vector of unique elements")
   }
 
   #############################
@@ -29,15 +29,15 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   #############################
 
   if (!(is.vector(init) && (length(init) == s ^ k))) {
-    stop("init is not a vector of length s ^ k.")
+    stop("'init' is not a vector of length s ^ k")
   }
   
   if (!(all(init >= 0) && all(init <= 1))) {
-    stop("Probabilities in init must be between [0, 1]")
+    stop("Probabilities in 'init' must be between [0, 1]")
   }
   
   if (!(sum(init) == 1)) {
-    stop("The sum of init is not equal to one")
+    stop("The sum of 'init' is not equal to one")
   }
 
   #############################
@@ -45,7 +45,7 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   #############################
   
   if (!((k > 0) && ((k %% 1) == 0))) {
-    stop("k must be a strictly positive integer")
+    stop("'k' must be a strictly positive integer")
   }
   
   #############################
@@ -53,19 +53,19 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   #############################
 
   if (!is.matrix(ptrans)) {
-    stop("ptrans is not a matrix")
+    stop("'ptrans' is not a matrix")
   }
   
   if (!(all(ptrans >= 0) && all(ptrans <= 1))) {
-    stop("Probabilities in ptrans must be between [0, 1]")
+    stop("Probabilities in 'ptrans' must be between [0, 1]")
   }
   
   if (!((dim(ptrans)[1] == s ^ k) && (dim(ptrans)[2] == s))) {
-    stop("The dimension of the matrix ptrans must be equal to (s ^ k, s)")
+    stop("The dimension of the matrix 'ptrans' must be equal to (s ^ k, s)")
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
-    stop("ptrans is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
+    stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
   
@@ -104,11 +104,12 @@ loglik.markovmodel <- function(x, sequences) {
   #############################
   
   if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter sequences should be a list of vectors")
+    stop("The parameter 'sequences' should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences sequences are not in the state space given by the model x")
+    stop("Some states in the list of observed sequences 'sequences' 
+         are not in the state space given by the model 'x'")
   }
   
   s <- length(x$states)

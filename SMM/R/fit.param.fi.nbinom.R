@@ -5,7 +5,9 @@
   s2 <- (1 / (sum(counting$Nik[i, ]) - 1)) * sum(counting$Nik[i, ] * (0:(kmax - 1) - xbar) ^ 2)
   
   if (xbar >= s2) {
-    stop("The negative binomial is not the appropriate distribution for modeling the data")
+    stop(paste0("The negative binomial distribution is not appropriate for modeling 
+        the conditional sojourn time distribution associated to the current 
+        state i = ", i, " (variance < expectation)"))
   }
   
   alphahat <- xbar ^ 2 / (s2 - xbar)

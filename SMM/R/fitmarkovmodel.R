@@ -91,11 +91,11 @@ fitmarkovmodel <- function(sequences, states, k = 1,
   #############################
   
   if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter sequences should be a list of vectors")
+    stop("The parameter 'sequences' should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% states)) {
-    stop("Some states in the list of observed sequences sequences are not in the state space states")
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space 'states'")
   }
   
   #############################
@@ -103,7 +103,7 @@ fitmarkovmodel <- function(sequences, states, k = 1,
   #############################
   
   if (!((k > 0) && ((k %% 1) == 0))) {
-    stop("k must be a strictly positive integer")
+    stop("'k' must be a strictly positive integer")
   }
   
   #############################

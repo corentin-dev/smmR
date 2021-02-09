@@ -16,11 +16,11 @@ processes <- function(sequences, states, verbose = TRUE) {
   #############################
   
   if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter sequences should be a list of vectors")
+    stop("The parameter 'sequences' should be a list of vectors")
   }
   
   if (!all(unique(unlist(sequences)) %in% states)) {
-    stop("Some states in the list of observed sequences sequences are not in the state space states")
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space 'states'")
   }
   
   s <- length(states) # State space size
