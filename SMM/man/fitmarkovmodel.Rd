@@ -4,12 +4,7 @@
 \alias{fitmarkovmodel}
 \title{Maximum Likelihood Estimation (MLE) of a k-th order Markov chain}
 \usage{
-fitmarkovmodel(
-  sequences,
-  states,
-  k = 1,
-  init.estim = c("mle", "stationary", "freq", "prod", "unif")
-)
+fitmarkovmodel(sequences, states, k = 1, init.estim = "mle")
 }
 \arguments{
 \item{sequences}{A list of vectors representing the sequences.}

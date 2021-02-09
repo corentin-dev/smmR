@@ -189,8 +189,8 @@
 #' est1
 #' 
 fitsemimarkovmodel <-
-  function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), distr = "nonparametric",
-           init.estim = c("mle", "limit", "freq", "unif"), cens.beg = FALSE, cens.end = FALSE) {
+  function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), distr = "nonparametric", 
+           init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {
     
 
   #############################
@@ -259,7 +259,7 @@ fitsemimarkovmodel <-
   # Checking parameter init.estim
   #############################
   
-  init.estim <- match.arg(init.estim)
+  # init.estim <- match.arg(init.estim)
   
 
   sequences <- processes(sequences = sequences, states = states)

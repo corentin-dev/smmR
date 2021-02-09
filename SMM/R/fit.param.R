@@ -146,16 +146,35 @@
       cens.end = cens.end
     )
   
-  # Inital distribution
-  if (init.estim == "mle") {
-    estimate$init <- counting$Nstarti / sum(counting$Nstarti)
-  } else if (init.estim == "limit") {
-    q <- getKernel(estimate, kmax)
-    estimate$init <- .limitDistribution(q = q, ptrans = estimate$ptrans)
-  } else if (init.estim == "freq") {
-    estimate$init <- counting$Ni / counting$N
-  } else {# init.estim == "unif"
-    estimate$init <- rep.int(x = 1 / s, times = s)
+  # Initial distribution
+  if (is.vector(init.estim) && length(init.estim) == 1) {
+    if (init.estim == "mle") {
+      estimate$init <- counting$Nstarti / sum(counting$Nstarti)
+    } else if (init.estim == "limit") {
+      q <- getKernel(estimate, kmax)
+      estimate$init <- .limitDistribution(q = q, ptrans = estimate$ptrans)
+    } else if (init.estim == "freq") {
+      estimate$init <- counting$Ni / counting$N
+    } else if (init.estim == "unif") {
+      estimate$init <- rep.int(x = 1 / s, times = s)
+    } else {
+      stop("'init.estim' must be equal to \"mle\", \"limit\", \"freq\" or \"unif\".
+           'init.estim' can also be a vector of length s for custom initial distribution")
+    }
+  } else {
+    if (!(length(init.estim) == s)) {
+      stop("'init.estim' is not a vector of length s")
+    }
+    
+    if (!(all(init.estim >= 0) && all(init.estim <= 1))) {
+      stop("Probabilities in 'init.estim' must be between [0, 1]")
+    }
+    
+    if (!(sum(init.estim) == 1)) {
+      stop("The sum of 'init.estim' is not equal to one")
+    }
+    
+    estimate$init <- init.estim
   }
   
   estimate$init <- estimate$init / sum(estimate$init)

@@ -83,8 +83,7 @@
 #' 
 #' est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
 #' 
-fitmarkovmodel <- function(sequences, states, k = 1, 
-                           init.estim = c("mle", "stationary", "freq", "prod", "unif")) {
+fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   
   #############################
   # Checking parameters sequences and states
@@ -110,7 +109,7 @@ fitmarkovmodel <- function(sequences, states, k = 1,
   # Checking parameter init.estim
   #############################
   
-  init.estim <- match.arg(init.estim)
+  # init.estim <- match.arg(init.estim)
 
   
   s <- length(states) # State space size
@@ -157,24 +156,44 @@ fitmarkovmodel <- function(sequences, states, k = 1,
   ptrans[which(is.na(ptrans))] <- 0
   ptrans <- .normalizePtrans(ptrans)
   
-  if (init.estim == "mle") {
-    Nstart <- as.vector(count(seq = unlist(lapply(sequences, function(x) x[1:k])), wordsize = k, by = k, alphabet = states))
-    init <- Nstart / sum(Nstart)
-  } else if (init.estim == "stationary") {
-    if (k == 1) {
-      init <- .stationaryDistribution(ptrans = ptrans)
+  # Initial distribution
+  if (is.vector(init.estim) && length(init.estim) == 1) {
+    if (init.estim == "mle") {
+      Nstart <- as.vector(count(seq = unlist(lapply(sequences, function(x) x[1:k])), wordsize = k, by = k, alphabet = states))
+      init <- Nstart / sum(Nstart)
+    } else if (init.estim == "stationary") {
+      if (k == 1) {
+        init <- .stationaryDistribution(ptrans = ptrans)
+      } else {
+        init <- .stationaryDistribution(ptrans = .blockMatrix(ptrans = ptrans))
+      }
+    } else if (init.estim == "freq") {
+      Nstart <- as.vector(count(seq = unlist(sequences), wordsize = k, alphabet = states))
+      init <- Nstart / sum(Nstart)
+    } else if (init.estim == "prod") {
+      Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states))
+      prob <- Nstart / sum(Nstart)
+      init <- as.vector(.productProb(length = k, prob = prob))
+    } else if (init.estim == "unif") {
+      init <- rep.int(x = 1 / (s ^ k), times = s ^ k)
     } else {
-      init <- .stationaryDistribution(ptrans = .blockMatrix(ptrans = ptrans))
+      stop("'init.estim' must be equal to \"mle\", \"stationary\", \"freq\", \"prod\" or \"unif\".
+           'init.estim' can also be a vector of length s ^ k for custom initial distribution")
     }
-  } else if (init.estim == "freq") {
-    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = k, alphabet = states))
-    init <- Nstart / sum(Nstart)
-  } else if (init.estim == "prod") {
-    Nstart <- as.vector(count(seq = unlist(sequences), wordsize = 1, alphabet = states))
-    prob <- Nstart / sum(Nstart)
-    init <- as.vector(.productProb(length = k, prob = prob))
-  } else {# init.estim == "unif"
-    init <- rep.int(x = 1 / (s ^ k), times = s ^ k)
+  } else {
+    if (!(length(init.estim) == s ^ k)) {
+      stop("'init.estim' is not a vector of length s ^ k")
+    }
+    
+    if (!(all(init.estim >= 0) && all(init.estim <= 1))) {
+      stop("Probabilities in 'init.estim' must be between [0, 1]")
+    }
+    
+    if (!(sum(init.estim) == 1)) {
+      stop("The sum of 'init.estim' is not equal to one")
+    }
+    
+    init <- init.estim
   }
   
   init <- init / sum(init)

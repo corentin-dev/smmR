@@ -9,7 +9,7 @@ fitsemimarkovmodel(
   states,
   type.sojourn = c("fij", "fi", "fj", "f"),
   distr = "nonparametric",
-  init.estim = c("mle", "limit", "freq", "unif"),
+  init.estim = "mle",
   cens.beg = FALSE,
   cens.end = FALSE
 )
