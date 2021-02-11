@@ -14,8 +14,7 @@ mttf(x, upstates = x$states, klim = 10000, var = FALSE)
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
-\link{meanSojournTimes} function) for the asymptotic
-variance.}
+\link{meanSojournTimes} function) for the asymptotic variance.}
 
 \item{var}{Optional. A logical value indicating whether or not the variance
 of the estimator should be computed.}

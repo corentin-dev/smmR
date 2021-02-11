@@ -29,8 +29,7 @@ to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
-\link{meanSojournTimes} function) for the asymptotic
-variance.}
+\link{meanSojournTimes} function) for the asymptotic variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the RG-failure

@@ -453,7 +453,7 @@ is.smmparametric <- function(x) {
 #'
 #' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
 #' 
-#' @param x An object of class [smmparametric][smmparametric].
+#' @param x An object of class [smmparametric].
 #' @param k A positive integer giving the time horizon.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
 #' @param klim Optional. The time horizon used to approximate the series in the

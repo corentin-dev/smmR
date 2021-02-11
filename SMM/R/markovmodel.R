@@ -6,7 +6,7 @@
 #' @param k Order of the Markov chain.
 #' @param init Vector of initial distribution of length s ^ k.
 #' @param ptrans Matrix of transition probabilities of dimension \eqn{(s, s)}.
-#' @return An object of class [markovmodel][markovmodel].
+#' @return An object of class [markovmodel].
 #' 
 #' @seealso [simulate.markovmodel], [fitmarkovmodel]
 #' 

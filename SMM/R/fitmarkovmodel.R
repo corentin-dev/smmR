@@ -63,7 +63,7 @@
 #'       equal to \eqn{1 / s}, with \eqn{s} the number of states.
 #'   }
 #' 
-#' @return An object of class [markovmodel][markovmodel].
+#' @return An object of class [markovmodel].
 #' 
 #' @seealso [markovmodel], [simulate.markovmodel]
 #' 

@@ -10,50 +10,6 @@ is.smm <- function(x) {
   inherits(x, "smm")
 }
 
-#' Method to get the sojourn time distribution f
-#'
-#' @description Computes the conditional sojourn time distribution \eqn{f(k)}, 
-#'   \eqn{f_{i}(k)}, \eqn{f_{j}(k)} or \eqn{f_{ij}(k)}.
-#' 
-#' @param x An object of class `smm`.
-#' @param k A positive integer giving the time horizon.
-#' @return A vector, matrix or array giving the value of \eqn{f} at each time 
-#'   between 0 and `k`.
-#'
-#' @noRd
-#' 
-.get.f <- function(x, k) {
-  UseMethod(".get.f", x)
-}
-
-#' Method to get the semi-Markov kernel \eqn{q}
-#'
-#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
-#' 
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
-#' @param k A positive integer giving the time horizon.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
-#' @param klim Optional. The time horizon used to approximate the series in the 
-#'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
-#' @return An array giving the value of \eqn{q_{ij}(k)} at each time between 0 
-#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
-#'   following components:
-#'   \itemize{
-#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
-#'      between 0 and `k`;}
-#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
-#'  }
-#'
-#' @export
-#' 
-getKernel <- function(x, k, var = FALSE, klim = 10000) {
-  UseMethod("getKernel", x)
-}
-
 #' Method to get the semi-Markov kernel \eqn{q_{Y}}
 #'
 #' @description Computes the semi-Markov kernel \eqn{q_{Y}(k)}
@@ -89,21 +45,6 @@ getKernel <- function(x, k, var = FALSE, klim = 10000) {
   
 }
 
-#' Method to get the number of parameters of the semi-Markov chain
-#'
-#' @description Method to get the number of parameters of the semi-Markov 
-#'   chain. This method is useful for the computation of criteria such as AIC 
-#'   and BIC.
-#' 
-#' @param x An object of class `smm`.
-#' @return A positive integer giving the number of parameters.
-#'
-#' @noRd
-#' 
-.getKpar <- function(x) {
-  UseMethod(".getKpar", x)
-}
-
 #' Method to get the mean recurrence times \eqn{\mu}
 #'
 #' @description Method to get the mean recurrence times \eqn{\mu}.
@@ -130,10 +71,10 @@ getKernel <- function(x, k, var = FALSE, klim = 10000) {
 #'   (see [meanSojournTimes] function for the computation).
 #' 
 #' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric][smmparametric] or [smmnonparametric][smmnonparametric]).
+#'   [smmparametric] or [smmnonparametric]).
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function).
+#'   [meanSojournTimes] function).
 #' @return A vector giving the mean recurrence time 
 #'   \eqn{(\mu_{i})_{i \in [1, \dots, s]}}.
 #'
@@ -495,8 +436,7 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @return A vector of length \eqn{k + 1} giving the values of the maintainability
 #'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
 #'   containing the following components:
@@ -602,8 +542,7 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
 #'   of the estimator should be computed.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @return A vector of length \eqn{k + 1} giving the values of the availability
 #'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
 #'   containing the following components:
@@ -734,8 +673,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
 #'   
 #'   The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
-#'   with \eqn{R} being the reliability function (see [reliability][reliability] 
-#'   function).
+#'   with \eqn{R} being the reliability function (see [reliability] function).
 #'   
 #'   The calculation of the reliability \eqn{R} involves the computation of 
 #'   many convolutions. It implies that the computation error, may be higher 
@@ -758,8 +696,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @return A vector of length \eqn{k + 1} giving the values of the BMP-failure 
 #'   rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
 #'   a list containing the following components:
@@ -849,8 +786,7 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
 #'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @return A vector of length \eqn{k + 1} giving the values of the RG-failure 
 #'   rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
 #'   a list containing the following components:
@@ -907,7 +843,7 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3
 #'   should be computed. `states` is a subset of \eqn{E}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function).
+#'   [meanSojournTimes] function).
 #' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
 #'   mean sojourn times for each state \eqn{i \in E}.
 #' 
@@ -971,8 +907,7 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @param var Optional. A logical value indicating whether or not the variance 
 #'   of the estimator should be computed.
 #' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(U)} giving 
@@ -1066,8 +1001,7 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
 #' @param downstates Vector giving the subset of non-operational states \eqn{D}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
+#'   [meanSojournTimes] function) for the asymptotic variance.
 #' @param var Optional. A logical value indicating whether or not the variance 
 #'   of the estimator should be computed.
 #' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(D)} giving 

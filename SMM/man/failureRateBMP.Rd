@@ -29,8 +29,7 @@ to be 0 because of computation errors (see Details).}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
-\link{meanSojournTimes} function) for the asymptotic
-variance.}
+\link{meanSojournTimes} function) for the asymptotic variance.}
 }
 \value{
 A vector of length \eqn{k + 1} giving the values of the BMP-failure
@@ -92,8 +91,7 @@ We can rewrite it as follows :
 \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
 
 The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
-with \eqn{R} being the reliability function (see \link{reliability}
-function).
+with \eqn{R} being the reliability function (see \link{reliability} function).
 
 The calculation of the reliability \eqn{R} involves the computation of
 many convolutions. It implies that the computation error, may be higher
