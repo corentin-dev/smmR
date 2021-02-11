@@ -316,34 +316,13 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' @description Computation of the log-likelihood for a semi-Markov model
 #'
 #' @param x An object of class [smmnonparametric].
-#' @param sequences A list of vectors representing the sequences for which the 
-#'   log-likelihood will be computed based on `x`.
-#' @return Value of the log-likelihood.
+#' @param processes An object of class `processes`.
 #' 
-#' @export
+#' @noRd
 #'
-loglik.smmnonparametric <- function(x, sequences) {
+.loglik.smmnonparametric <- function(x, processes) {
   
-  #############################
-  # Checking parameters sequences and states
-  #############################
-  
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter 'sequences' should be a list of vectors")
-  }
-  
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
-  }
-  
-  
-  sequences <- processes(sequences = sequences, states = x$states, verbose = FALSE)
-  kmax <- sequences$kmax
-  
-  if (!(kmax == x$kmax)) {
-    stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
-  }
-  
+  kmax <- processes$kmax
   type.sojourn <- x$type.sojourn
   cens.end <- x$cens.end
   
@@ -352,13 +331,13 @@ loglik.smmnonparametric <- function(x, sequences) {
   #############################
   
   init <- x$init # Initial distribution
-  Nstarti <- sequences$counting$Nstarti
+  Nstarti <- processes$counting$Nstarti
   maskNstarti <- Nstarti != 0 & init != 0
   
   if (!cens.end) {# No censoring
     
     pij <- x$ptrans # Transition matrix
-    Nij <- sequences$counting$Nij
+    Nij <- processes$counting$Nij
     maskNij <- Nij != 0 & pij != 0
     
     # Contribution of the initial distribution and 
@@ -370,28 +349,28 @@ loglik.smmnonparametric <- function(x, sequences) {
     # Contribution of the sojourn time distribution
     if (type.sojourn == "fij") {
       
-      Nijk <- sequences$counting$Nijk
+      Nijk <- processes$counting$Nijk
       maskNijk <- Nijk != 0 & x$distr != 0
       
       loglik <- loglik + sum(Nijk[maskNijk] * log(x$distr[maskNijk]))
       
     } else if (type.sojourn == "fi") {
       
-      Nik <- sequences$counting$Nik
+      Nik <- processes$counting$Nik
       maskNik <- Nik != 0 & x$distr != 0
       
       loglik <- loglik + sum(Nik[maskNik] * log(x$distr[maskNik]))
       
     } else if (type.sojourn == "fj") {
       
-      Njk <- sequences$counting$Njk
+      Njk <- processes$counting$Njk
       maskNjk <- Njk != 0 & x$distr != 0
       
       loglik <- loglik + sum(Njk[maskNjk] * log(x$distr[maskNjk]))
       
     } else {
       
-      Nk <- sequences$counting$Nk
+      Nk <- processes$counting$Nk
       maskNk <- Nk != 0 & x$distr != 0
       
       loglik <- loglik + sum(Nk[maskNk] * log(x$distr[maskNk]))
@@ -400,9 +379,9 @@ loglik.smmnonparametric <- function(x, sequences) {
     
   } else {# Censoring
     
-    s <- sequences$s
-    Y <- sequences$Y
-    U <- sequences$U
+    s <- processes$s
+    Y <- processes$Y
+    U <- processes$U
     
     
     # Computation of Niujv (couple Markov chain (Y, U))
@@ -437,6 +416,44 @@ loglik.smmnonparametric <- function(x, sequences) {
   }
   
   return(loglik)
+  
+}
+
+#' Log-likelihood Function
+#'
+#' @description Computation of the log-likelihood for a semi-Markov model
+#'
+#' @param x An object of class [smmnonparametric].
+#' @param sequences A list of vectors representing the sequences for which the 
+#'   log-likelihood will be computed based on `x`.
+#' @return Value of the log-likelihood.
+#' 
+#' @export
+#'
+loglik.smmnonparametric <- function(x, sequences) {
+  
+  #############################
+  # Checking parameters sequences and states
+  #############################
+  
+  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+    stop("The parameter 'sequences' should be a list of vectors")
+  }
+  
+  if (!all(unique(unlist(sequences)) %in% x$states)) {
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
+  }
+  
+  processes <- processes(sequences = sequences, states = x$states, verbose = FALSE)
+  
+  if (!(processes$kmax == x$kmax)) {
+    stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
+  }
+  
+  loglik <- .loglik.smmnonparametric(x = x, processes = processes)
+  
+  return(loglik)
+  
 }
 
 # Method to get the number of parameters

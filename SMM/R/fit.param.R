@@ -1,9 +1,9 @@
-.fit.param <- function(sequences, states, type.sojourn, distr, init.estim = init.estim, cens.end, cens.beg) {
+.fit.param <- function(processes, states, type.sojourn, distr, init.estim = init.estim, cens.end, cens.beg) {
   
-  states <- sequences$states
-  s <- sequences$s
-  kmax <- sequences$kmax
-  counting <- sequences$counting
+  states <- processes$states
+  s <- processes$s
+  kmax <- processes$kmax
+  counting <- processes$counting
   
   
   if (type.sojourn == "fij") {

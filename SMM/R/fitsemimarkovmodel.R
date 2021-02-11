@@ -262,19 +262,19 @@ fitsemimarkovmodel <-
   # init.estim <- match.arg(init.estim)
   
 
-  sequences <- processes(sequences = sequences, states = states)
+  processes <- processes(sequences = sequences, states = states)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     
     if (!(cens.beg)) {
       
-      if (sequences$L > 1) {# If more than one sequence, use the estimation based on a couple Markov chain
-        estimate <- .fit.nonparam.couplemarkovchain(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+      if (processes$L > 1) {# If more than one sequence, use the estimation based on a couple Markov chain
+        estimate <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
       } else {
         if (!cens.end) {
-          estimate <- .fit.nonparam.nocensoring(processes = sequences, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
+          estimate <- .fit.nonparam.nocensoring(processes = processes, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
         } else {
-          estimate <- .fit.nonparam.couplemarkovchain(processes = sequences, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+          estimate <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
         }
       }
       
@@ -288,7 +288,7 @@ fitsemimarkovmodel <-
        
     }
   } else {
-    estimate <- .fit.param(sequences = sequences, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
+    estimate <- .fit.param(processes = processes, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
   }
   
   if (any(estimate$init == 0)) {

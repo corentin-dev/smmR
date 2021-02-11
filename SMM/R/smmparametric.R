@@ -498,6 +498,153 @@ getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' @description Computation of the log-likelihood for a semi-Markov model
 #'
 #' @param x An object of class [smmparametric].
+#' @param processes An object of class `processes`.
+#' 
+#' @noRd
+#'
+.loglik.smmparametric <- function(x, processes) {
+  
+  kmax <- processes$kmax
+  type.sojourn <- x$type.sojourn
+  cens.beg <- x$cens.beg
+  cens.end <- x$cens.end
+  
+  #############################
+  # Let's compute the log-likelihood
+  #############################
+  
+  init <- x$init # Initial distributiob
+  Nstarti <- processes$counting$Nstarti
+  maskNstarti <- Nstarti != 0 & init != 0
+  
+  pij <- x$ptrans # Transition matrix
+  Nij <- processes$counting$Nij
+  maskNij <- Nij != 0 & pij != 0
+  
+  f <- .get.f.smmparametric(x = x, k = kmax) # Compute the sojourn time distribution
+  
+  
+  if (type.sojourn == "fij") {
+    
+    Nijk <- processes$counting$Nijk
+    maskNijk <- Nijk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nijk[maskNijk] * log(f[maskNijk]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first right censored time to the log-likelihood
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
+      
+      Nbijk <- processes$counting$Nbijk
+      maskNbijk <- Nbijk != 0 & Fbar != 0
+      
+      # Contribution of the last right censored time to the log-likelihood
+      Fbarj <- t(apply(X = apply(X = getKernel.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
+      
+      Neik <- processes$counting$Neik
+      maskNeik <- Neik != 0 & Fbarj != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
+      
+    }
+    
+  } else if (type.sojourn == "fi") {
+    
+    Nik <- processes$counting$Nik
+    maskNik <- Nik != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nik[maskNik] * log(f[maskNik]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first and last right censored time to the log-likelihood
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
+      
+      Nbik <- processes$counting$Nbik
+      maskNbik <- Nbik != 0 & Fbar != 0
+      
+      Neik <- processes$counting$Neik
+      maskNeik <- Neik != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbar[maskNeik]))
+      
+    }
+    
+  } else if (type.sojourn == "fj") {
+    
+    Njk <- processes$counting$Njk
+    maskNjk <- Njk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Njk[maskNjk] * log(f[maskNjk]))
+    
+    if (cens.beg || cens.end) {
+      
+      # Contribution of the first right censored time to the log-likelihood
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
+      
+      Nbjk <- processes$counting$Nbjk
+      maskNbjk <- Nbjk != 0 & Fbar != 0
+      
+      # Contribution of the last right censored time to the log-likelihood
+      Fbarj <- pij %*% Fbar
+      
+      Neik <- processes$counting$Neik
+      maskNeik <- Neik != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
+        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
+      
+    }
+    
+  } else {
+    
+    Nk <- processes$counting$Nk
+    maskNk <- Nk != 0 & f != 0
+    
+    # Uncensored log-likelihood
+    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+      sum(Nij[maskNij] * log(pij[maskNij])) +
+      sum(Nk[maskNk] * log(f[maskNk]))
+    
+    if (cens.beg || cens.end) {# Censoring
+      
+      # Contribution of the first and last right censored time to the log-likelihood
+      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
+      
+      Nbk <- processes$counting$Nbk
+      maskNbk <- Nbk != 0 & Fbar != 0
+      
+      Nek <- processes$counting$Nek
+      maskNek <- Nek != 0 & Fbar != 0
+      
+      loglik <- loglik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
+        (1 * cens.end) * sum(Nek[maskNek] * log(Fbar[maskNek]))
+      
+    }
+    
+  }
+  
+  return(loglik)
+  
+}
+
+#' Log-likelihood Function
+#'
+#' @description Computation of the log-likelihood for a semi-Markov model
+#'
+#' @param x An object of class [smmparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
@@ -518,142 +665,11 @@ loglik.smmparametric <- function(x, sequences) {
     stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
   }
   
-  
-  sequences <- processes(sequences = sequences, states = x$states, verbose = FALSE)
-  kmax <- sequences$kmax
-  
-  type.sojourn <- x$type.sojourn
-  cens.beg <- x$cens.beg
-  cens.end <- x$cens.end
-  
-  #############################
-  # Let's compute the log-likelihood
-  #############################
-  
-  init <- x$init # Initial distributiob
-  Nstarti <- sequences$counting$Nstarti
-  maskNstarti <- Nstarti != 0 & init != 0
-  
-  pij <- x$ptrans # Transition matrix
-  Nij <- sequences$counting$Nij
-  maskNij <- Nij != 0 & pij != 0
-  
-  f <- .get.f.smmparametric(x = x, k = kmax) # Compute the sojourn time distribution
-  
-  
-  if (type.sojourn == "fij") {
-    
-    Nijk <- sequences$counting$Nijk
-    maskNijk <- Nijk != 0 & f != 0
-    
-    # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
-      sum(Nij[maskNij] * log(pij[maskNij])) +
-      sum(Nijk[maskNijk] * log(f[maskNijk]))
-    
-    if (cens.beg || cens.end) {# Censoring
-      
-      # Contribution of the first right censored time to the log-likelihood
-      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
-      
-      Nbijk <- sequences$counting$Nbijk
-      maskNbijk <- Nbijk != 0 & Fbar != 0
-      
-      # Contribution of the last right censored time to the log-likelihood
-      Fbarj <- t(apply(X = apply(X = getKernel.smmparametric(x = x, k = kmax)[, , -1], MARGIN = c(2, 3), sum), MARGIN = 1, cumsum))
-      
-      Neik <- sequences$counting$Neik
-      maskNeik <- Neik != 0 & Fbarj != 0
-      
-      loglik <- loglik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
-        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
-      
-    }
-    
-  } else if (type.sojourn == "fi") {
-    
-    Nik <- sequences$counting$Nik
-    maskNik <- Nik != 0 & f != 0
-    
-    # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
-      sum(Nij[maskNij] * log(pij[maskNij])) +
-      sum(Nik[maskNik] * log(f[maskNik]))
-    
-    if (cens.beg || cens.end) {# Censoring
-      
-      # Contribution of the first and last right censored time to the log-likelihood
-      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
-      
-      Nbik <- sequences$counting$Nbik
-      maskNbik <- Nbik != 0 & Fbar != 0
-      
-      Neik <- sequences$counting$Neik
-      maskNeik <- Neik != 0 & Fbar != 0
-      
-      loglik <- loglik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
-        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbar[maskNeik]))
-      
-    }
-    
-  } else if (type.sojourn == "fj") {
-    
-    Njk <- sequences$counting$Njk
-    maskNjk <- Njk != 0 & f != 0
-    
-    # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
-      sum(Nij[maskNij] * log(pij[maskNij])) +
-      sum(Njk[maskNjk] * log(f[maskNjk]))
-    
-    if (cens.beg || cens.end) {
-      
-      # Contribution of the first right censored time to the log-likelihood
-      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
-      
-      Nbjk <- sequences$counting$Nbjk
-      maskNbjk <- Nbjk != 0 & Fbar != 0
-      
-      # Contribution of the last right censored time to the log-likelihood
-      Fbarj <- pij %*% Fbar
-      
-      Neik <- sequences$counting$Neik
-      maskNeik <- Neik != 0 & Fbar != 0
-      
-      loglik <- loglik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
-        (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
-      
-    }
-    
-  } else {
-    
-    Nk <- sequences$counting$Nk
-    maskNk <- Nk != 0 & f != 0
-    
-    # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
-      sum(Nij[maskNij] * log(pij[maskNij])) +
-      sum(Nk[maskNk] * log(f[maskNk]))
-    
-    if (cens.beg || cens.end) {# Censoring
-      
-      # Contribution of the first and last right censored time to the log-likelihood
-      Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
-      
-      Nbk <- sequences$counting$Nbk
-      maskNbk <- Nbk != 0 & Fbar != 0
-      
-      Nek <- sequences$counting$Nek
-      maskNek <- Nek != 0 & Fbar != 0
-      
-      loglik <- loglik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
-        (1 * cens.end) * sum(Nek[maskNek] * log(Fbar[maskNek]))
-      
-    }
-    
-  }
+  processes <- processes(sequences = sequences, states = x$states, verbose = FALSE)
+  loglik <- .loglik.smmparametric(x = x, processes = processes)
   
   return(loglik)
+  
 }
 
 # Method to get the number of parameters
