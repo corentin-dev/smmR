@@ -241,7 +241,15 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
   return(ans)
 }
 
-# Function to check if an object is of class smmnonparametric
+#' Function to check if an object is of class `smmnonparametric`
+#'
+#' @description `is.smm` returns `TRUE` if `x` is an object of 
+#'   class `smmnonparametric`.
+#' 
+#' @param x An arbitrary R object.
+#'
+#' @export
+#' 
 is.smmnonparametric <- function(x) {
   inherits(x, "smmnonparametric")
 }

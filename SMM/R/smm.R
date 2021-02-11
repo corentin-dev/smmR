@@ -4,7 +4,7 @@
 #' 
 #' @param x An arbitrary R object.
 #'
-#' @noRd
+#' @export
 #' 
 is.smm <- function(x) {
   inherits(x, "smm")

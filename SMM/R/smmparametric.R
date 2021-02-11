@@ -282,7 +282,15 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   return(ans)
 }
 
-# Function to check if an object is of class smmparametric
+#' Function to check if an object is of class `smmparametric`
+#'
+#' @description `is.smm` returns `TRUE` if `x` is an object of 
+#'   class `smmparametric`.
+#' 
+#' @param x An arbitrary R object.
+#'
+#' @export
+#' 
 is.smmparametric <- function(x) {
   inherits(x, "smmparametric")
 }
