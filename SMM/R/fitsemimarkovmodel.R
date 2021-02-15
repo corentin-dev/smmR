@@ -1,18 +1,18 @@
 #' Maximum Likelihood Estimation (MLE) of a semi-Markov chain
-#'
+#' 
 #' @description Maximum Likelihood Estimation of a semi-Markov chain starting 
 #'   from one or several sequences. This estimation can be parametric or 
 #'   non-parametric, non-censored, censored at the beginning and/or at the end 
 #'   of the sequence, with one or several trajectories. Several parametric 
 #'   distributions are considered (Uniform, Geometric, Poisson, Discrete 
 #'   Weibull and Negative Binomial).
-#'
+#'   
 #' @details This function estimates a semi-Markov model in parametric or 
 #' non-parametric case, taking into account the type of sojourn time and the 
 #' censoring described in references. The non-parametric estimation concerns 
 #' sojourn time distributions defined by the user. For the parametric 
 #' estimation, several discrete distributions are considered (see below).
-#'
+#' 
 #' The difference between the Markov model and the semi-Markov model concerns 
 #' the modeling of the sojourn time. With a Markov chain, the sojourn time 
 #' distribution is modeled by a Geometric distribution (in discrete time). 
@@ -45,10 +45,10 @@
 #'      \eqn{f} is specified by the argument `param` in the parametric case 
 #'      and by `distr` in the non-parametric case.
 #'  }
-#'
+#'  
 #' The maximum likelihood estimation of the transition matrix of the embedded 
 #' Markov chain is \eqn{\widehat{p_{trans}}(i,j) = \frac{N_{ij}}{N_{i.}}}.
-#'
+#' 
 #' Five methods are proposed for the estimation of the initial distribution :
 #' \describe{
 #'   \item{Maximum Likelihood Estimator: }{The Maximum Likelihood Estimator 
@@ -65,7 +65,7 @@
 #'   \item{Uniform distribution: }{The initial probability of each state is 
 #'     equal to \eqn{1 / s}, with \eqn{s}, the number of states.}
 #'  }
-#'
+#'  
 #' Note that \eqn{q_{ij}(k) = p_{trans}(i,j) \ f_{ij}(k)} in the general case 
 #' (depending on the present state and on the next state). For particular cases, 
 #' we replace \eqn{f_{ij}(k)} by \eqn{f_{i.}(k)} (depending on the present 
@@ -98,7 +98,7 @@
 #' If the sequence is censored at the beginning and/or at the end, `cens.beg` 
 #' must be equal to `TRUE` and/or `cens.end` must be equal to `TRUE`. 
 #' All the sequences must be censored in the same way.
-#'
+#' 
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
 #' @param type.sojourn Type of sojourn time (for more explanations, see Details).
@@ -133,12 +133,12 @@
 #' @return Returns an object of class smm (a [smmnonparametric] 
 #'   object if `distr = "nonparametric"`, a [smmparametric] 
 #'   otherwise).
-#' 
+#'   
 #' @seealso [smmnonparametric], [smmparametric], [simulate.smmnonparametric],
 #'   [simulate.smmparametric], [plot.smmparametric], [plot.smmnonparametric]
 #'   
 #' @export
-#'
+#' 
 #' @examples
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)

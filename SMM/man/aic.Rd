@@ -7,8 +7,8 @@
 aic(x, sequences)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object for which there exists a \code{loglik} method to compute the
+log-likelihood.}
 
 \item{sequences}{A list of vectors representing the sequences for which the
 AIC will be computed based on \code{x}.}

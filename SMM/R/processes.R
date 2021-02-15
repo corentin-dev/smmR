@@ -1,12 +1,12 @@
 #' Compute processes and counting processes
-#'
+#' 
 #' @description Compute processes such as Y, T, U... and counting processes.
 #' 
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
 #' @param verbose Boolean. If TRUE, messages are generated.
 #' @return An object of class S3 `processes`.
-#'
+#' 
 #' @noRd
 #' 
 processes <- function(sequences, states, verbose = TRUE) {

@@ -1,12 +1,12 @@
 #' Parametric semi-Markov model specification
-#'
+#' 
 #' @description Creates a parametric model specification for a semi-Markov model.
-#'
+#' 
 #' @details This function creates a semi-Markov model object in the parametric 
 #' case, taking into account the type of sojourn time and the censoring 
 #' described in references. For the parametric specification, several discrete 
 #' distributions are considered (see below).
-#'
+#' 
 #' The difference between the Markov model and the semi-Markov model concerns 
 #' the modeling of the sojourn time. With a Markov chain, the sojourn time 
 #' distribution is modeled by a Geometric distribution (in discrete time). 
@@ -31,7 +31,7 @@
 #'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
 #'      \eqn{f} is specified by the argument `param` in the parametric case.
 #'  }
-#'
+#'  
 #' In this package we can choose different types of sojourn time. 
 #' Four options are available for the sojourn times:
 #' \itemize{
@@ -57,7 +57,7 @@
 #' If the sequence is censored at the beginning and/or at the end, `cens.beg` 
 #' must be equal to `TRUE` and/or `cens.end` must be equal to `TRUE`.
 #' All the sequences must be censored in the same way.
-#'
+#' 
 #' @param states Vector of state space of length \eqn{s}.
 #' @param init Vector of initial distribution of length \eqn{s}.
 #' @param ptrans Matrix of transition probabilities of the embedded Markov 
@@ -90,7 +90,7 @@
 #' @seealso [simulate], [fitsemimarkovmodel], [smmnonparametric]
 #' 
 #' @export
-#'
+#' 
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)
@@ -282,20 +282,23 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   return(ans)
 }
 
+
 #' Function to check if an object is of class `smmparametric`
-#'
-#' @description `is.smm` returns `TRUE` if `x` is an object of 
+#' 
+#' @description `is.smmparametric` returns `TRUE` if `x` is an object of 
 #'   class `smmparametric`.
 #' 
 #' @param x An arbitrary R object.
-#'
+#' 
 #' @export
 #' 
 is.smmparametric <- function(x) {
   inherits(x, "smmparametric")
 }
 
-# Method used to compute the semi-Markov kernel q (see method getKernel.smmparametric)
+
+# Method used to compute the semi-Markov kernel q 
+# (see method getKernel.smmparametric)
 .get.fijk.smmparametric <- function(x, k) {
   
   s <- x$s
@@ -370,6 +373,7 @@ is.smmparametric <- function(x) {
   
 }
 
+
 # Method to get the sojourn time distribution f
 .get.f.smmparametric <- function(x, k) {
   
@@ -432,6 +436,7 @@ is.smmparametric <- function(x) {
   
 }
 
+
 # Method to get the survival/reliability function Fbar
 # (useful to compute the contribution to the likelihood when censoring)
 .get.Fbar.smmparametric <- function(x, k) {
@@ -449,59 +454,34 @@ is.smmparametric <- function(x) {
   
 }
 
-#' Method to get the semi-Markov kernel \eqn{q}
-#'
-#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
-#' 
-#' @param x An object of class [smmparametric].
-#' @param k A positive integer giving the time horizon.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
-#' @param klim Optional. The time horizon used to approximate the series in the
-#'   computation of the mean recurrence times vector for the asymptotic 
-#'   variance.
-#' @return An array giving the value of \eqn{q_{ij}(k)} at each time between 0 
-#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
-#'   following components:
-#'   \itemize{
-#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
-#'      between 0 and `k`;}
-#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
-#'  }
-#'
-#' @export
-#' 
-getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
+.getKpar.smmparametric <- function(x) {
   
-  q <- array(data = 0, dim = c(x$s, x$s, k + 1))
+  distr <- x$distr
   
-  fijk <- .get.fijk.smmparametric(x, k)
-  q[, , 2:(k + 1)] <- array(x$ptrans, c(x$s, x$s, k)) * fijk
+  nbDweibull <- length(which(distr == "dweibull"))
+  nbGeom <- length(which(distr == "geom"))
+  nbNbinom <- length(which(distr == "nbinom"))
+  nbPois <- length(which(distr == "pois"))
+  nbUnif <- length(which(distr == "unif"))
   
-  if (var) {
-    
-    mu <- meanRecurrenceTimes(x = x, klim = klim)
-    sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
-    
-    return(list(x = q, sigma2 = sigma2))
-    
-  } else {
-    
-    return(q)
-    
-  }
+  kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
   
+  return(kpar)
 }
 
+
 #' Log-likelihood Function
-#'
+#' 
 #' @description Computation of the log-likelihood for a semi-Markov model
-#'
+#' 
 #' @param x An object of class [smmparametric].
 #' @param processes An object of class `processes`.
 #' 
 #' @noRd
-#'
+#' 
 .loglik.smmparametric <- function(x, processes) {
   
   kmax <- processes$kmax
@@ -640,17 +620,120 @@ getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
   
 }
 
+
+#' Akaike Information Criterion (AIC)
+#' 
+#' @description Computation of the Akaike Information Criterion.
+#' 
+#' @param x An object of class [smmparametric].
+#' @param sequences A list of vectors representing the sequences for which the 
+#'   AIC will be computed based on `x`.
+#' @return Value of the AIC.
+#' 
+#' @noRd
+#' 
+#' @export
+#' 
+aic.smmparametric <- function(x, sequences) {
+  
+  loglik <- loglik(x, sequences)
+  
+  kpar <- .getKpar(x)
+  
+  aic <- -2 * loglik + 2 * kpar
+  
+  return(aic)
+  
+}
+
+#' Bayesian Information Criterion (BIC)
+#' 
+#' @description Computation of the Bayesian Information Criterion.
+#' 
+#' @param x An object of class [smmparametric].
+#' @param sequences A list of vectors representing the sequences for which the 
+#'   BIC will be computed based on `x`.
+#' @return Value of the BIC.
+#' 
+#' @noRd
+#' 
+#' @export
+#' 
+bic.smmparametric <- function(x, sequences) {
+  
+  loglik <- loglik(x, sequences)
+  
+  kpar <- .getKpar(x)
+  
+  n <- sum(unlist(lapply(sequences, length)))
+  
+  bic <- -2 * loglik + log(n) * kpar
+  
+  return(bic)
+  
+}
+
+
+#' Method to get the semi-Markov kernel \eqn{q}
+#' 
+#' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
+#' 
+#' @param x An object of class [smmparametric].
+#' @param k A positive integer giving the time horizon.
+#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param klim Optional. The time horizon used to approximate the series in the
+#'   computation of the mean recurrence times vector for the asymptotic 
+#'   variance.
+#' @return An array giving the value of \eqn{q_{ij}(k)} at each time between 0 
+#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
+#'   following components:
+#'   \itemize{
+#'    \item{x: }{an array giving the value of \eqn{q_{ij}(k)} at each time 
+#'      between 0 and `k`;}
+#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
+#'      \eqn{\sigma_{q}^{2}(i, j, k)}.}
+#'  }
+#'  
+#' @noRd
+#' 
+#' @export
+#' 
+getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
+  
+  q <- array(data = 0, dim = c(x$s, x$s, k + 1))
+  
+  fijk <- .get.fijk.smmparametric(x, k)
+  q[, , 2:(k + 1)] <- array(x$ptrans, c(x$s, x$s, k)) * fijk
+  
+  if (var) {
+    
+    mu <- meanRecurrenceTimes(x = x, klim = klim)
+    sigma2 <- array(data = mu, dim = c(x$s, x$s, k + 1)) * q * (1 - q)
+    
+    return(list(x = q, sigma2 = sigma2))
+    
+  } else {
+    
+    return(q)
+    
+  }
+  
+}
+
+
 #' Log-likelihood Function
-#'
+#' 
 #' @description Computation of the log-likelihood for a semi-Markov model
-#'
+#' 
 #' @param x An object of class [smmparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
 #' 
+#' @noRd
+#' 
 #' @export
-#'
+#' 
 loglik.smmparametric <- function(x, sequences) {
   
   #############################
@@ -672,77 +755,13 @@ loglik.smmparametric <- function(x, sequences) {
   
 }
 
-# Method to get the number of parameters
-# (useful for the computation of criteria such as AIC and BIC)
-.getKpar.smmparametric <- function(x) {
-  
-  distr <- x$distr
-  
-  nbDweibull <- length(which(distr == "dweibull"))
-  nbGeom <- length(which(distr == "geom"))
-  nbNbinom <- length(which(distr == "nbinom"))
-  nbPois <- length(which(distr == "pois"))
-  nbUnif <- length(which(distr == "unif"))
-  
-  kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
-  
-  return(kpar)
-}
-
-#' Akaike Information Criterion (AIC)
-#'
-#' @description Computation of the Akaike Information Criterion.
-#'
-#' @param x An object of class [smmparametric].
-#' @param sequences A list of vectors representing the sequences for which the 
-#'   AIC will be computed based on `x`.
-#' @return Value of the AIC.
-#' 
-#' @export
-#'
-aic.smmparametric <- function(x, sequences) {
-  
-  loglik <- loglik(x, sequences)
-  
-  kpar <- .getKpar(x)
-  
-  aic <- -2 * loglik + 2 * kpar
-  
-  return(aic)
-  
-}
-
-#' Bayesian Information Criterion (BIC)
-#'
-#' @description Computation of the Bayesian Information Criterion.
-#'
-#' @param x An object of class [smmparametric].
-#' @param sequences A list of vectors representing the sequences for which the 
-#'   BIC will be computed based on `x`.
-#' @return Value of the BIC.
-#' 
-#' @export
-#'
-bic.smmparametric <- function(x, sequences) {
-  
-  loglik <- loglik(x, sequences)
-  
-  kpar <- .getKpar(x)
-  
-  n <- sum(unlist(lapply(sequences, length)))
-  
-  bic <- -2 * loglik + log(n) * kpar
-  
-  return(bic)
-  
-}
 
 #' Plot function for an object of class smmparametric
-#'
+#' 
 #' @description Displays the densities for the conditional sojourn time 
 #'   distributions depending on the current state `i` and on the next state 
 #'   `j`.
-#'
+#'   
 #' @param x An object of class [smmparametric].
 #' @param i An integer giving the current state in the following cases: 
 #'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
@@ -755,8 +774,9 @@ bic.smmparametric <- function(x, sequences) {
 #' @param ... Arguments passed to plot.
 #' 
 #' @export
-#'
+#' 
 #' @import graphics
+#' 
 plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   #############################

@@ -10,6 +10,6 @@ is.smmnonparametric(x)
 \item{x}{An arbitrary R object.}
 }
 \description{
-\code{is.smm} returns \code{TRUE} if \code{x} is an object of
+\code{is.smmnonparametric} returns \code{TRUE} if \code{x} is an object of
 class \code{smmnonparametric}.
 }

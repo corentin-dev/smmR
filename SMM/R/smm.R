@@ -1,17 +1,18 @@
 #' Function to check if an object is of class `smm`
-#'
+#' 
 #' @description `is.smm` returns `TRUE` if `x` is an object of class `smm`.
 #' 
 #' @param x An arbitrary R object.
-#'
+#' 
 #' @export
 #' 
 is.smm <- function(x) {
   inherits(x, "smm")
 }
 
+
 #' Method to get the semi-Markov kernel \eqn{q_{Y}}
-#'
+#' 
 #' @description Computes the semi-Markov kernel \eqn{q_{Y}(k)}
 #'   (See proposition 5.1 p.106).
 #' 
@@ -20,7 +21,7 @@ is.smm <- function(x) {
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @return An array giving the value of \eqn{q_{Y}(k)} at each time between 0 
 #'   and `k`.
-#'
+#' 
 #' @noRd
 #' 
 .get.qy <- function(x, k, upstates = x$upstates) {
@@ -45,53 +46,38 @@ is.smm <- function(x) {
   
 }
 
-#' Method to get the mean recurrence times \eqn{\mu}
-#'
-#' @description Method to get the mean recurrence times \eqn{\mu}.
+
+#' Method to compute the value of \eqn{H}
 #' 
-#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
-#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
-#'   
-#'   We are interested in investigating the mean recurrence times of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
-#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
-#'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
-#'   
-#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
-#'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
-#'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
-#'   these time points.
-#'   
-#'   The mean recurrence of an arbitrary state \eqn{j \in E} is given by:
-#'   
-#'   \deqn{\mu_{jj} = \frac{\sum_{i \in E} \nu(i) m_{i}}{\nu(j)}}
-#'   
-#'   where \eqn{m_{i}} is the mean sojourn time in state \eqn{i \in E} 
-#'   (see [meanSojournTimes] function for the computation).
+#' @description Method to compute the value of \eqn{H} (See equation (3.4) p.46).
 #' 
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
-#' @param klim Optional. The time horizon used to approximate the series in the 
-#'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes] function).
-#' @return A vector giving the mean recurrence time 
-#'   \eqn{(\mu_{i})_{i \in [1, \dots, s]}}.
-#'
-#' @export
+#' @param q An array giving the values of the kernel for a giving time horizon 
+#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `getKernel` 
+#'   or `.get.qy`).
+#' @return An array giving the value of \eqn{H(k)} at each time between 0 
+#'   and `k`.
 #' 
-meanRecurrenceTimes <- function(x, klim = 10000) {
+#' @noRd
+#' 
+.get.H <- function(q) {
   
-  nu <- .stationaryDistribution(ptrans = x$ptrans)
-  m <- meanSojournTimes(x = x, klim = klim)
-  mu <- sum(nu * m) / nu
+  k <- dim(q)[3] - 1
   
-  return(mu)
+  hik <- apply(X = q, MARGIN = c(1, 3), sum)
+  Hik <- t(apply(X = hik, MARGIN = 1, cumsum))
   
+  H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
+  
+  for (j in 1:(k + 1)) {
+    H[, , j] <- diag(Hik[, j])
+  }
+  
+  return(H)
 }
 
+
 #' Method to compute the value of \eqn{\psi}
-#'
+#' 
 #' @description Method to compute the value of \eqn{\psi}
 #'   (See equation (3.16) p.53).
 #' 
@@ -100,7 +86,7 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   or `.get.qy`).
 #' @return An array giving the value of \eqn{\psi(k)} at each time between 0 
 #'   and `k`.
-#'
+#' 
 #' @noRd
 #' 
 .get.psi <- function(q) {
@@ -124,36 +110,9 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
   
 }
 
-#' Method to compute the value of \eqn{H}
-#'
-#' @description Method to compute the value of \eqn{H} (See equation (3.4) p.46).
-#' 
-#' @param q An array giving the values of the kernel for a giving time horizon 
-#'   \eqn{[0, \dots, k]} (This kernel `q` is the output of the method `getKernel` 
-#'   or `.get.qy`).
-#' @return An array giving the value of \eqn{H(k)} at each time between 0 
-#'   and `k`.
-#'
-#' @noRd
-#' 
-.get.H <- function(q) {
-  
-  k <- dim(q)[3] - 1
-  
-  hik <- apply(X = q, MARGIN = c(1, 3), sum)
-  Hik <- t(apply(X = hik, MARGIN = 1, cumsum))
-  
-  H <- array(data = 0, dim = c(nrow(q), ncol(q), k + 1))
-  
-  for (j in 1:(k + 1)) {
-    H[, , j] <- diag(Hik[, j])
-  }
-  
-  return(H)
-}
 
 #' Method to compute the value of \eqn{P}
-#'
+#' 
 #' @description Method to compute the value of \eqn{P} 
 #'   (See equation (3.33) p.59).
 #' 
@@ -175,7 +134,7 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{P}^{2}(i, j, k)}.}
 #'  }
-#'
+#'  
 #' @noRd
 #' 
 .get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
@@ -206,19 +165,20 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
     mu <- meanRecurrenceTimes(x = x, klim = klim)
     
     sigma2 <- varP(mu, q, psi, Psi, H)
-   
+    
     return(list(x = p, sigma2 = sigma2))
-     
+    
   } else {
     
     return(p)
-      
+    
   }
   
 }
 
+
 #' Method to compute the value of \eqn{P_{Y}}
-#'
+#' 
 #' @description Method to compute the value of \eqn{P_{Y}}
 #'   (See Proposition 5.1 p.105-106).
 #' 
@@ -228,7 +188,7 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   should be computed. `states` is a subset of \eqn{E}.
 #' @return An array giving the value of \eqn{P_{Y}(k)} at each time between 0
 #'   and `k`.
-#'
+#' 
 #' @noRd
 #' 
 .get.Py <- function(x, k, upstates = x$states) {
@@ -250,13 +210,109 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
   
 }
 
+
+#' Mean Sojourn Times Function
+#' 
+#' @description The mean sojourn time is the mean time spent in each state.
+#' 
+#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
+#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
+#'   
+#'   We are interested in investigating the mean sojourn times of a 
+#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
+#'   that the evolution in time of the system is governed by an E-state space 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
+#'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
+#'   
+#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
+#'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
+#'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
+#'   these time points.
+#'   
+#'   The mean sojourn times vector is defined as follows:
+#'   
+#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
+#'   
+#' @param x An object inheriting from the S3 class `smm` (an object of class
+#'   [smmparametric] or [smmnonparametric]).
+#' @param states Vector giving the states for which the mean sojourn time 
+#'   should be computed. `states` is a subset of \eqn{E}.
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes] function).
+#' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
+#'   mean sojourn times for each state \eqn{i \in E}.
+#' 
+#' @export
+#' 
+meanSojournTimes <- function(x, states = x$states, klim = 10000) {
+  
+  q <- getKernel(x = x, k = klim)
+  H1 <- .get.H(q)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
+  
+  if (dim(H1)[1] != 1) {
+    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)
+  } else {
+    m1 <- sum(1 - H1)
+  }
+  
+  return(m1)
+}
+
+
+#' Method to get the mean recurrence times \eqn{\mu}
+#' 
+#' @description Method to get the mean recurrence times \eqn{\mu}.
+#' 
+#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
+#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
+#'   
+#'   We are interested in investigating the mean recurrence times of a 
+#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
+#'   that the evolution in time of the system is governed by an E-state space 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
+#'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
+#'   
+#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
+#'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
+#'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
+#'   these time points.
+#'   
+#'   The mean recurrence of an arbitrary state \eqn{j \in E} is given by:
+#'   
+#'   \deqn{\mu_{jj} = \frac{\sum_{i \in E} \nu(i) m_{i}}{\nu(j)}}
+#'   
+#'   where \eqn{m_{i}} is the mean sojourn time in state \eqn{i \in E} 
+#'   (see [meanSojournTimes] function for the computation).
+#'   
+#' @param x An object inheriting from the S3 class `smm` (an object of class
+#'   [smmparametric] or [smmnonparametric]).
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes] function).
+#' @return A vector giving the mean recurrence time 
+#'   \eqn{(\mu_{i})_{i \in [1, \dots, s]}}.
+#' 
+#' @export
+#' 
+meanRecurrenceTimes <- function(x, klim = 10000) {
+  
+  nu <- .stationaryDistribution(ptrans = x$ptrans)
+  m <- meanSojournTimes(x = x, klim = klim)
+  mu <- sum(nu * m) / nu
+  
+  return(mu)
+  
+}
+
+
 #' Reliability Function
-#'
+#' 
 #' @description Consider a system \eqn{S_{ystem}} starting to function at time 
 #'   \eqn{k = 0}. The reliability of \eqn{S_{ystem}} at time \eqn{k \in N} is 
 #'   the probability that the system has functioned without failure in the 
 #'   period \eqn{[0, k]}.
-#'
+#'   
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -279,12 +335,12 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   \eqn{j \in D}, means that the system is not operational at time \eqn{k} 
 #'   due to the mode of failure \eqn{j} or that the system is under the 
 #'   repairing mode \eqn{j}.
-#' 
+#'   
 #'   Let \eqn{T_D} denote the first passage time in subset \eqn{D}, called 
 #'   the lifetime of the system, i.e.,
 #'   
 #'  \deqn{T_D := \textrm{inf}\{ n \in N;\ Z_n \in D\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
-#'
+#'  
 #'  The reliability at time \eqn{k \in N} of a discrete-time semi-Markov system is
 #'  
 #'  \deqn{R(k) := P(T_D > k) = P(Zn \in U,n = 0,\dots,k)}
@@ -292,7 +348,7 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'  which can be rewritten as follows:
 #'  
 #'  \deqn{R(k) = \sum_{i \in U} P(Z_0 = i) P(T_D > k | Z_0 = i) = \sum_{i \in U} \alpha_i P(T_D > k | Z_0 = i)}
-#'
+#'  
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric] or [smmnonparametric]).
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
@@ -312,9 +368,9 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{R}^{2}(k)}.}
 #'  }
-#'
+#'  
 #' @export
-#'
+#' 
 reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   
   #############################
@@ -387,13 +443,14 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 
 }
 
+
 #' Maintainability Function
-#'
+#' 
 #' @description For a reparable system \eqn{S_{ystem}} for which the failure 
 #'   occurs at time \eqn{k = 0}, its maintainability at time \eqn{k \in N} is 
 #'   the probability that the system is repaired up to time \eqn{k}, given that
 #'   it has failed at time \eqn{k = 0}.
-#' 
+#'   
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -416,11 +473,11 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   \eqn{j \in D}, means that the system is not operational at time \eqn{k} 
 #'   due to the mode of failure \eqn{j} or that the system is under the 
 #'   repairing mode \eqn{j}.
-#' 
+#'   
 #'   Thus, we take \eqn{(\alpha_{i} := P(Z_{0} = i))_{i \in U} = 0} and we 
 #'   denote by \eqn{T_U} the first hitting time of subset \eqn{U}, called the 
 #'   duration of repair or repair time, that is,
-#' 
+#'   
 #'   \deqn{T_U := \textrm{inf}\{ n \in N;\ Z_n \in U\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
 #'   
 #'   The maintainability at time \eqn{k \in N} of a discrete-time semi-Markov 
@@ -446,9 +503,9 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{M}^{2}(k)}.}
 #'  }
-#'
+#'  
 #' @export
-#'
+#' 
 maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 10000) {
   
   #############################
@@ -489,13 +546,14 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
   
 }
 
+
 #' Availability Function
-#'
+#' 
 #' @description The pointwise (or instantaneous) availability of a system 
 #'   \eqn{S_{ystem}} at time \eqn{k \in N} is the probability that the system 
 #'   is operational at time \eqn{k} (independently of the fact that the system 
 #'   has failed or not in \eqn{[0, k)}).
-#'
+#' 
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -532,7 +590,7 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
 #'   system at time \eqn{k \in N}, given that it starts in state \eqn{i \in E},
 #'   
 #'   \deqn{A_i(k) = P(Z_k \in U | Z_0 = i).}
-#'
+#'   
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric] or [smmnonparametric]).
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
@@ -552,9 +610,9 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{A}^{2}(k)}.}
 #'  }
-#'
+#'  
 #' @export
-#'
+#' 
 availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   
   #############################
@@ -624,13 +682,14 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
   
 }
 
+
 #' BMP-Failure Rate Function
-#'
+#' 
 #' @description Consider a system \eqn{S_{ystem}} starting to work at time 
 #'   \eqn{k = 0}. The BMP-failure rate at time \eqn{k \in N} is the conditional 
 #'   probability that the failure of the system occurs at time \eqn{k}, given 
 #'   that the system has worked until time \eqn{k - 1}.
-#'
+#' 
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -657,7 +716,7 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   The BMP-failure rate at time \eqn{k \in N} is the conditional probability 
 #'   that the failure of the system occurs at time \eqn{k}, given that the 
 #'   system has worked until time \eqn{k - 1}.
-#'
+#'   
 #'   Let \eqn{T_D} denote the first passage time in subset \eqn{D}, called 
 #'   the lifetime of the system, i.e.,
 #'   
@@ -706,9 +765,9 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{\lambda}^{2}(k)}.}
 #'  }
-#'
+#'  
 #' @export
-#'
+#' 
 failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
   
   ###########################################################
@@ -754,8 +813,9 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
   
 }
 
+
 #' RG-Failure Rate Function
-#'
+#' 
 #' @description Discrete-time adapted failure rate, proposed by D. Roy and 
 #'   R. Gupta. Classification of discrete lives. Microelectronics Reliability, 
 #'   32(10):1459--1473, 1992.
@@ -775,7 +835,7 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
 #'   
 #'   The computation of the RG-failure rate is based on the [failureRateBMP] 
 #'   function (See [failureRateBMP] for details about the parameter `epsilon`).
-#' 
+#'   
 #' @param x An object inheriting from the S3 class `smm` (an object of class
 #'   [smmparametric] or [smmnonparametric]).
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
@@ -796,9 +856,9 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
 #'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
 #'      \eqn{\sigma_{r}^{2}(k)}.}
 #'  }
-#'
+#'  
 #' @export
-#'
+#' 
 failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
   
   lbda <- failureRateBMP(x = x, k = k, upstates = upstates, var = var, epsilon = epsilon, klim = klim)
@@ -815,60 +875,13 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3
   
 }
 
-#' Mean Sojourn Times Function
-#'
-#' @description The mean sojourn time is the mean time spent in each state.
-#'
-#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
-#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
-#'   
-#'   We are interested in investigating the mean sojourn times of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
-#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
-#'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
-#'   
-#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
-#'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
-#'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
-#'   these time points.
-#'   
-#'   The mean sojourn times vector is defined as follows:
-#'   
-#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
-#'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
-#' @param states Vector giving the states for which the mean sojourn time 
-#'   should be computed. `states` is a subset of \eqn{E}.
-#' @param klim Optional. The time horizon used to approximate the series in the 
-#'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes] function).
-#' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
-#'   mean sojourn times for each state \eqn{i \in E}.
-#' 
-#' @export
-#'
-meanSojournTimes <- function(x, states = x$states, klim = 10000) {
-  
-  q <- getKernel(x = x, k = klim)
-  H1 <- .get.H(q)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
-  
-  if (dim(H1)[1] != 1) {
-    m1 <- apply(1 - apply(H1, 3, diag), 1, sum)
-  } else {
-    m1 <- sum(1 - H1)
-  }
-  
-  return(m1)
-}
 
 #' Mean Time To Failure (MTTF) Function
-#'
+#' 
 #' @description Consider a system \eqn{S_{ystem}} starting to work at time 
 #'   \eqn{k = 0}. The mean time to failure (MTTF) is defined as the mean 
 #'   lifetime.
-#'
+#' 
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -921,7 +934,7 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #'  }
 #' 
 #' @export
-#'
+#' 
 mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   
   p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates), drop = FALSE]
@@ -957,12 +970,13 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   
 }
 
+
 #' Mean Time To Repair (MTTR) Function
-#'
+#' 
 #' @description Consider a system \eqn{S_{ystem}} starting to fail at time 
 #'   \eqn{k = 0}. The mean time to repair (MTTR) is defined as the mean of the 
 #'   repair duration.
-#'
+#'   
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
@@ -1013,9 +1027,9 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
 #'    \item{sigma2: }{the variances of the estimator for each estimation of the 
 #'      mean time to repair \eqn{\sigma_{MTTR_{i}}^{2}(k)};}
 #'  }
-#' 
+#'  
 #' @export
-#'
+#' 
 mttr <- function(x, downstates = x$states, klim = 10000, var = FALSE) {
   
   return(mttf(x = x, upstates = downstates, klim = klim, var = var))

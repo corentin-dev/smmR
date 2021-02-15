@@ -1,11 +1,11 @@
 #' Simulates semi-Markov chains
-#'
+#' 
 #' @description Simulates sequences from a parametric semi-Markov model.
-#'
+#' 
 #' @details If `nsim` is a single integer then a chain of that length is 
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
-#'
+#' 
 #' @param object An object of class [smmparametric].
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
@@ -16,7 +16,7 @@
 #' @seealso [smmparametric], [smmnonparametric], [fitsemimarkovmodel]
 #' 
 #' @export
-#'
+#' 
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)

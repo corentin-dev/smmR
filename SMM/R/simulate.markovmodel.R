@@ -1,11 +1,11 @@
 #' Simulates k-th order Markov chains
-#'
+#' 
 #' @description Simulates k-th order Markov chains.
-#'
+#' 
 #' @details If `nsim` is a single integer then a chain of that length is 
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
-#'
+#' 
 #' @param object An object of class [markovmodel].
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
@@ -16,7 +16,7 @@
 #' @seealso [markovmodel], [fitmarkovmodel]
 #' 
 #' @export
-#'
+#' 
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)

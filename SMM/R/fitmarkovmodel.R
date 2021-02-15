@@ -1,9 +1,9 @@
 #' Maximum Likelihood Estimation (MLE) of a k-th order Markov chain
-#'
+#' 
 #' @description Maximum Likelihood Estimation of the transition matrix and 
 #'   initial distribution of a k-th order Markov chain starting from one or 
 #'   several sequences.
-#'
+#' 
 #' @details Let \eqn{X_1, X_2, ..., X_n} be a trajectory of length \eqn{n} of 
 #'   the Markov chain \eqn{X = (X_m)_{m \in N}} of order \eqn{k = 1} with 
 #'   transition matrix \eqn{p_{trans}(i,j) = P(X_{m+1} = j | X_m = i)}. The 
@@ -12,7 +12,7 @@
 #'   is the number of transitions from state \eqn{i} to state \eqn{j} and 
 #'   \eqn{N_{i.}} is the number of transition from state \eqn{i} to any state. 
 #'   For \eqn{k > 1} we have similar expressions.
-#'
+#'   
 #'  The initial distribution of a k-th order Markov chain is defined as 
 #'  \eqn{\mu_i = P(X_1 = i)}. Five methods are proposed for the estimation
 #'  of the latter :
@@ -40,7 +40,7 @@
 #'    \item{Uniform distribution: }{The initial probability of each state is 
 #'       equal to \eqn{1 / s}, with \eqn{s}, the number of states.}
 #'  }
-#'
+#'  
 #' @param sequences A list of vectors representing the sequences.
 #' @param states Vector of state space (of length s).
 #' @param k Order of the Markov chain.
@@ -62,13 +62,13 @@
 #'     \item `init.estim = "unif"`: the initial probability of each state is 
 #'       equal to \eqn{1 / s}, with \eqn{s} the number of states.
 #'   }
-#' 
+#'   
 #' @return An object of class [markovmodel].
 #' 
 #' @seealso [markovmodel], [simulate.markovmodel]
 #' 
 #' @export
-#'
+#' 
 #' @examples 
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)

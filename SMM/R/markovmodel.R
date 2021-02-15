@@ -1,7 +1,7 @@
 #' Markov model specification
-#'
+#' 
 #' @description Creates a model specification of a Markov model.
-#'
+#' 
 #' @param states Vector of state space of length s.
 #' @param k Order of the Markov chain.
 #' @param init Vector of initial distribution of length s ^ k.
@@ -11,7 +11,7 @@
 #' @seealso [simulate.markovmodel], [fitmarkovmodel]
 #' 
 #' @export
-#'
+#' 
 markovmodel <- function(states, init, ptrans, k = 1) {
 
   #############################
@@ -81,22 +81,99 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   return(ans)
 }
 
-# Function to check if an object is of class markovmodel
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
+.getKpar.markovmodel <- function(x) {
+  
+  s <- x$s
+  
+  kpar <- (s - 1) * s ^ x$k
+  
+  return(kpar)
+}
+
+
+#' Function to check if an object is of class `markovmodel`
+#' 
+#' @description `is.markovmodel` returns `TRUE` if `x` is an object of 
+#'   class `markovmodel`.
+#' 
+#' @param x An arbitrary R object.
+#' 
+#' @export
+#' 
 is.markovmodel <- function(x) {
   inherits(x, "markovmodel")
 }
 
+
+#' Akaike Information Criterion (AIC)
+#' 
+#' @description Computation of the Akaike Information Criterion.
+#' 
+#' @param x An object of class [markovmodel].
+#' @param sequences A list of vectors representing the sequences for which the 
+#'   AIC will be computed based on `x`.
+#' @return Value of the AIC.
+#' 
+#' @noRd
+#' 
+#' @export
+#' 
+aic.markovmodel <- function(x, sequences) {
+  
+  loglik <- loglik(x, sequences)
+  
+  kpar <- .getKpar(x)
+  
+  aic <- -2 * loglik + 2 * kpar
+  
+  return(aic)
+  
+}
+
+
+#' Bayesian Information Criterion (BIC)
+#' 
+#' @description Computation of the Bayesian Information Criterion.
+#' 
+#' @param x An object of class [markovmodel].
+#' @param sequences A list of vectors representing the sequences for which the 
+#'   BIC will be computed based on `x`.
+#' @return Value of the BIC.
+#' 
+#' @noRd
+#' 
+#' @export
+#' 
+bic.markovmodel <- function(x, sequences) {
+  
+  loglik <- loglik(x, sequences)
+  
+  kpar <- .getKpar(x)
+  
+  n <- sum(unlist(lapply(sequences, length)))
+  
+  bic <- -2 * loglik + log(n) * kpar
+  
+  return(bic)
+}
+
+
 #' Loglikelihood
-#'
+#' 
 #' @description Computation of the log-likelihood for a Markov model
-#'
+#' 
 #' @param x An object of class [markovmodel].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
 #' 
+#' @noRd
+#' 
 #' @export
-#'
+#' 
 loglik.markovmodel <- function(x, sequences) {
   
   #############################
@@ -134,62 +211,4 @@ loglik.markovmodel <- function(x, sequences) {
   loglik <- sum(contrInit) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
   
   return(loglik)
-}
-
-# Method to get the number of parameters
-# (useful for the computation of criteria such as AIC and BIC)
-.getKpar.markovmodel <- function(x) {
-  
-  s <- x$s
-  
-  kpar <- (s - 1) * s ^ x$k
-  
-  return(kpar)
-}
-
-#' Akaike Information Criterion (AIC)
-#'
-#' @description Computation of the Akaike Information Criterion.
-#'
-#' @param x An object of class [markovmodel].
-#' @param sequences A list of vectors representing the sequences for which the 
-#'   AIC will be computed based on `x`.
-#' @return Value of the AIC.
-#' 
-#' @export
-#'
-aic.markovmodel <- function(x, sequences) {
-  
-  loglik <- loglik(x, sequences)
-  
-  kpar <- .getKpar(x)
-  
-  aic <- -2 * loglik + 2 * kpar
-  
-  return(aic)
-  
-}
-
-#' Bayesian Information Criterion (BIC)
-#'
-#' @description Computation of the Bayesian Information Criterion.
-#'
-#' @param x An object of class [markovmodel].
-#' @param sequences A list of vectors representing the sequences for which the 
-#'   BIC will be computed based on `x`.
-#' @return Value of the BIC.
-#' 
-#' @export
-#'
-bic.markovmodel <- function(x, sequences) {
-  
-  loglik <- loglik(x, sequences)
-  
-  kpar <- .getKpar(x)
-  
-  n <- sum(unlist(lapply(sequences, length)))
-  
-  bic <- -2 * loglik + log(n) * kpar
-  
-  return(bic)
 }
