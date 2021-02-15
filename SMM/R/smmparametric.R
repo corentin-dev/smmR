@@ -646,6 +646,7 @@ aic.smmparametric <- function(x, sequences) {
   
 }
 
+
 #' Bayesian Information Criterion (BIC)
 #' 
 #' @description Computation of the Bayesian Information Criterion.
@@ -756,27 +757,7 @@ loglik.smmparametric <- function(x, sequences) {
 }
 
 
-#' Plot function for an object of class smmparametric
-#' 
-#' @description Displays the densities for the conditional sojourn time 
-#'   distributions depending on the current state `i` and on the next state 
-#'   `j`.
-#'   
-#' @param x An object of class [smmparametric].
-#' @param i An integer giving the current state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
-#'   ignored.
-#' @param j An integer giving the next state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
-#'   ignored.
-#' @param klim An integer giving the limit value for which the density will be 
-#'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
-#' @param ... Arguments passed to plot.
-#' 
 #' @export
-#' 
-#' @import graphics
-#' 
 plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   #############################
@@ -869,4 +850,65 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   plot.default(x = 1:klim, y = f, xlab = "k", ylab = ylab, ...)
   title(main = main)
+}
+
+
+#' @export
+simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
+  
+  ###########################################################
+  ###########################################################
+  # The algorithm used to simulate the sequences is the following:
+  # 
+  # 1. Set k = 0, S_{0} = 0 and sample J_{0} from the initial distribution \alpha;
+  # 2. Sample the random variable J \sim p(J_{k} , .) and set J_{k+1} = J(\omega);
+  # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
+  # 4. Set S_{k+1} = S_{k} + X;
+  # 5. If S_{k+1} >= M, then end;
+  # 6. Else, set k= k + 1 and continue to step 2.
+  # 
+  ###########################################################
+  ###########################################################
+  
+  if (is.null(seed)) {
+    seed <- as.numeric(Sys.time())
+  }
+  
+  # Preparation of the parameters and the distributions matrix to ease the sampling process
+  param1 <- rep.int(x = NA, times = object$s)
+  param2 <- rep.int(x = NA, times = object$s)
+  distributions <- array(data = NA, dim = c(object$s, object$s))
+  if (object$type.sojourn == "fij") {
+    param1 <- object$param[, , 1]
+    param2 <- object$param[, , 2]
+    distributions <- object$distr
+  } else if (object$type.sojourn == "fj") {
+    param1 <- t(matrix(data = object$param[, 1], nrow = object$s, ncol = object$s))
+    param2 <- t(matrix(data = object$param[, 2], nrow = object$s, ncol = object$s))
+    distributions <- t(matrix(data = object$distr, nrow = object$s, ncol = object$s))
+  } else if (object$type.sojourn == "fi") {
+    param1 <- matrix(data = object$param[, 1], nrow = object$s, ncol = object$s)
+    param2 <- matrix(data = object$param[, 2], nrow = object$s, ncol = object$s)
+    distributions <- matrix(data = object$distr, nrow = object$s, ncol = object$s)
+  } else {
+    param1 <- matrix(data = object$param[1], nrow = object$s, ncol = object$s)
+    param2 <- matrix(data = object$param[2], nrow = object$s, ncol = object$s)
+    distributions <- matrix(data = object$distr, nrow = object$s, ncol = object$s)
+  }
+  
+  distrib <- matrix(data = NA, nrow = nrow(distributions), ncol = ncol(distributions))
+  
+  distrib[distributions == "unif"] <- 0
+  distrib[distributions == "geom"] <- 1
+  distrib[distributions == "pois"] <- 2
+  distrib[distributions == "dweibull"] <- 3
+  distrib[distributions == "nbinom"] <- 4
+  
+  sequences <- simulateParam(seed, nsim, object$init, object$ptrans, distrib, param1,
+                             param2, censBeg = object$cens.beg, censEnd = object$cens.end)
+  
+  sequences <- lapply(sequences, function(x) object$states[x])
+  
+  return(sequences)
+  
 }

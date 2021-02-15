@@ -541,27 +541,7 @@ loglik.smmnonparametric <- function(x, sequences) {
 }
 
 
-#' Plot function for an object of class smmnonparametric
-#' 
-#' @description Displays the densities for the conditional sojourn time 
-#'   distributions depending on the current state `i` and on the next state 
-#'   `j`.
-#'   
-#' @param x An object of class [smmnonparametric].
-#' @param i An integer giving the current state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
-#'   ignored.
-#' @param j An integer giving the next state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
-#'   ignored.
-#' @param klim An integer giving the limit value for which the density will be 
-#'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
-#' @param ... Arguments passed to plot.
-#' 
 #' @export
-#' 
-#' @import graphics
-#' 
 plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   #############################
@@ -638,4 +618,47 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   plot.default(x = 1:klim, y = f[1:klim], xlab = "k", ylab = ylab, ...)
   title(main = main)
+}
+
+
+#' @export
+simulate.smmnonparametric <- function(object, nsim = 1, seed = NULL, ...) {
+  
+  ###########################################################
+  ###########################################################
+  # The algorithm used to simulate the sequences is the following:
+  # 
+  # 1. Set k = 0, S_{0} = 0 and sample J_{0} from the initial distribution \alpha;
+  # 2. Sample the random variable J \sim p(J_{k} , .) and set J_{k+1} = J(\omega);
+  # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
+  # 4. Set S_{k+1} = S_{k} + X;
+  # 5. If S_{k+1} >= M, then end;
+  # 6. Else, set k= k + 1 and continue to step 2.
+  # 
+  ###########################################################
+  ###########################################################
+  
+  if (is.null(seed)) {
+    seed <- as.numeric(Sys.time())
+  }
+  
+  # Preparation of distribution matrix to ease the sampling process
+  distribution <- array(data = NA, dim = c(object$s, object$s, object$kmax))
+  if (object$type.sojourn == "fij") {
+    distribution <- object$distr
+  } else if (object$type.sojourn == "fj") {
+    distribution <- aperm(a = array(data = object$distr, dim = c(object$s, object$kmax, object$s)), perm = c(3, 1, 2))
+  } else if (object$type.sojourn == "fi") {
+    distribution <- aperm(a = array(data = object$distr, dim = c(object$s, object$kmax, object$s)), perm = c(1, 3, 2))
+  } else {
+    distribution <- aperm(a = array(data = object$distr, dim = c(object$kmax, object$s, object$s)), perm = c(2, 3, 1))
+  }
+  
+  sequences <- simulateNonParam(seed, nsim, object$init, object$ptrans, distribution, 
+                                censBeg = object$cens.beg, censEnd = object$cens.end)
+  
+  sequences <- lapply(sequences, function(x) object$states[x])
+  
+  return(sequences)
+  
 }

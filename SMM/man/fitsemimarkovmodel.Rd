@@ -209,6 +209,5 @@ est1
 
 }
 \seealso{
-\link{smmnonparametric}, \link{smmparametric}, \link{simulate.smmnonparametric},
-\link{simulate.smmparametric}, \link{plot.smmparametric}, \link{plot.smmnonparametric}
+\link{smmnonparametric}, \link{smmparametric}, \link{simulate.smm}, \link{plot.smm}
 }

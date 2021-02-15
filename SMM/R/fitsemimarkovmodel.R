@@ -134,8 +134,7 @@
 #'   object if `distr = "nonparametric"`, a [smmparametric] 
 #'   otherwise).
 #'   
-#' @seealso [smmnonparametric], [smmparametric], [simulate.smmnonparametric],
-#'   [simulate.smmparametric], [plot.smmparametric], [plot.smmnonparametric]
+#' @seealso [smmnonparametric], [smmparametric], [simulate.smm], [plot.smm]
 #'   
 #' @export
 #' 

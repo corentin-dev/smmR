@@ -534,3 +534,55 @@ mttr.smm <- function(x, downstates = x$states, klim = 10000, var = FALSE) {
   return(mttf(x = x, upstates = downstates, klim = klim, var = var))
   
 }
+
+
+#' Plot function for an object of class smm
+#' 
+#' @description Displays the densities for the conditional sojourn time 
+#'   distributions depending on the current state `i` and on the next state 
+#'   `j`.
+#'   
+#' @param x An object inheriting from the S3 class `smm` (an object of 
+#'   class [smmparametric] or [smmnonparametric]).
+#' @param i An integer giving the current state in the following cases: 
+#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
+#'   ignored.
+#' @param j An integer giving the next state in the following cases: 
+#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
+#'   ignored.
+#' @param klim An integer giving the limit value for which the density will be 
+#'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
+#' @param ... Arguments passed to plot.
+#' 
+#' @export
+#' 
+#' @import graphics
+#' 
+plot.smm <- function(x, i = 1, j = 1, klim = NULL, ...) {
+  NextMethod(x)
+}
+
+
+#' Simulates semi-Markov chains
+#' 
+#' @description Simulates sequences from a semi-Markov model.
+#' 
+#' @details If `nsim` is a single integer then a chain of that length is 
+#'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
+#'   sequences are generated with respective lengths.
+#' 
+#' @param object An object inheriting from the S3 class `smm` (an object of 
+#'   class [smmparametric] or [smmnonparametric]).
+#' @param nsim An integer or vector of integers (for multiple sequences) 
+#'   specifying the length of the sequence(s).
+#' @param seed `seed` for the random number generator.
+#' @param ... further arguments passed to or from other methods.
+#' @return A list of vectors representing the sequences.
+#' 
+#' @seealso [smmparametric], [smmnonparametric], [fitsemimarkovmodel]
+#' 
+#' @export
+#' 
+simulate.smm <- function(object, nsim = 1, seed = NULL, ...) {
+  NextMethod(object)
+}
