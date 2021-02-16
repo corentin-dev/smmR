@@ -130,11 +130,12 @@
 #'   sequences are censored at the beginning.
 #' @param cens.end Optional. A logical value indicating whether or not 
 #'   sequences are censored at the end.
-#' @return Returns an object of class smm (a [smmnonparametric] 
-#'   object if `distr = "nonparametric"`, a [smmparametric] 
-#'   otherwise).
+#' @return Returns an object of S3 class `smmfit` (inheriting from the S3 
+#'   class \code{smm} and [smmnonparametric] class if `distr = "nonparametric"`
+#'   or [smmparametric] otherwise).
 #'   
-#' @seealso [smmnonparametric], [smmparametric], [simulate.smm], [plot.smm]
+#' @seealso [smmnonparametric], [smmparametric], [simulate.smm],
+#'   [simulate.smmfit], [plot.smm], [plot.smmfit]
 #'   
 #' @export
 #' 
@@ -268,12 +269,12 @@ fitsemimarkovmodel <-
     if (!(cens.beg)) {
       
       if (processes$L > 1) {# If more than one sequence, use the estimation based on a couple Markov chain
-        estimate <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+        smm <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
       } else {
         if (!cens.end) {
-          estimate <- .fit.nonparam.nocensoring(processes = processes, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
+          smm <- .fit.nonparam.nocensoring(processes = processes, type.sojourn = type.sojourn, init.estim = init.estim, cens.beg = cens.beg)
         } else {
-          estimate <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
+          smm <- .fit.nonparam.couplemarkovchain(processes = processes, states = states, type.sojourn = type.sojourn, init.estim = init.estim, cens.end = cens.end)
         }
       }
       
@@ -287,14 +288,18 @@ fitsemimarkovmodel <-
        
     }
   } else {
-    estimate <- .fit.param(processes = processes, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
+    smm <- .fit.param(processes = processes, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)
   }
   
-  if (any(estimate$init == 0)) {
+  if (any(smm$init == 0)) {
     message("The probabilities of the initial state(s) ",
-            paste0(names(which(estimate$init == 0)), collapse = ", "),
+            paste0(names(which(smm$init == 0)), collapse = ", "),
             " are 0.")
   }
   
+  loglik <- .loglik(x = smm, processes = processes)
+  estimate <- smmfit(smm = smm, M = processes$M, loglik = loglik, sequences = sequences)
+  
   return(estimate)
+  
 }

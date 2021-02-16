@@ -54,9 +54,9 @@ sequences are censored at the beginning.}
 sequences are censored at the end.}
 }
 \value{
-Returns an object of class smm (a \link{smmnonparametric}
-object if \code{distr = "nonparametric"}, a \link{smmparametric}
-otherwise).
+Returns an object of S3 class \code{smmfit} (inheriting from the S3
+class \code{smm} and \link{smmnonparametric} class if \code{distr = "nonparametric"}
+or \link{smmparametric} otherwise).
 }
 \description{
 Maximum Likelihood Estimation of a semi-Markov chain starting
@@ -209,5 +209,6 @@ est1
 
 }
 \seealso{
-\link{smmnonparametric}, \link{smmparametric}, \link{simulate.smm}, \link{plot.smm}
+\link{smmnonparametric}, \link{smmparametric}, \link{simulate.smm},
+\link{simulate.smmfit}, \link{plot.smm}, \link{plot.smmfit}
 }

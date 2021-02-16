@@ -666,7 +666,7 @@ bic.smmparametric <- function(x, sequences) {
   
   kpar <- .getKpar(x)
   
-  n <- sum(unlist(lapply(sequences, length)))
+  n <- sum(sapply(sequences, length))
   
   bic <- -2 * loglik + log(n) * kpar
   

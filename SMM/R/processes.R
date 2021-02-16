@@ -38,6 +38,7 @@ processes <- function(sequences, states, verbose = TRUE) {
   Tm <- processes$Tm # Successive time points when state changes
   Lm <- processes$Lm # Sojourn time
   Um <- processes$Um # Backward recurrence time
+  M <- sum(sapply(processes$Ym , length))
   kmax <- max(unlist(Lm))
   
   #############################
@@ -70,13 +71,14 @@ processes <- function(sequences, states, verbose = TRUE) {
     list(
       states = states,
       s = s,
+      M = M,
       L = L,
+      kmax = kmax,
       Ym = Ym,
       Jm = Jm,
       Tm = Tm,
       Lm = Lm,
       Um = Um,
-      kmax = kmax,
       counting = counting
     )
   

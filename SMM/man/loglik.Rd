@@ -4,13 +4,15 @@
 \alias{loglik}
 \title{Log-likelihood Function}
 \usage{
-loglik(x, sequences)
+loglik(x, sequences = NULL)
 }
 \arguments{
-\item{x}{An object for which the log-likelihood can be computed.}
+\item{x}{An object for which there exists a \code{loglik} attribute if
+\code{sequences = NULL}. Otherwise, the log-likelihood will be computed using
+the model \code{x} and the sequences \code{sequences}.}
 
-\item{sequences}{A list of vectors representing the sequences for which the
-log-likelihood will be computed based on \code{x}.}
+\item{sequences}{Optional. A list of vectors representing the sequences for
+which the log-likelihood will be computed based on \code{x}.}
 }
 \value{
 Value of the log-likelihood.

@@ -4,14 +4,14 @@
 \alias{aic}
 \title{Akaike Information Criterion (AIC)}
 \usage{
-aic(x, sequences)
+aic(x, sequences = NULL)
 }
 \arguments{
-\item{x}{An object for which there exists a \code{loglik} method to compute the
-log-likelihood.}
+\item{x}{An object for which there exists a \code{loglik} attribute if
+\code{sequences = NULL} or a \code{loglik} method otherwise.}
 
-\item{sequences}{A list of vectors representing the sequences for which the
-AIC will be computed based on \code{x}.}
+\item{sequences}{Optional. A list of vectors representing the sequences for
+which the AIC will be computed based on \code{x} using the method \code{loglik}.}
 }
 \value{
 Value of the AIC.
