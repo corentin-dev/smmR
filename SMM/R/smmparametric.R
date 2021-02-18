@@ -478,7 +478,7 @@ is.smmparametric <- function(x) {
 #' @description Computation of the log-likelihood for a semi-Markov model
 #' 
 #' @param x An object of class [smmparametric].
-#' @param processes An object of class `processes`.
+#' @param processes An object of class `processesSemiMarkov`.
 #' 
 #' @noRd
 #' 
@@ -724,7 +724,7 @@ getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
 
 #' Log-likelihood Function
 #' 
-#' @description Computation of the log-likelihood for a semi-Markov model
+#' @description Computation of the log-likelihood for a semi-Markov model.
 #' 
 #' @param x An object of class [smmparametric].
 #' @param sequences A list of vectors representing the sequences for which the 
@@ -749,7 +749,7 @@ loglik.smmparametric <- function(x, sequences) {
     stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
   }
   
-  processes <- processes(sequences = sequences, states = x$states, verbose = FALSE)
+  processes <- processesSemiMarkov(sequences = sequences, states = x$states)
   loglik <- .loglik.smmparametric(x = x, processes = processes)
   
   return(loglik)

@@ -82,6 +82,20 @@ markovmodel <- function(states, init, ptrans, k = 1) {
 }
 
 
+#' Function to check if an object is of class `markovmodel`
+#' 
+#' @description `is.markovmodel` returns `TRUE` if `x` is an object of 
+#'   class `markovmodel`.
+#' 
+#' @param x An arbitrary R object.
+#' 
+#' @export
+#' 
+is.markovmodel <- function(x) {
+  inherits(x, "markovmodel")
+}
+
+
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
 .getKpar.markovmodel <- function(x) {
@@ -94,17 +108,31 @@ markovmodel <- function(states, init, ptrans, k = 1) {
 }
 
 
-#' Function to check if an object is of class `markovmodel`
+#' Log-likelihood Function
 #' 
-#' @description `is.markovmodel` returns `TRUE` if `x` is an object of 
-#'   class `markovmodel`.
+#' @description Computation of the log-likelihood for a Markov model
 #' 
-#' @param x An arbitrary R object.
+#' @param x An object of class [markovmodel].
+#' @param processes An object of class `processesMarkov`.
 #' 
-#' @export
+#' @noRd
 #' 
-is.markovmodel <- function(x) {
-  inherits(x, "markovmodel")
+.loglik.markovmodel <- function(x, processes) {
+  
+  #############################
+  # Let's compute the log-likelihood
+  #############################
+  
+  Nstarti <- processes$Nstarti
+  maskNstarti <- processes$Nstarti != 0 & x$init != 0
+  
+  Nij <- processes$Nij
+  maskNij <- processes$Nij != 0 & x$ptrans != 0
+  
+  loglik <- sum(Nstarti[maskNstarti] * log(x$init[maskNstarti])) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
+  
+  return(loglik)
+  
 }
 
 
@@ -189,26 +217,75 @@ loglik.markovmodel <- function(x, sequences) {
          are not in the state space given by the model 'x'")
   }
   
-  s <- length(x$states)
-  nbseq <- length(sequences) # Number of sequences
-  
-  # Count the number of transitions from i to j in k steps
-  Nijl <- array(0, c(s ^ x$k, s, nbseq))
-  contrInit <- rep.int(x = 0, times = nbseq)
-  
-  for (i in 1:nbseq) {
-    
-    # Transitions
-    Nijl[, , i] <- matrix(count(seq = sequences[[i]], wordsize = x$k + 1, alphabet = x$states), byrow = TRUE, ncol = s)
-    
-    # Initial state(s)
-    contrInit[i] <- log(x$init[which(words(length = x$k, alphabet = x$states) == c2s(sequences[[i]][1:x$k]))])
-  }
-  
-  Nij <- apply(Nijl, c(1, 2), sum)
-  maskNij <- Nij != 0 & x$ptrans != 0
-  
-  loglik <- sum(contrInit) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
+  processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k)
+  loglik <- .loglik.markovmodel(x = x, processes = processes)
   
   return(loglik)
+  
+}
+
+
+#' Simulates k-th order Markov chains
+#' 
+#' @description Simulates k-th order Markov chains.
+#' 
+#' @details If `nsim` is a single integer then a chain of that length is 
+#'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
+#'   sequences are generated with respective lengths.
+#' 
+#' @param object An object of class [markovmodel].
+#' @param nsim An integer or vector of integers (for multiple sequences) 
+#'   specifying the length of the sequence(s).
+#' @param seed `seed` for the random number generator.
+#' @param ... further arguments passed to or from other methods.
+#' @return A list of vectors representing the sequences.
+#' 
+#' @seealso [markovmodel], [fitmarkovmodel]
+#' 
+#' @export
+#' 
+#' @examples 
+#' states <- c("a", "c", "g", "t")
+#' s <- length(states)
+#' k <- 2
+#' vect.init <- rep.int(1 / s ^ k, s ^ k)
+#' p <- matrix(0.25, nrow = s ^ k, ncol = s)
+#' 
+#' # Specify the Markov model
+#' markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
+#' 
+#' seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
+#' seq1[[1]][1:15]
+#' 
+simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
+  
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+  
+  s <- length(object$states)
+  out <- list()
+  nbseq <- length(nsim)
+  
+  for (n in 1:nbseq) {
+    y <- rep.int(NA, nsim[n])
+    
+    # Initial state(s)
+    y[1:object$k] <- s2c(sample(x = names(object$init), size = 1, prob = object$init))
+    
+    for (i in 1:(nsim[n] - object$k)) {
+      ind <- which(object$states == y[i + object$k - 1])
+      if (object$k > 1) {
+        for (j in (object$k - 2):0) {
+          ind <- ind + s ^ (j + 1) * (which(object$states == y[i + j]) - 1)
+        }
+      }
+      y[i + object$k] <- sample(object$states, 1, prob = object$ptrans[ind, ])
+    }
+    out[[n]] <- y
+    
+  }
+  
+  return(out)
+  
 }

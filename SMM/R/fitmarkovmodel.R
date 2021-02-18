@@ -111,45 +111,11 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   
   # init.estim <- match.arg(init.estim)
 
-  
-  s <- length(states) # State space size
-  nbseq <- length(sequences) # Number of sequences
-  sequence <- c()
-  
-  # Count the number of transitions from i to j in k steps
-  Nijl <- array(0, c(s ^ k, s, nbseq))
-  
-  for (i in 1:nbseq) {
-    
-    sequence <- sequences[[i]]
-    Nijl[, , i] <- matrix(count(seq = sequence, wordsize = k + 1, alphabet = states), byrow = TRUE, ncol = s)
-    
-  }
-  
-  Nij <- apply(Nijl, c(1, 2), sum)
-  Ni <- apply(Nijl, 1, sum)
-  
-  indexdiag <- seq(1, s * s, by = s + 1)
-  Nij.temp <- as.vector(Nij)[-indexdiag]
-  
-  statesi <- row(Nij)[-indexdiag][which(Nij.temp == 0)]
-  statesj <- col(Nij)[-indexdiag][which(Nij.temp == 0)]
-  
-  # Verify the existence of all transitions
-  if ((length(statesi) != 0) | (length(statesj) != 0)) {
-    warning(
-      "Some transitions from state i to state j are not observed.
-            The following are ",
-      paste0(sapply(1:length(statesi), function(x)
-        paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", "),
-      "."
-    )
-  }
-  
-  # Verify the existence of all states
-  if (length(which(Ni == 0)) > 0) {
-    warning("Missing observed states")
-  }
+  processes <- processesMarkov(sequences = sequences, states = states, k = k)
+  s <- processes$s
+  Nij <- processes$Nij
+  Ni <- processes$Ni
+  Nstarti <- processes$Nstarti
   
   # Compute the transition matrix
   ptrans <- Nij / tcrossprod(Ni, rep.int(1, s))
@@ -159,8 +125,7 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   # Initial distribution
   if (is.vector(init.estim) && length(init.estim) == 1) {
     if (init.estim == "mle") {
-      Nstart <- as.vector(count(seq = unlist(lapply(sequences, function(x) x[1:k])), wordsize = k, by = k, alphabet = states))
-      init <- Nstart / sum(Nstart)
+      init <- Nstarti / sum(Nstarti)
     } else if (init.estim == "stationary") {
       if (k == 1) {
         init <- .stationaryDistribution(ptrans = ptrans)
@@ -198,7 +163,10 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   
   init <- init / sum(init)
   
-  estimate <- markovmodel(states = states, init = init, ptrans = ptrans, k = k)
+  markovmodel <- markovmodel(states = states, init = init, ptrans = ptrans, k = k)
+  loglik <- .loglik(x = markovmodel, processes = processes)
+  
+  estimate <- markovmodelfit(markovmodel = markovmodel, M = processes$M, loglik = loglik, sequences = sequences)
   
   return(estimate)
 }

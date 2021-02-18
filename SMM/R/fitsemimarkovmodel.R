@@ -262,7 +262,7 @@ fitsemimarkovmodel <-
   # init.estim <- match.arg(init.estim)
   
 
-  processes <- processes(sequences = sequences, states = states)
+  processes <- processesSemiMarkov(sequences = sequences, states = states, verbose = TRUE)
 
   if (length(distr) == 1 && distr == "nonparametric") {
     

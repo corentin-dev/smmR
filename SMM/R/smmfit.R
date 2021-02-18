@@ -121,7 +121,7 @@ getKernel.smmfit <- function(x, k, var = FALSE, klim = 10000) {
 
 #' Log-likelihood Function
 #' 
-#' @description Computation of the log-likelihood for a semi-Markov model
+#' @description Computation of the log-likelihood for a semi-Markov model.
 #' 
 #' @param x An object of class `smmfit`.
 #' @param sequences A list of vectors representing the sequences for which the 
