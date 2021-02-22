@@ -131,7 +131,7 @@
 #' @param cens.end Optional. A logical value indicating whether or not 
 #'   sequences are censored at the end.
 #' @return Returns an object of S3 class `smmfit` (inheriting from the S3 
-#'   class \code{smm} and [smmnonparametric] class if `distr = "nonparametric"`
+#'   class `smm` and [smmnonparametric] class if `distr = "nonparametric"`
 #'   or [smmparametric] otherwise).
 #'   
 #' @seealso [smmnonparametric], [smmparametric], [simulate.smm],

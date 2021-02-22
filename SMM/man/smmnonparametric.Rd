@@ -38,7 +38,7 @@ sequences are censored at the beginning.}
 sequences are censored at the end.}
 }
 \value{
-Returns an object of class \link{smmnonparametric}.
+Returns an object of class \code{smm}, \link{smmnonparametric}.
 }
 \description{
 Creates a non-parametric model specification for a semi-Markov model.

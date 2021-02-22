@@ -55,7 +55,7 @@
 #'   sequences are censored at the beginning.
 #' @param cens.end Optional. A logical value indicating whether or not 
 #'   sequences are censored at the end.
-#' @return Returns an object of class [smmnonparametric].
+#' @return Returns an object of class `smm`, [smmnonparametric].
 #' 
 #' @seealso [simulate], [fitsemimarkovmodel], [smmparametric]
 #' 

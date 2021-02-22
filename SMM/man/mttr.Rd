@@ -4,11 +4,10 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, downstates = x$states, klim = 10000, var = FALSE)
+mttr(x, downstates = x$states, klim = 10000, level = 0.95)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
 
@@ -16,19 +15,14 @@ mttr(x, downstates = x$states, klim = 10000, var = FALSE)
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function) for the asymptotic variance.}
 
-\item{var}{Optional. A logical value indicating whether or not the variance
-of the estimator should be computed.}
+\item{level}{Confidence level of the asymptotic confidence interval. Helpful
+for an object \code{x} of class \code{smmfit}.}
 }
 \value{
-If \code{var = FALSE}, a vector of length \eqn{\textrm{card}(D)} giving
-the values of the mean time to repair for each state \eqn{i \in D}. If
-\code{var = TRUE}, a list containing the following components:
-\itemize{
-\item{x: }{a vector of length \eqn{\textrm{card}(D)} giving the values
-of the mean time to repair for each state \eqn{i \in D}.}
-\item{sigma2: }{the variances of the estimator for each estimation of the
-mean time to repair \eqn{\sigma_{MTTR_{i}}^{2}(k)};}
-}
+A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns
+giving values of the mean time to repair for each state \eqn{i \in U},
+variances, lower and upper asymptotic confidence limits (if \code{x} is an
+object of class \code{smmfit}).
 }
 \description{
 Consider a system \eqn{S_{ystem}} starting to fail at time

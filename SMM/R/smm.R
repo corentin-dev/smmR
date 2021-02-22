@@ -240,7 +240,7 @@ meanRecurrenceTimes.smm <- function(x, klim = 10000) {
 
 
 #' @export
-reliability.smm <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   
   #############################
   # Checking parameters k
@@ -291,30 +291,25 @@ reliability.smm <- function(x, k, upstates = x$states, var = FALSE, klim = 10000
   # Compute the variance (See equation (5.29), p.116)
   ###########################################################
   
-  if (var) {
-    
-    q <- .get.qy(x = x, k =  k, upstates = upstates)
-    Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
-    psi <- .get.psi(q = q)
-    Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
-    H <- .get.H(q)
-    mu1 <- meanRecurrenceTimes(x = x, klim = klim)[which(x$states %in% upstates)]
-    
-    sigma2 <- as.numeric(varR(alpha1, mu1, q, psi, Psi, H, Q))
-    
-    return(list(x = reliab, sigma2 = sigma2))
-    
-  } else {
-    
-    return(reliab)
-    
-  }
-
+  q <- .get.qy(x = x, k =  k, upstates = upstates)
+  Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
+  psi <- .get.psi(q = q)
+  Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
+  H <- .get.H(q)
+  mu1 <- meanRecurrenceTimes(x = x, klim = klim)[which(x$states %in% upstates)]
+  
+  sigma2 <- as.numeric(varR(alpha1, mu1, q, psi, Psi, H, Q))
+  
+  out <- cbind(reliab, sigma2)
+  colnames(out) <- c("reliability", "sigma2")
+  
+  return(out)
+  
 }
 
 
 #' @export
-maintainability.smm <- function(x, k, downstates = x$states, var = FALSE, klim = 10000) {
+maintainability.smm <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
   
   #############################
   # Checking parameters k
@@ -340,23 +335,18 @@ maintainability.smm <- function(x, k, downstates = x$states, var = FALSE, klim =
     stop("Every element of 'downstates' must be in 'states' ('dowstates' is a subset of 'states')")
   }
   
-  reliab <- reliability(x = x, k = k, upstates = downstates, var = var, klim = klim)
+  reliab <- reliability.smm(x = x, k = k, upstates = downstates, level = level, klim = klim)
   
-  if (var) {
-    
-    return(list(x = 1 - reliab$x, sigma2 = reliab$sigma2))
-    
-  } else {
-    
-    return(1 - reliab)
-    
-  }
+  out <- cbind(1 - reliab[, 1], reliab[, 2])
+  colnames(out) <- c("maintainability", "sigma2")
+  
+  return(out)
   
 }
 
 
 #' @export
-availability.smm <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   
   #############################
   # Checking parameters k
@@ -398,36 +388,31 @@ availability.smm <- function(x, k, upstates = x$states, var = FALSE, klim = 1000
   # Compute the variance (See equation (5.34), p.118)
   ###########################################################
   
-  if (var) {
-    
-    indices_u <- which(x$states %in% upstates) - 1
-    
-    alpha <- x$init
-    
-    q <- getKernel(x = x, k = k)
-    Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
-    
-    psi <- .get.psi(q = q)
-    Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
-    
-    H <- .get.H(q = q)
-    mu <- meanRecurrenceTimes(x = x, klim = klim)
-    
-    sigma2 <- as.numeric(varA(indices_u, alpha, mu, q, psi, Psi, H, Q))
-    
-    return(list(x = avail, sigma2 = sigma2))
+  indices_u <- which(x$states %in% upstates) - 1
   
-  } else {
-    
-    return(avail)
-    
-  }
+  alpha <- x$init
+  
+  q <- getKernel(x = x, k = k)
+  Q <- aperm(apply(q, c(1, 2), cumsum), c(2, 3, 1))
+  
+  psi <- .get.psi(q = q)
+  Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
+  
+  H <- .get.H(q = q)
+  mu <- meanRecurrenceTimes(x = x, klim = klim)
+  
+  sigma2 <- as.numeric(varA(indices_u, alpha, mu, q, psi, Psi, H, Q))
+  
+  out <- cbind(avail, sigma2)
+  colnames(out) <- c("availability", "sigma2")
+  
+  return(out)
   
 }
 
 
 #' @export
-failureRateBMP.smm <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
+failureRateBMP.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
   ###########################################################
   # Compute \lambda, the BMP-failure rate
@@ -447,52 +432,42 @@ failureRateBMP.smm <- function(x, k, upstates = x$states, var = FALSE, epsilon =
   # Compute the variance (See equation (5.35), p.119)
   ###########################################################
   
-  if (var) {
-    
-    alpha1 <- x$init[which(x$states %in% upstates)]
-    mu1 <- meanRecurrenceTimes(x = x, klim = klim)[which(x$states %in% upstates)]
-    
-    qy <- .get.qy(x = x, k =  k, upstates = upstates)
-    Q <- aperm(apply(qy, c(1, 2), cumsum), c(2, 3, 1))
-    
-    psi <- .get.psi(q = qy)
-    Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
-    
-    H <- .get.H(qy)
-    
-    sigma2 <- as.numeric(varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q))
-    
-    return(list(x = lbda, sigma2 = sigma2))
-    
-  } else {
-    
-    return(lbda)
-    
-  }
+  alpha1 <- x$init[which(x$states %in% upstates)]
+  mu1 <- meanRecurrenceTimes(x = x, klim = klim)[which(x$states %in% upstates)]
+  
+  qy <- .get.qy(x = x, k =  k, upstates = upstates)
+  Q <- aperm(apply(qy, c(1, 2), cumsum), c(2, 3, 1))
+  
+  psi <- .get.psi(q = qy)
+  Psi <- aperm(a = apply(X = psi, MARGIN = c(1, 2), cumsum), perm = c(2, 3, 1))
+  
+  H <- .get.H(qy)
+  
+  sigma2 <- as.numeric(varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q))
+  
+  out <- cbind(lbda, sigma2)
+  colnames(out) <- c("BMP", "sigma2")
+  
+  return(out)
   
 }
 
 
 #' @export
-failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
+failureRateRG.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
-  lbda <- failureRateBMP(x = x, k = k, upstates = upstates, var = var, epsilon = epsilon, klim = klim)
+  lbda <- failureRateBMP.smm(x = x, k = k, upstates = upstates, level = 0.95, epsilon = epsilon, klim = klim)
   
-  if (var) {
-    
-    return(list(x = -log(1 - lbda$x), sigma2 = (1 / (1 - lbda$x) ^ 2) * lbda$sigma2))
-    
-  } else {
-    
-    return(-log(1 - lbda))
-    
-  }
+  out <- cbind(-log(1 - lbda[, 1]), lbda[, 2])
+  colnames(out) <- c("RG", "sigma2")
+  
+  return(out)
   
 }
 
 
 #' @export
-mttf.smm <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
+mttf.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
   
   p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates), drop = FALSE]
   
@@ -505,33 +480,32 @@ mttf.smm <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
   }
   names(mttf) <- upstates
   
-  if (var) {
-    
-    indices_u <- which(x$states %in% upstates) - 1
-    indices_d <- which(!(x$states %in% upstates)) - 1
-    
-    m <- meanSojournTimes(x = x, klim = klim)
-    mu <- meanRecurrenceTimes(x = x, klim = klim)
-    
-    q <- getKernel(x = x, k = klim)
-    
-    sigma2 <- as.numeric(varMTTF(indices_u, indices_d, m, mu, x$ptrans, q))
-    
-    return(list(x = mttf, sigma2 = sigma2))
-    
-  } else {
-    
-    return(mttf)
-    
-  }
+  
+  indices_u <- which(x$states %in% upstates) - 1
+  indices_d <- which(!(x$states %in% upstates)) - 1
+  
+  m <- meanSojournTimes(x = x, klim = klim)
+  mu <- meanRecurrenceTimes(x = x, klim = klim)
+  
+  q <- getKernel(x = x, k = klim)
+  
+  sigma2 <- as.numeric(varMTTF(indices_u, indices_d, m, mu, x$ptrans, q))
+  
+  out <- cbind(mttf, sigma2)
+  colnames(out) <- c("mttf", "sigma2")
+  
+  return(out)
   
 }
 
 
 #' @export
-mttr.smm <- function(x, downstates = x$states, klim = 10000, var = FALSE) {
+mttr.smm <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
   
-  return(mttf(x = x, upstates = downstates, klim = klim, var = var))
+  out <- mttf.smm(x = x, upstates = downstates, klim = klim, level = 0.95)
+  colnames(out) <- c("mttr", "sigma2")
+  
+  return(out)
   
 }
 
@@ -542,8 +516,8 @@ mttr.smm <- function(x, downstates = x$states, klim = 10000, var = FALSE) {
 #'   distributions depending on the current state `i` and on the next state 
 #'   `j`.
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of 
-#'   class [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smm` (inheriting from the S3 class 
+#'   [smmnonparametric] or [smmparametric]).
 #' @param i An integer giving the current state in the following cases: 
 #'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
 #'   ignored.
@@ -571,8 +545,8 @@ plot.smm <- function(x, i = 1, j = 1, klim = NULL, ...) {
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
 #' 
-#' @param object An object inheriting from the S3 class `smm` (an object of 
-#'   class [smmparametric] or [smmnonparametric]).
+#' @param object An object of S3 class `smm` (inheriting from the S3 class 
+#'   [smmnonparametric] or [smmparametric]).
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
 #' @param seed `seed` for the random number generator.

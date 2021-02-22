@@ -7,7 +7,8 @@
 \method{plot}{smmfit}(x, i = 1, j = 1, klim = NULL, ...)
 }
 \arguments{
-\item{x}{An object of class \code{smmfit}.}
+\item{x}{An object of class \code{smmfit} (inheriting from the S3 classes
+\code{smm}, \link{smmnonparametric} or \link{smmparametric}).}
 
 \item{i}{An integer giving the current state in the following cases:
 \code{type.sojourn = "fij"} or \code{type.sojourn = "fi"}, otherwise, \code{i} is

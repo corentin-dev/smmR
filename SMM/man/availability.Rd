@@ -4,34 +4,27 @@
 \alias{availability}
 \title{Availability Function}
 \usage{
-availability(x, k, upstates = x$states, var = FALSE, klim = 10000)
+availability(x, k, upstates = x$states, level = 0.95, klim = 10000)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
 availability should be computed.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
-\item{var}{Optional. A logical value indicating whether or not the variance
-of the estimator should be computed.}
+\item{level}{Confidence level of the asymptotic confidence interval. Helpful
+for an object \code{x} of class \code{smmfit}.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function) for the asymptotic variance.}
 }
 \value{
-A vector of length \eqn{k + 1} giving the values of the availability
-for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE}, a list
-containing the following components:
-\itemize{
-\item{x: }{a vector of length \eqn{k + 1} giving the values of the
-availability for the period \eqn{[0,\dots,k]};}
-\item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{A}^{2}(k)}.}
-}
+A matrix with \eqn{k + 1} rows, and with columns giving values of
+the availability, variances, lower and upper asymptotic confidence limits
+(if \code{x} is an object of class \code{smmfit}).
 }
 \description{
 The pointwise (or instantaneous) availability of a system

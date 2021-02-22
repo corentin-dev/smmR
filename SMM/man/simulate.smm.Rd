@@ -7,8 +7,8 @@
 \method{simulate}{smm}(object, nsim = 1, seed = NULL, ...)
 }
 \arguments{
-\item{object}{An object inheriting from the S3 class \code{smm} (an object of
-class \link{smmparametric} or \link{smmnonparametric}).}
+\item{object}{An object of S3 class \code{smm} (inheriting from the S3 class
+\link{smmnonparametric} or \link{smmparametric}).}
 
 \item{nsim}{An integer or vector of integers (for multiple sequences)
 specifying the length of the sequence(s).}

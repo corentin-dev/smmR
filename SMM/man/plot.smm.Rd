@@ -7,8 +7,8 @@
 \method{plot}{smm}(x, i = 1, j = 1, klim = NULL, ...)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of
-class \link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smm} (inheriting from the S3 class
+\link{smmnonparametric} or \link{smmparametric}).}
 
 \item{i}{An integer giving the current state in the following cases:
 \code{type.sojourn = "fij"} or \code{type.sojourn = "fi"}, otherwise, \code{i} is

@@ -3,8 +3,7 @@
 #' @description Computes the conditional sojourn time distribution \eqn{f(k)}, 
 #'   \eqn{f_{i}(k)}, \eqn{f_{j}(k)} or \eqn{f_{ij}(k)}.
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the time horizon.
 #' @return A vector, matrix or array giving the value of \eqn{f} at each time 
 #'   between 0 and `k`.
@@ -86,8 +85,7 @@ bic <- function(x, sequences = NULL) {
 #' 
 #' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
 #' 
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the time horizon.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
 #' @param klim Optional. The time horizon used to approximate the series in the 
@@ -151,8 +149,7 @@ loglik <- function(x, sequences = NULL) {
 #'   
 #'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param states Vector giving the states for which the mean sojourn time 
 #'   should be computed. `states` is a subset of \eqn{E}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
@@ -193,8 +190,7 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #'   where \eqn{m_{i}} is the mean sojourn time in state \eqn{i \in E} 
 #'   (see [meanSojournTimes] function for the computation).
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function).
@@ -250,29 +246,23 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'  
 #'  \deqn{R(k) = \sum_{i \in U} P(Z_0 = i) P(T_D > k | Z_0 = i) = \sum_{i \in U} \alpha_i P(T_D > k | Z_0 = i)}
 #'  
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   reliability should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
 #'   variance.
-#' @return A vector of length \eqn{k + 1} giving the values of the reliability
-#'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
-#'   containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
-#'      reliability for the period \eqn{[0,\dots,k]};}
-#'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{R}^{2}(k)}.}
-#'  }
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the reliability, variances, lower and upper asymptotic confidence limits 
+#'   (if `x` is an object of class `smmfit`).
 #'  
 #' @export
 #' 
-reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("reliability", x)
 }
 
@@ -318,28 +308,22 @@ reliability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   
 #'   \deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} \geq k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   maintainability should be computed.
 #' @param downstates Vector giving the subset of non-operational states \eqn{D}.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @return A vector of length \eqn{k + 1} giving the values of the maintainability
-#'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
-#'   containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
-#'      maintainability for the period \eqn{[0,\dots,k]};}
-#'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{M}^{2}(k)}.}
-#'  }
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the maintainability, variances, lower and upper asymptotic confidence limits 
+#'   (if `x` is an object of class `smmfit`).
 #'  
 #' @export
 #' 
-maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 10000) {
+maintainability <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("maintainability", x)
 }
 
@@ -388,29 +372,22 @@ maintainability <- function(x, k, downstates = x$states, var = FALSE, klim = 100
 #'   
 #'   \deqn{A_i(k) = P(Z_k \in U | Z_0 = i).}
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   availability should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
-#' @param var Optional. A logical value indicating whether or not the variance 
-#'   of the estimator should be computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @return A vector of length \eqn{k + 1} giving the values of the availability
-#'   for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, a list
-#'   containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
-#'      availability for the period \eqn{[0,\dots,k]};}
-#'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{A}^{2}(k)}.}
-#'  }
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the availability, variances, lower and upper asymptotic confidence limits 
+#'   (if `x` is an object of class `smmfit`).
 #'  
 #' @export
 #' 
-availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
+availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("availability", x)
 }
 
@@ -477,30 +454,24 @@ availability <- function(x, k, upstates = x$states, var = FALSE, klim = 10000) {
 #'   with \eqn{\epsilon}, the threshold, the parameter `epsilon` in the 
 #'   function `failureRateBMP`.
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   BMP-failure rate should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param epsilon Value of the reliability above which the latter is supposed 
 #'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @return A vector of length \eqn{k + 1} giving the values of the BMP-failure 
-#'   rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
-#'   a list containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
-#'      BMP-failure rate for the period \eqn{[0,\dots,k]};}
-#'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{\lambda}^{2}(k)}.}
-#'  }
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the BMP-failure rate, variances, lower and upper asymptotic confidence 
+#'   limits (if `x` is an object of class `smmfit`).
 #'  
 #' @export
 #' 
-failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
+failureRateBMP <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   UseMethod("failureRateBMP", x)
 }
 
@@ -527,30 +498,24 @@ failureRateBMP <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-
 #'   The computation of the RG-failure rate is based on the [failureRateBMP] 
 #'   function (See [failureRateBMP] for details about the parameter `epsilon`).
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   RG-failure rate should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param epsilon Value of the reliability above which the latter is supposed 
 #'   to be 0 because of computation errors (see Details).
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @return A vector of length \eqn{k + 1} giving the values of the RG-failure 
-#'   rate for the period \eqn{[0,\dots,k]} if `var = FALSE`. If `var = TRUE`, 
-#'   a list containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{k + 1} giving the values of the 
-#'      RG-failure rate for the period \eqn{[0,\dots,k]};}
-#'    \item{sigma2: }{a vector giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{r}^{2}(k)}.}
-#'  }
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the RG-failure rate, variances, lower and upper asymptotic confidence 
+#'   limits (if `x` is an object of class `smmfit`).
 #'  
 #' @export
 #' 
-failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3, klim = 10000) {
+failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   UseMethod("failureRateRG", x)
 }
 
@@ -594,27 +559,21 @@ failureRateRG <- function(x, k, upstates = x$states, var = FALSE, epsilon = 1e-3
 #'   
 #'   \deqn{MTTF = E[T_{D}]}
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @param var Optional. A logical value indicating whether or not the variance 
-#'   of the estimator should be computed.
-#' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(U)} giving 
-#'   the values of the mean time to failure for each state \eqn{i \in U}. If 
-#'   `var = TRUE`, a list containing the following components:
-#'   \itemize{
-#'    \item{x: }{a vector of length \eqn{\textrm{card}(U) = s_{1}} giving 
-#'      the values of the mean time to failure for each state \eqn{i \in U}.}
-#'    \item{sigma2: }{the variances of the estimator for each estimation of the 
-#'      mean time to failure \eqn{\sigma_{MTTF_{i}}^{2}(k)};}
-#'  }
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
+#' @return A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns 
+#'   giving values of the mean time to failure for each state \eqn{i \in U}, 
+#'   variances, lower and upper asymptotic confidence limits (if `x` is an 
+#'   object of class `smmfit`).
 #' 
 #' @export
 #' 
-mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
+mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
   UseMethod("mttf", x)
 }
 
@@ -658,26 +617,20 @@ mttf <- function(x, upstates = x$states, klim = 10000, var = FALSE) {
 #'   
 #'   \deqn{MTTR = E[T_{U}]}
 #'   
-#' @param x An object inheriting from the S3 class `smm` (an object of class
-#'   [smmparametric] or [smmnonparametric]).
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param downstates Vector giving the subset of non-operational states \eqn{D}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @param var Optional. A logical value indicating whether or not the variance 
-#'   of the estimator should be computed.
-#' @return If `var = FALSE`, a vector of length \eqn{\textrm{card}(D)} giving 
-#'   the values of the mean time to repair for each state \eqn{i \in D}. If 
-#'   `var = TRUE`, a list containing the following components:
-#'   \itemize{
-#'  \item{x: }{a vector of length \eqn{\textrm{card}(D)} giving the values
-#'      of the mean time to repair for each state \eqn{i \in D}.}
-#'    \item{sigma2: }{the variances of the estimator for each estimation of the 
-#'      mean time to repair \eqn{\sigma_{MTTR_{i}}^{2}(k)};}
-#'  }
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
+#' @return A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns 
+#'   giving values of the mean time to repair for each state \eqn{i \in U}, 
+#'   variances, lower and upper asymptotic confidence limits (if `x` is an 
+#'   object of class `smmfit`).
 #'  
 #' @export
 #' 
-mttr <- function(x, downstates = x$states, klim = 10000, var = FALSE) {
+mttr <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
   UseMethod("mttr", x)
 }

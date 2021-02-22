@@ -7,7 +7,8 @@
 \method{simulate}{smmfit}(object, nsim = 1, seed = NULL, ...)
 }
 \arguments{
-\item{object}{An object of class \code{smmfit}.}
+\item{object}{An object of class \code{smmfit} (inheriting from the S3 classes
+\code{smm}, \link{smmnonparametric} or \link{smmparametric}).}
 
 \item{nsim}{An integer or vector of integers (for multiple sequences)
 specifying the length of the sequence(s).}

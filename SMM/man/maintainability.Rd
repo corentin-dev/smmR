@@ -4,33 +4,27 @@
 \alias{maintainability}
 \title{Maintainability Function}
 \usage{
-maintainability(x, k, downstates = x$states, var = FALSE, klim = 10000)
+maintainability(x, k, downstates = x$states, level = 0.95, klim = 10000)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
 maintainability should be computed.}
 
 \item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
 
-\item{var}{Logical. If \code{TRUE} the asymptotic variance is computed.}
+\item{level}{Confidence level of the asymptotic confidence interval. Helpful
+for an object \code{x} of class \code{smmfit}.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function) for the asymptotic variance.}
 }
 \value{
-A vector of length \eqn{k + 1} giving the values of the maintainability
-for the period \eqn{[0,\dots,k]} if \code{var = FALSE}. If \code{var = TRUE}, a list
-containing the following components:
-\itemize{
-\item{x: }{a vector of length \eqn{k + 1} giving the values of the
-maintainability for the period \eqn{[0,\dots,k]};}
-\item{sigma2: }{a vector giving the asymptotic variance of the estimator
-\eqn{\sigma_{M}^{2}(k)}.}
-}
+A matrix with \eqn{k + 1} rows, and with columns giving values of
+the maintainability, variances, lower and upper asymptotic confidence limits
+(if \code{x} is an object of class \code{smmfit}).
 }
 \description{
 For a reparable system \eqn{S_{ystem}} for which the failure

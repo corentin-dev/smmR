@@ -7,8 +7,7 @@
 meanSojournTimes(x, states = x$states, klim = 10000)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{states}{Vector giving the states for which the mean sojourn time
 should be computed. \code{states} is a subset of \eqn{E}.}

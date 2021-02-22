@@ -36,7 +36,8 @@ is.smmfit <- function(x) {
 #' 
 #' @description Computation of the Akaike Information Criterion.
 #' 
-#' @param x An object of class `smmfit`.
+#' @param x An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC will be computed based on `x`.
 #' @return Value of the AIC.
@@ -62,7 +63,8 @@ aic.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @description Computation of the Bayesian Information Criterion.
 #' 
-#' @param x An object of class `smmfit`.
+#' @param x An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC will be computed based on `x`.
 #' @return Value of the BIC.
@@ -94,7 +96,8 @@ bic.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @description Computes the semi-Markov kernel \eqn{q_{ij}(k)}.
 #' 
-#' @param x An object of class `smmfit`.
+#' @param x An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param k A positive integer giving the time horizon.
 #' @param var Logical. If `TRUE` the asymptotic variance is computed.
 #' @param klim Optional. The time horizon used to approximate the series in the
@@ -123,7 +126,8 @@ getKernel.smmfit <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @description Computation of the log-likelihood for a semi-Markov model.
 #' 
-#' @param x An object of class `smmfit`.
+#' @param x An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
@@ -163,7 +167,8 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #'   distributions depending on the current state `i` and on the next state 
 #'   `j`.
 #'   
-#' @param x An object of class `smmfit`.
+#' @param x An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param i An integer giving the current state in the following cases: 
 #'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
 #'   ignored.
@@ -191,7 +196,8 @@ plot.smmfit <- function(x, i = 1, j = 1, klim = NULL, ...) {
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
 #' 
-#' @param object An object of class `smmfit`.
+#' @param object An object of class `smmfit` (inheriting from the S3 classes 
+#'   `smm`, [smmnonparametric] or [smmparametric]).
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
 #' @param seed `seed` for the random number generator.
@@ -204,4 +210,88 @@ plot.smmfit <- function(x, i = 1, j = 1, klim = NULL, ...) {
 #' 
 simulate.smmfit <- function(object, nsim = 1, seed = NULL, ...) {
   NextMethod(object)
+}
+
+
+#' @export
+reliability.smmfit <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("reliability", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+maintainability.smmfit <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("maintainability", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+availability.smmfit <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("availability", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+failureRateBMP.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("BMP", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+failureRateRG.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("RG", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+mttf.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("mttf", "sigma2", "lwr", "upper")
+  
+  return(out)
+}
+
+
+#' @export
+mttr.smmfit <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
+  
+  out <- NextMethod()
+  
+  out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
+  colnames(out) <- c("mttr", "sigma2", "lwr", "upper")
+  
+  return(out)
 }

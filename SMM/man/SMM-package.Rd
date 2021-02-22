@@ -16,6 +16,46 @@ Moreover, the estimation can be done on the basis of one or several sample
 paths, with or without censoring at the beginning or/and at the end of the
 sample paths. Estimation and simulation of discrete-time k-th order Markov
 chains are also considered.
+
+Semi-Markov models are specified by using the functions \code{smmparametric()}
+and \code{smmnonparametric()} for parametric and non-parametric specifications
+respectively. These functions return objects of S3 class (\code{smm},
+\code{smmparametric}) and (\code{smm}, \code{smmnonparametric}) respectively (\code{smm} class
+inherits from S3 classes \code{smmparametric} or \code{smmnonparametric}). Thus, \code{smm}
+is like a wrapper class for semi-Markov model specifications.
+
+Based on a model specification (an object of class \code{smm}), it is possible to:
+\itemize{
+\item \strong{simulate} one or several sequences with the method
+\code{simulate.smm()};
+\item \strong{plot} conditional sojourn time distributions (method
+\code{plot.smm()});
+\item compute \strong{log-likelihood}, \strong{AIC} and \strong{BIC} criteria (methods
+\code{loglik()}, \code{aic()}, \code{bic()});
+\item compute \strong{reliability}, \strong{maintainability}, \strong{availability},
+\strong{failure rates} (methods \code{reliability()}, \code{maintainability()},
+\code{availability()}, \code{failureRate()}).
+}
+
+Estimations of parametric and non-parametric semi-Markov models can be done
+by using the function \code{fitsemimarkovmodel()}. This function returns an
+object of S3 class \code{fitsmm}. \code{fitsmm} inherits from classes
+(\code{smm}, \code{smmparametric}) or (\code{smm}, \code{smmnonparametric}).
+
+Based on a fitted/estimated semi-Markov model (an object of class \code{smmfit}),
+it is possible to:
+\itemize{
+\item \strong{simulate} one or several sequences with the method
+\code{simulate.smmfit()};
+\item \strong{plot} estimated conditional sojourn time distributions
+(method \code{plot.smmfit()});
+\item compute \strong{log-likelihood}, \strong{AIC} and \strong{BIC} criteria (methods
+\code{loglik()}, \code{aic()}, \code{bic()});
+\item compute estimated \strong{reliability}, \strong{maintainability},
+\strong{availability}, \strong{failure rates} and their \strong{confidence intervals}
+(methods \code{reliability()}, \code{maintainability()}, \code{availability()},
+\code{failureRate()}).
+}
 }
 \keyword{censored}
 \keyword{estimation}

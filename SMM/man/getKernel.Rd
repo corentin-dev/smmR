@@ -7,8 +7,7 @@
 getKernel(x, k, var = FALSE, klim = 10000)
 }
 \arguments{
-\item{x}{An object inheriting from the S3 class \code{smm} (an object of class
-\link{smmparametric} or \link{smmnonparametric}).}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{k}{A positive integer giving the time horizon.}
 

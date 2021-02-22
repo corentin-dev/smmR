@@ -146,8 +146,8 @@ and the following conditional sojourn time distributions:
 
 ## Specification and simulation
 
-First, let us create a **smmparametric** object to represent the semi-
-Markov chain associated to the system:
+First, let us create a **smmparametric** object to represent the semi-Markov 
+chain associated to the system:
 
 ```{r}
 states <- c("1", "2", "3") # State space
@@ -220,9 +220,10 @@ legend(x = "topright",
 
 <br />
 
-In the following sections, based on the estimated model, we are going to
-compute some indicators such as the reliability, the availability, the
-maintainability and also their asymptotic confidence intervals.
+In the following sections, based on the model specification `factory` and the 
+estimate of the latter `estimate`, we can compute true and estimated values of 
+some indicators such as reliability, availability, maintainability as well as 
+their asymptotic confidence intervals.
 
 ## Reliability
 
@@ -238,22 +239,20 @@ downstates <- c("3") # Failure state of the semi-Markov system
 ```
 
 ```{r}
-reliab <- reliability(x = factory, k = k, upstates = upstates, var = TRUE)
-
-level <- 0.95
-confInf <- reliab$x - sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- reliab$x + sqrt(reliab$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+trueReliab <- reliability(x = factory, k = k, upstates = upstates)
+estReliab <- reliability(x = estimate, k = k, upstates = upstates)
 ```
 
 ```{r}
-plot(x = 0:k, y = reliab$x, type = "l", cex = 2.5, ylim = c(0, 1), 
-     col = "blue", main = "Reliability", xlab = "k", ylab = "R(k)")
+plot(x = 0:k, y = trueReliab[, 1], type = "l", cex = 2.5, ylim = c(0, 1), 
+     col = "red", main = "Reliability", xlab = "k", ylab = "R(k)")
 
-lines(x = confInf, lty = 4, col = "blue")
-lines(x = confSup, lty = 4, col = "blue")
+lines(x = estReliab[, 1], col = "blue")
+lines(x = estReliab[, 3], lty = 4, col = "blue")
+lines(x = estReliab[, 4], lty = 4, col = "blue")
 legend(x = "topright", 
-       legend = c("True value", "95% confidence interval"), 
-       col = "blue", lty = c(1, 4))
+       legend = c("True value", "Estimated value", "95% confidence interval"), 
+       col = c("red", "blue", "blue"), lty = c(1, 1, 4))
 ```
 
 ## Availability
@@ -264,22 +263,20 @@ system is operational at time $k$ (independently of the fact that the
 system has failed or not in $[0, k)$).
 
 ```{r}
-avail <- availability(x = factory, k = k, upstates = upstates, var = TRUE)
-
-level <- 0.95
-confInf <- avail$x - sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- avail$x + sqrt(avail$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+trueAvail <- availability(x = factory, k = k, upstates = upstates)
+estAvail <- availability(x = estimate, k = k, upstates = upstates)
 ```
 
 ```{r}
-plot(x = 0:k, y = avail$x, type = "l", cex = 2.5, ylim = c(0.95, 1), 
-     col = "blue", main = "Availability", xlab = "k", ylab = "A(k)")
+plot(x = 0:k, y = trueAvail[, 1], type = "l", cex = 2.5, ylim = c(0.95, 1), 
+     col = "red", main = "Availability", xlab = "k", ylab = "A(k)")
 
-lines(x = confInf, lty = 4, col = "blue")
-lines(x = confSup, lty = 4, col = "blue")
+lines(x = estAvail[, 1], col = "blue")
+lines(x = estAvail[, 3], lty = 4, col = "blue")
+lines(x = estAvail[, 4], lty = 4, col = "blue")
 legend(x = "topright", 
-       legend = c("True value", "95% confidence interval"), 
-       col = "blue", lty = c(1, 4))
+       legend = c("True value", "Estimated value", "95% confidence interval"), 
+       col = c("red", "blue", "blue"), lty = c(1, 1, 4))
 ```
 
 ## Failure Rates
@@ -300,22 +297,20 @@ system occurs at time $k$, given that the system has worked until time
 $k - 1$.
 
 ```{r}
-failureBMP <- failureRateBMP(x = factory, k = k, upstates = upstates, var = TRUE)
-
-level <- 0.95
-confInf <- failureBMP$x - sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- failureBMP$x + sqrt(failureBMP$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+trueBMP <- failureRateBMP(x = factory, k = k, upstates = upstates)
+estBMP <- failureRateBMP(x = estimate, k = k, upstates = upstates)
 ```
 
 ```{r}
-plot(x = 0:k, y =  failureBMP$x, type = "l", cex = 2.5, ylim = c(0, 0.025), 
-     col = "blue", main = "BMP-failure rate", xlab = "k", ylab = bquote(lambda(k)))
+plot(x = 0:k, y =  trueBMP[, 1], type = "l", cex = 2.5, ylim = c(0, 0.025), 
+     col = "red", main = "BMP-failure rate", xlab = "k", ylab = bquote(lambda(k)))
 
-lines(x = confInf, lty = 4, col = "blue")
-lines(x = confSup, lty = 4, col = "blue")
+lines(x = estBMP[, 1], col = "blue")
+lines(x = estBMP[, 3], lty = 4, col = "blue")
+lines(x = estBMP[, 4], lty = 4, col = "blue")
 legend(x = "topright", 
-       legend = c("True value", "95% confidence interval"), 
-       col = "blue", lty = c(1, 4))
+       legend = c("True value", "Estimated value", "95% confidence interval"), 
+       col = c("red", "blue", "blue"), lty = c(1, 1, 4))
 ```
 
 ### RG-failure rate
@@ -323,22 +318,20 @@ legend(x = "topright",
 The **RG-failure rate** will be denoted by $r(k),\ k \in \mathbb{N}$.
 
 ```{r}
-failureRG <- failureRateRG(x = factory, k = k, upstates = upstates, var = TRUE)
-
-level <- 0.95
-confInf <- failureRG$x - sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- failureRG$x + sqrt(failureRG$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+trueRG <- failureRateRG(x = factory, k = k, upstates = upstates)
+estRG <- failureRateRG(x = estimate, k = k, upstates = upstates)
 ```
 
 ```{r}
-plot(x = 0:k, y =  failureRG$x, type = "l", cex = 2.5, ylim = c(0, 0.025), 
-     col = "blue", main = "RG-failure rate", xlab = "k", ylab = "r(k)")
+plot(x = 0:k, y =  trueRG[, 1], type = "l", cex = 2.5, ylim = c(0, 0.03), 
+     col = "red", main = "RG-failure rate", xlab = "k", ylab = "r(k)")
 
-lines(x = confInf, lty = 4, col = "blue")
-lines(x = confSup, lty = 4, col = "blue")
+lines(x = estRG[, 1], col = "blue")
+lines(x = estRG[, 3], lty = 4, col = "blue")
+lines(x = estRG[, 4], lty = 4, col = "blue")
 legend(x = "topright", 
-       legend = c("True value", "95% confidence interval"), 
-       col = "blue", lty = c(1, 4))
+       legend = c("True value", "Estimated value", "95% confidence interval"), 
+       col = c("red", "blue", "blue"), lty = c(1, 1, 4))
 ```
 
 ## Mean Times
@@ -349,15 +342,13 @@ Consider a system $S_{ystem}$ starting to work at time $k = 0$. The
 **mean time to failure** (MTTF) is defined as the mean lifetime.
 
 ```{r}
-mttf <- mttf(x = factory, upstates = upstates, var = TRUE)
-
-level <- 0.95
-confInf <- mttf$x - sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
-confSup <- mttf$x + sqrt(mttf$sigma2 / M) * qnorm(p = 1 - (1 - level) / 2)
+trueMTTF <- mttf(x = factory, upstates = upstates)
+estMTTF <- mttf(x = estimate, upstates = upstates)
 ```
 
 ```{r}
-print(rbind(confInf, mttf$x, confSup))
+print(trueMTTF)
+print(estMTTF)
 ```
 
 ### Mean time to repair (MTTR)
@@ -367,7 +358,8 @@ at time $k = 0$. The **mean time to repair (MTTR)** is defined as the
 mean of the repair duration.
 
 ```{r}
-mttr(x = factory, downstates = downstates, var = TRUE)
+trueMTTR <- mttr(x = factory, downstates = downstates)
+estMTTR <- mttr(x = estimate, downstates = downstates)
 ```
 
 # References
