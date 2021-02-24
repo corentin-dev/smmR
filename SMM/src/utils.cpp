@@ -381,8 +381,8 @@ List simulateParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& 
   
   for (arma::uword m = 0; m < nbseq; m++) {
     
-    arma::vec J(nsim(m), arma::fill::zeros);
-    arma::vec T(nsim(m), arma::fill::zeros);
+    arma::vec J(nsim(m) + 1, arma::fill::zeros);
+    arma::vec T(nsim(m) + 1, arma::fill::zeros);
     
     // Initial state ...
     J(0) = RcppArmadillo::sample(states, 1, false, init)(0);
@@ -508,8 +508,8 @@ List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::ve
   
   for (arma::uword m = 0; m < nbseq; m++) {
     
-    arma::vec J(nsim(m), arma::fill::zeros);
-    arma::vec T(nsim(m), arma::fill::zeros);
+    arma::vec J(nsim(m) + 1, arma::fill::zeros);
+    arma::vec T(nsim(m) + 1, arma::fill::zeros);
     
     // Initial state ...
     J(0) = RcppArmadillo::sample(states, 1, false, init)(0);

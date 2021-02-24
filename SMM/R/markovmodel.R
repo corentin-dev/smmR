@@ -223,7 +223,7 @@ loglik.markovmodel <- function(x, sequences) {
          are not in the state space given by the model 'x'")
   }
   
-  processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k)
+  processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k, verbose = FALSE)
   loglik <- .loglik.markovmodel(x = x, processes = processes)
   
   return(loglik)
@@ -242,7 +242,9 @@ loglik.markovmodel <- function(x, sequences) {
 #' @param object An object of class [markovmodel].
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
-#' @param seed `seed` for the random number generator.
+#' @param seed Optional. `seed` for the random number generator. 
+#'   If no `seed` is given, then seed is set by using the command 
+#'   `set.seed(round(as.numeric(Sys.time()))`.
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 
@@ -291,20 +293,30 @@ simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
   nbseq <- length(nsim)
   
   for (n in 1:nbseq) {
-    y <- rep.int(NA, nsim[n])
     
-    # Initial state(s)
-    y[1:object$k] <- s2c(sample(x = names(object$init), size = 1, prob = object$init))
+    if (nsim[n] <= object$k) {
+      
+      y <- s2c(sample(x = names(object$init), size = 1, prob = object$init))
     
-    for (i in 1:(nsim[n] - object$k)) {
-      ind <- which(object$states == y[i + object$k - 1])
-      if (object$k > 1) {
-        for (j in (object$k - 2):0) {
-          ind <- ind + s ^ (j + 1) * (which(object$states == y[i + j]) - 1)
+    } else {
+    
+      y <- rep.int(NA, nsim[n])
+      
+      # Initial state(s)
+      y[1:object$k] <- s2c(sample(x = names(object$init), size = 1, prob = object$init))
+      
+      for (i in 1:(nsim[n] - object$k)) {
+        ind <- which(object$states == y[i + object$k - 1])
+        if (object$k > 1) {
+          for (j in (object$k - 2):0) {
+            ind <- ind + s ^ (j + 1) * (which(object$states == y[i + j]) - 1)
+          }
         }
+        y[i + object$k] <- sample(object$states, 1, prob = object$ptrans[ind, ])
       }
-      y[i + object$k] <- sample(object$states, 1, prob = object$ptrans[ind, ])
+      
     }
+    
     out[[n]] <- y
     
   }

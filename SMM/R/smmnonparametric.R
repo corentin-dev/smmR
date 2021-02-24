@@ -534,7 +534,7 @@ loglik.smmnonparametric <- function(x, sequences) {
     stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states)
+  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
   
   if (!(processes$kmax == x$kmax)) {
     stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")

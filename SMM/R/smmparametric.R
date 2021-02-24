@@ -815,7 +815,7 @@ loglik.smmparametric <- function(x, sequences) {
     stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states)
+  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
   loglik <- .loglik.smmparametric(x = x, processes = processes)
   
   return(loglik)

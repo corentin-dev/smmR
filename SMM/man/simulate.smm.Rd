@@ -13,7 +13,9 @@
 \item{nsim}{An integer or vector of integers (for multiple sequences)
 specifying the length of the sequence(s).}
 
-\item{seed}{\code{seed} for the random number generator.}
+\item{seed}{Optional. \code{seed} for the random number generator.
+If no \code{seed} is given, then seed is set by using the command
+\verb{set.seed(round(as.numeric(Sys.time()))}.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
