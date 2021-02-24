@@ -1,4 +1,78 @@
 ## __________________________________________________________
+## Functions checking the parameters of the specified distributions
+## __________________________________________________________
+
+checkParameter <- function(distr, param) {
+  
+  out <- NULL
+  
+  if (distr == "unif") {
+    
+    if (is.na(param[1]) | !(is.na(param[2]))) {
+      out <- "For uniform distributions, only the first parameter must be specified"
+    }
+    
+    if (!((param[1] > 0) & ((param[1] %% 1) == 0))) {
+      out <- "For uniform distributions, the value of the parameter must be a positive integer"
+    }
+    
+  } else if (distr == "geom") {
+    
+    if (is.na(param[1]) | !(is.na(param[2]))) {
+      out <- "For geometric distributions, only the first parameter must be specified"
+    }
+    
+    if (param[1] <= 0 | param[1] >= 1) {
+      out <- "For geometric distributions, the value of the parameter must be 
+           between ]0, 1[ (the parameter is the probability of success)"
+    }
+    
+  } else if (distr == "pois") {
+    
+    if (is.na(param[1]) | !(is.na(param[2]))) {
+      out <- "For poisson distributions, only the first parameter must be specified"
+    }
+    
+    if (param[1] <= 0) {
+      out <- "For poisson distributions, the parameter must be a positive number"
+    }
+    
+  } else if (distr == "dweibull") {
+    
+    if (anyNA(param)) {
+      out <- "For discrete weibull distributions, two parameters must be specified"
+    }
+    
+    if (param[1] <= 0 | param[1] >= 1) {
+      out <- "For discrete weibull distributions, the value of the first parameter must be between ]0, 1["
+    }
+    
+    if (param[2] <= 0) {
+      out <- "For discrete weibull distributions, the second parameter must be a positive number"
+    }
+    
+  } else if (distr == "nbinom") {
+    
+    if (anyNA(param)) {
+      out <- "For negative binomial distributions, two parameters must be specified"
+    }
+    
+    if (param[1] <= 0) {
+      out <- "For negative binomial distributions, the first parameter must be a 
+           positive number (parameter of overdispersion)"
+    }
+    
+    if (param[2] <= 0 | param[2] >= 1) {
+      out <- "For negative binomial distributions, the value of the second parameter must 
+           be between ]0, 1[ (the parameter is the probability of success)"
+    }
+    
+  }
+  
+  return(out)
+}
+
+## __________________________________________________________
 ## Functions giving the value of the densities
 ## __________________________________________________________
 
@@ -117,7 +191,7 @@
   if (modulo == 0) {
     modulo <- n # Set modulo to |A|^order-1 if equal to 0
   }
-
+  
   return(c(rep(0, alphaSize * (modulo - 1)), vector, rep(0, alphaSize * (n - modulo)))) # Add zeros to vector
 }
 
@@ -135,6 +209,6 @@
   # Set dim names
   rownames(block) <- rwnms
   colnames(block) <- rwnms
-
+  
   return(t(block))
 }

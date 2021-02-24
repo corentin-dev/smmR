@@ -1168,7 +1168,7 @@ pij <- matrix(c(0, 0.2, 0.5, 0.3,
 
 # Model specification
 smmspec <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-                         type.sojourn = "f", distr = "pois", param = 2)
+                         type.sojourn = "f", distr = "pois", param = c(2, NA))
 
 # Simulation of a squence of length 5000
 seq5000 <- simulate(object = smmspec, nsim = 5000, seed = 150)

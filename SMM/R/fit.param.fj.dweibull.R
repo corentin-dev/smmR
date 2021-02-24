@@ -2,7 +2,7 @@
   
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- suppressWarnings(estdweibull(x = unlist(sapply(1:kmax, function(x) rep(x, counting$Njk[j, x]))), method = "ML", zero = FALSE))
-
+  
   loglik <- function(par) {
     
     mask <- counting$Njk[j, ] != 0

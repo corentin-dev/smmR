@@ -250,7 +250,7 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
     stop("'k' must be a positive integer")
   }
   
-  if ((!((k >= 0) && ((k %% 1) == 0)))) {
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
     stop("'k' must be a positive integer")
   }
   
@@ -258,7 +258,7 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
   # Checking parameters upstates
   #############################
   
-  if (!(is.vector(upstates) && (length(unique(upstates)) == length(upstates)))) {
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
     stop("The subset of state space 'upstates' is not a vector of unique elements")
   }
   
@@ -319,7 +319,7 @@ maintainability.smm <- function(x, k, downstates = x$states, level = 0.95, klim 
     stop("'k' must be a positive integer")
   }
   
-  if ((!((k >= 0) && ((k %% 1) == 0)))) {
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
     stop("'k' must be a positive integer")
   }
   
@@ -327,7 +327,7 @@ maintainability.smm <- function(x, k, downstates = x$states, level = 0.95, klim 
   # Checking parameters upstates
   #############################
   
-  if (!(is.vector(downstates) && (length(unique(downstates)) == length(downstates)))) {
+  if (!(is.vector(downstates) & (length(unique(downstates)) == length(downstates)))) {
     stop("The subset of state space 'downstates' is not a vector of unique elements")
   }
   
@@ -356,7 +356,7 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
     stop("'k' must be a positive integer")
   }
   
-  if ((!((k >= 0) && ((k %% 1) == 0)))) {
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
     stop("'k' must be a positive integer")
   }
   
@@ -364,7 +364,7 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
   # Checking parameters upstates
   #############################
   
-  if (!(is.vector(upstates) && (length(unique(upstates)) == length(upstates)))) {
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
     stop("The subset of state space 'upstates' is not a vector of unique elements")
   }
   

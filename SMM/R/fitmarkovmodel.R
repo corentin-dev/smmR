@@ -89,7 +89,7 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   # Checking parameters sequences and states
   #############################
   
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+  if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
@@ -101,7 +101,7 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   # Checking parameter k
   #############################
   
-  if (!((k > 0) && ((k %% 1) == 0))) {
+  if (!((k > 0) & ((k %% 1) == 0))) {
     stop("'k' must be a strictly positive integer")
   }
   
@@ -110,7 +110,7 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   #############################
   
   # init.estim <- match.arg(init.estim)
-
+  
   processes <- processesMarkov(sequences = sequences, states = states, k = k)
   s <- processes$s
   Nij <- processes$Nij
@@ -123,7 +123,7 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   ptrans <- .normalizePtrans(ptrans)
   
   # Initial distribution
-  if (is.vector(init.estim) && length(init.estim) == 1) {
+  if (is.vector(init.estim) & length(init.estim) == 1) {
     if (init.estim == "mle") {
       init <- Nstarti / sum(Nstarti)
     } else if (init.estim == "stationary") {
@@ -146,11 +146,11 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
            'init.estim' can also be a vector of length s ^ k for custom initial distribution")
     }
   } else {
-    if (!(length(init.estim) == s ^ k)) {
-      stop("'init.estim' is not a vector of length s ^ k")
+    if (!(is.numeric(init.estim) & !anyNA(init.estim) & is.vector(init.estim) & length(init.estim) == s ^ k)) {
+      stop("'init.estim' is not a numeric vector of length s ^ k")
     }
     
-    if (!(all(init.estim >= 0) && all(init.estim <= 1))) {
+    if (!(all(init.estim >= 0) & all(init.estim <= 1))) {
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     

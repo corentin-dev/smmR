@@ -43,7 +43,7 @@
   )
   theta0 <- mle$par
   
-  if (!cens.beg && cens.end) {# Censoring at the end
+  if (!cens.beg & cens.end) {# Censoring at the end
     
     loglik <- function(par) {
       
@@ -69,7 +69,7 @@
     )
     theta <- mle$par
     
-  } else if (cens.beg && !cens.end) {# Censoring at the beginning
+  } else if (cens.beg & !cens.end) {# Censoring at the beginning
     
     loglik <- function(par) {
       
@@ -95,7 +95,7 @@
     )
     theta <- mle$par
     
-  } else if (cens.beg && cens.end) {# Censoring at the beginning and at the end
+  } else if (cens.beg & cens.end) {# Censoring at the beginning and at the end
     
     loglik <- function(par) {
       

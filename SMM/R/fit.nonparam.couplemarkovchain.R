@@ -7,7 +7,7 @@
   kmax <- processes$kmax
   counting <- processes$counting
   Nstart <- counting$Nstarti
-
+  
   
   Ym <- lapply(Ym, function(x) x - 1)
   Niuj <- getCountingNiuj(Ym, Um, s, kmax)
@@ -60,7 +60,7 @@
   }
   
   # Initial distribution
-  if (is.vector(init.estim) && length(init.estim) == 1) {
+  if (is.vector(init.estim) & length(init.estim) == 1) {
     if (init.estim == "mle") {
       init <- Nstart / sum(Nstart)
     } else if (init.estim == "limit") {
@@ -74,11 +74,11 @@
            'init.estim' can also be a vector of length s for custom initial distribution")
     }
   } else {
-    if (!(length(init.estim) == s)) {
-      stop("'init.estim' is not a vector of length s")
+    if (!(is.numeric(init.estim) & !anyNA(init.estim) & is.vector(init.estim) & length(init.estim) == s)) {
+      stop("'init.estim' is not a numeric vector of length s")
     }
     
-    if (!(all(init.estim >= 0) && all(init.estim <= 1))) {
+    if (!(all(init.estim >= 0) & all(init.estim <= 1))) {
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     

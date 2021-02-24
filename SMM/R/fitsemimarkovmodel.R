@@ -188,58 +188,36 @@
 #'                            distr = distr.matrix)
 #' est1
 #' 
-fitsemimarkovmodel <-
-  function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), distr = "nonparametric", 
-           init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {
-    
-
+fitsemimarkovmodel <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
+                               distr = "nonparametric", init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {
+  
+  
   #############################
   # Checking parameters sequences and states
   #############################
-
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+  
+  if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
-
+  
   if (!all(unique(unlist(sequences)) %in% states)) {
     stop("Some states in the list of observed sequences 'sequences' are not in the state space 'states'")
   }
-
+  
   #############################
   # Checking parameter type.sojourn
   #############################
-
+  
   type.sojourn <- match.arg(type.sojourn)
-
+  
   #############################
   # Checking parameters distr
   #############################
   
   s <- length(states) # State space size
   
-  if (!(length(distr) == 1 && all(distr == "nonparametric"))) {
-
-    if (type.sojourn == "fij" && !(is.matrix(distr))) {
-      stop("'distr' must be a matrix of dimension (s, s) since 'type.sojourn == \"fij\"'")
-    }
-
-    if ((type.sojourn == "fi" || type.sojourn == "fj") && !is.vector(distr)) {
-      stop("'distr' must be a vector of length s since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
-    }
-
-    if (type.sojourn == "f" && !(length(distr) == 1)) {
-      stop("'distr' must be one element since 'type.sojourn == \"f\"'")
-    }
-
-
-    if (type.sojourn == "fij" && !(dim(distr)[1] == s && dim(distr)[2] == s)) {
-      stop("'distr' must be a matrix of dimension (s, s) since 'type.sojourn == \"fij\"'")
-    }
-
-    if ((type.sojourn == "fi" || type.sojourn == "fj") && !(length(distr) == s)) {
-      stop("'distr' must be a vector of length s since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
-    }
-
+  if (!all(is.vector(distr), length(distr) == 1, distr == "nonparametric")) {
+    
     distrib.vec <- c("unif", "geom", "pois", "dweibull", "nbinom", NA)
     if (!all(distr %in% distrib.vec)) {
       stop("The specified distributions must be either ", paste(distrib.vec, collapse = ", "), 
@@ -247,10 +225,39 @@ fitsemimarkovmodel <-
     }
     
     if (type.sojourn == "fij") {
-      if (!(all(is.na(diag(distr))))) {
-        stop("All the diagonal elements of 'distr' must be equal to NA 
-             since transitions to the same state are not allowed")
+      
+      if (!(is.matrix(distr) & dim(distr)[1] == s & dim(distr)[2] == s)) {
+        stop("'distr' must be a matrix of dimension (s, s) since 'type.sojourn == \"fij\"'")
       }
+      
+      if (!(all(is.na(diag(distr))))) {
+        stop("All the diagonal elements of 'distr' must be equal to NA since transitions to the same state are not allowed")
+      }
+      
+    }
+    
+    if (type.sojourn == "fi" | type.sojourn == "fj") {
+      
+      if (!(is.vector(distr) & length(distr) == s)) {
+        stop("'distr' must be a vector of length s since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
+      }
+      
+      if (anyNA(distr)) {
+        stop("'distr' cannot contain non specified distributions")
+      }
+      
+    }
+    
+    if (type.sojourn == "f") {
+      
+      if (!(is.vector(distr) & length(distr) == 1)) {
+        stop("'distr' must be one distribution since 'type.sojourn == \"f\"'")
+      }
+      
+      if (is.na(distr)) {
+        stop("'distr' must be either ", paste(distrib.vec[-length(distrib.vec)], collapse = ", "))
+      }
+      
     }
     
   }
@@ -261,10 +268,10 @@ fitsemimarkovmodel <-
   
   # init.estim <- match.arg(init.estim)
   
-
+  
   processes <- processesSemiMarkov(sequences = sequences, states = states, verbose = TRUE)
-
-  if (length(distr) == 1 && distr == "nonparametric") {
+  
+  if (all(length(distr) == 1, distr == "nonparametric")) {
     
     if (!(cens.beg)) {
       
@@ -279,13 +286,13 @@ fitsemimarkovmodel <-
       }
       
     } else {
-     
+      
       if (!cens.end) {
         stop("fitsmm not implemented in the case 'distr = \"nonparametric\"', 'cens.beg = TRUE', 'cens.end = FALSE'")
       } else {
         stop("fitsmm not implemented in the case 'distr = \"nonparametric\"', 'cens.beg = TRUE', 'cens.end = TRUE'")
       }
-       
+      
     }
   } else {
     smm <- .fit.param(processes = processes, states = states, type.sojourn = type.sojourn, distr = distr, init.estim = init.estim, cens.end = cens.end, cens.beg = cens.beg)

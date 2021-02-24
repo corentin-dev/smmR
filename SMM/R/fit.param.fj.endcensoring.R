@@ -29,7 +29,7 @@
     ##########################################################
     # Sojourn time distributions are 2 uniforms
     ##########################################################
-    if ((distr[1] == "unif") && (distr[2] == "unif")) {
+    if ((distr[1] == "unif") & (distr[2] == "unif")) {
       
       for (j in 1:s) {
         param[j, ] <- .fit.param.fj.unif(counting, j, kmax)

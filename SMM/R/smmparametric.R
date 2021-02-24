@@ -143,7 +143,7 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   
   s <- length(states)
   
-  if (!(is.vector(states) && (length(unique(states)) == s))) {
+  if (!(is.vector(states) & (length(unique(states)) == s))) {
     stop("The state space 'states' is not a vector of unique elements")
   }
   
@@ -151,11 +151,11 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   # Checking parameter init
   #############################
   
-  if (!(is.vector(init) && (length(init) == s))) {
-    stop("'init' is not a vector of length s")
+  if (!(is.numeric(init) & !anyNA(init) & is.vector(init) & length(init) == s)) {
+    stop("'init' is not a numeric vector of length s")
   }
   
-  if (!(all(init >= 0) && all(init <= 1))) {
+  if (!(all(init >= 0) & all(init <= 1))) {
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
@@ -167,24 +167,24 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   # Checking parameter ptrans
   #############################
   
-  if (!is.matrix(ptrans)) {
-    stop("'ptrans' is not a matrix")
+  if (!(is.numeric(ptrans) & !anyNA(ptrans) & is.matrix(ptrans))) {
+    stop("'ptrans' is not a matrix with numeric values")
   }
   
-  if (!(all(ptrans >= 0) && all(ptrans <= 1))) {
-    stop("Probabilities in 'ptrans' must be between [0, 1]")
-  }
-  
-  if (!((dim(ptrans)[1] == s) && (dim(ptrans)[2] == s))) {
+  if (!((dim(ptrans)[1] == s) & (dim(ptrans)[2] == s))) {
     stop("The dimension of the matrix 'ptrans' must be equal to (s, s)")
   }
   
-  if (!all(apply(ptrans, 1, sum) == 1)) {
-    stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
+  if (!(all(ptrans >= 0) & all(ptrans <= 1))) {
+    stop("Probabilities in 'ptrans' must be between [0, 1]")
   }
   
   if (!all(diag(ptrans) == 0)) {
     stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
+  }
+  
+  if (!all(apply(ptrans, 1, sum) == 1)) {
+    stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
   #############################
@@ -197,28 +197,6 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   # Checking parameters distr and param
   #############################
   
-  if (type.sojourn == "fij" && !(is.matrix(distr) && (is.array(param) && !is.matrix(param)))) {
-    stop("'distr' must be a matrix of dimension (s, s) and 'param' must be an array of dimension (s, s, 2) since 'type.sojourn == \"fij\"'")
-  }
-  
-  if ((type.sojourn == "fi" | type.sojourn == "fj") && !(is.vector(distr) && is.matrix(param))) {
-    stop("'distr' must be a vector of length s and param must be a matrix of dimension (s, 2) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
-  }
-  
-  if (type.sojourn == "f" && !((length(distr) == 1) && is.vector(param))) {
-    stop("'distr' must be one element and 'param' must be a vector of length 2 since 'type.sojourn == \"f\"'")
-  }
-  
-  
-  if (type.sojourn == "fij" && !((dim(distr)[1] == s && dim(distr)[2] == s) && (dim(param)[1] == s && dim(param)[2] == s))) {
-    stop("'distr' must be a matrix of dimension (s, s) and 'param' must be an array of dimension (s, s, 2) since type.sojourn == \"fij\"")
-  }
-  
-  if ((type.sojourn == "fi" | type.sojourn == "fj") && !((length(distr) == s) && (dim(param)[1] == s && dim(param)[2] == 2))) {
-    stop("'distr' must be a vector of length s and 'param' must be a matrix of dimension (s, 2) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
-  }
-  
-  
   distrib.vec <- c("unif", "geom", "pois", "dweibull", "nbinom", NA)
   if (!all(distr %in% distrib.vec)) {
     stop("The specified distributions must be either ", paste(distrib.vec, collapse = ", "), 
@@ -226,16 +204,104 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   }
   
   if (!all(param >= 0 | is.na(param))) {
-    stop("Every element of 'param' must be positive")
+    stop("Every element of 'param' must be positive values (or NA for missing/unused parameters)")
   }
   
   if (type.sojourn == "fij") {
+    
+    if (!(is.matrix(distr) & dim(distr)[1] == s & dim(distr)[2] == s)) {
+      stop("'distr' must be a matrix of dimension (s, s) since 'type.sojourn == \"fij\"'")
+    }
+    
+    if (anyNA(distr[ptrans != 0])) {
+      
+      indexdiag <- seq(1, s * s, by = s + 1)
+      distr.temp <- as.vector(distr)[-indexdiag]
+      
+      statesi <- row(distr)[-indexdiag][is.na(distr.temp)]
+      statesj <- col(distr)[-indexdiag][is.na(distr.temp)]
+      
+      stop("Some conditional sojourn time distributions are not specified while 
+           transitions are allowed via the matrix transition 'ptrans' (see transitions ", 
+           paste0(sapply(1:length(statesi), function(x) 
+             paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", "), ")")
+    }
+    
     if (!(all(is.na(diag(distr))))) {
       stop("All the diagonal elements of 'distr' must be equal to NA since transitions to the same state are not allowed")
     }
     
-    if (!(all(is.na(diag(param[, , 1]))) && all(is.na(diag(param[, , 2]))))) {
+    if (!(is.array(param) & !is.matrix(param) & dim(param)[1] == s & dim(param)[2] == s)) {
+      stop("'param' must be an array of dimension (s, s, 2) since 'type.sojourn == \"fij\"'")
+    }
+    
+    if (!(all(is.na(diag(param[, , 1]))) & all(is.na(diag(param[, , 2]))))) {
       stop("All the diagonal elements of 'param' must be equal to NA since transitions to the same state are not allowed")
+    }
+    
+    allChecking <- c()
+    for (i in 1:s) {
+      for (j in 1:s) {
+        if (i != j & !is.na(distr[i, j])) {
+          checking <- checkParameter(distr[i, j], param[i, j, ])
+          if (length(checking)) {
+            allChecking <- c(allChecking, paste0("-Transition (i = ", i, " to j = ", j, "): ", checking))
+          }
+        }
+      }
+    }
+    
+    if (length(allChecking)) {
+      stop("Bad parameter specifications:\n\n", paste0(allChecking, collapse = "\n\n"))
+    }
+    
+  }
+  
+  if (type.sojourn == "fi" | type.sojourn == "fj") {
+    
+    if (!(is.vector(distr) & length(distr) == s)) {
+      stop("'distr' must be a vector of length s since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
+    }
+    
+    if (anyNA(distr)) {
+      stop("'distr' cannot contain non specified distributions")
+    }
+    
+    if (!(is.matrix(param) & dim(param)[1] == s & dim(param)[2] == 2)) {
+      stop("'param' must be a matrix of dimension (s, 2) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
+    }
+    
+    allChecking <- c()
+    for (i in 1:s) {
+      checking <- checkParameter(distr[i], param[i, ])
+      if (length(checking)) {
+        allChecking <- c(allChecking, paste0("-State ", ifelse(type.sojourn == "fi", "i", "j"), " = ", i, ": ", checking))
+      }
+    }
+    
+    if (length(allChecking) != 0) {
+      stop("Bad parameter specifications:\n\n", paste0(allChecking, collapse = "\n\n"))
+    }
+    
+  }
+  
+  if (type.sojourn == "f") {
+    
+    if (!(is.vector(distr) & length(distr) == 1)) {
+      stop("'distr' must be one distribution since 'type.sojourn == \"f\"'")
+    }
+    
+    if (is.na(distr)) {
+      stop("'distr' must be either ", paste(distrib.vec[-length(distrib.vec)], collapse = ", "))
+    }
+    
+    if (!(is.vector(param) & length(param) == 2)) {
+      stop("'param' must be a vector of length 2 since 'type.sojourn == \"f\"'")
+    }
+    
+    checking <- checkParameter(distr, param)
+    if (length(checking) != 0) {
+      stop("Bad parameter specifications :\n\n", checking)
     }
     
   }
@@ -244,7 +310,7 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
   # Checking parameter cens.beg and cens.end
   #############################
   
-  if (!(is.logical(cens.beg) && is.logical(cens.end))) {
+  if (!(is.logical(cens.beg) & is.logical(cens.end))) {
     stop("'cens.beg' and 'cens.end' must be TRUE or FALSE")
   }
   
@@ -302,7 +368,7 @@ is.smmparametric <- function(x) {
 .get.fijk.smmparametric <- function(x, k) {
   
   s <- x$s
-
+  
   if (x$type.sojourn == "fij") {
     param1 <- x$param[, , 1]
     param2 <- x$param[, , 2]
@@ -320,7 +386,7 @@ is.smmparametric <- function(x) {
     param2 <- x$param[2]
     f <- matrix(0, nrow = 1, ncol = k)
   }
-
+  
   if ("dweibull" %in% x$distr) {
     indices <- which(x$distr == "dweibull")
     for (j in indices) {
@@ -351,7 +417,7 @@ is.smmparametric <- function(x) {
       f[j, ] <- sapply(1:k, function(k) ifelse(k <= x$param[j], 1 / x$param[j], 0))
     }
   }
-
+  
   if (x$type.sojourn == "fij") {
     fijk <- array(f, c(s, s, k))
   } else if (x$type.sojourn == "fi") {
@@ -368,7 +434,7 @@ is.smmparametric <- function(x) {
     fmat <- matrix(f, nrow = k, ncol = s * s, byrow = TRUE)
     fijk <- array(as.vector(t(fmat)), c(s, s, k))
   }
-
+  
   return(fijk)
   
 }
@@ -514,7 +580,7 @@ is.smmparametric <- function(x) {
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nijk[maskNijk] * log(f[maskNijk]))
     
-    if (cens.beg || cens.end) {# Censoring
+    if (cens.beg | cens.end) {# Censoring
       
       # Contribution of the first right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
@@ -543,7 +609,7 @@ is.smmparametric <- function(x) {
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nik[maskNik] * log(f[maskNik]))
     
-    if (cens.beg || cens.end) {# Censoring
+    if (cens.beg | cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
@@ -569,7 +635,7 @@ is.smmparametric <- function(x) {
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Njk[maskNjk] * log(f[maskNjk]))
     
-    if (cens.beg || cens.end) {
+    if (cens.beg | cens.end) {
       
       # Contribution of the first right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
@@ -598,7 +664,7 @@ is.smmparametric <- function(x) {
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nk[maskNk] * log(f[maskNk]))
     
-    if (cens.beg || cens.end) {# Censoring
+    if (cens.beg | cens.end) {# Censoring
       
       # Contribution of the first and last right censored time to the log-likelihood
       Fbar <- .get.Fbar.smmparametric(x = x, k = kmax)
@@ -741,7 +807,7 @@ loglik.smmparametric <- function(x, sequences) {
   # Checking parameters sequences and states
   #############################
   
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+  if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
@@ -787,7 +853,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
       if (!((j > 0) & (j <= dim(x$distr)[2]) & ((j %% 1) == 0))) {
         stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[2]))
       }
-
+      
     }
     
   }
@@ -797,7 +863,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   #############################
   
   if (!is.null(klim)) {
-    if (!((klim > 0) && ((klim %% 1) == 0))) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
       stop("'klim' must be a strictly positive integer")
     }
   }
@@ -865,14 +931,31 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
   # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
   # 4. Set S_{k+1} = S_{k} + X;
   # 5. If S_{k+1} >= M, then end;
-  # 6. Else, set k= k + 1 and continue to step 2.
+  # 6. Else, set k = k + 1 and continue to step 2.
   # 
   ###########################################################
   ###########################################################
   
-  if (is.null(seed)) {
-    seed <- as.numeric(Sys.time())
+  #############################
+  # Checking parameter nsim
+  #############################
+  
+  if (!all(is.numeric(nsim), is.vector(nsim), !anyNA(nsim), nsim > 0, (nsim %% 1) == 0)) {
+    stop("'nsim' must be a strictly positive integer or a vector of striclty positive integers")
   }
+  
+  #############################
+  # Checking parameter seed
+  #############################
+  
+  if (is.null(seed)) {
+    seed <- round(as.numeric(Sys.time()))
+  }
+  
+  if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
+    stop("'seed' must be a positive integer")
+  }
+  
   
   # Preparation of the parameters and the distributions matrix to ease the sampling process
   param1 <- rep.int(x = NA, times = object$s)

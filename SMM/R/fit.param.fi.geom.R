@@ -2,8 +2,8 @@
   
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- sum(counting$Nik[i, ]) / sum(1:kmax * counting$Nik[i, ])
-
-  if (!cens.beg && cens.end) {# Censoring at the end
+  
+  if (!cens.beg & cens.end) {# Censoring at the end
     
     loglik <- function(par) {
       
@@ -22,8 +22,8 @@
     
     mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
-
-  } else if (cens.beg && !cens.end) {# Censoring at the beginning
+    
+  } else if (cens.beg & !cens.end) {# Censoring at the beginning
     
     loglik <- function(par) {
       
@@ -43,7 +43,7 @@
     mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
-  } else if (cens.beg && cens.end) {# Censoring at the beginning and at the end
+  } else if (cens.beg & cens.end) {# Censoring at the beginning and at the end
     
     loglik <- function(par) {
       
@@ -59,7 +59,7 @@
       
       return(-(sum(counting$Nik[i, ] * fk) + sum(counting$Nebik[i, ] * Fk)))
     }
-
+    
     mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
@@ -70,5 +70,5 @@
   }
   
   return(c(theta, NA))
-    
+  
 }

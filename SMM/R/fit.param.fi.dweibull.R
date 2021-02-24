@@ -2,7 +2,7 @@
   
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- suppressWarnings(estdweibull(x = unlist(sapply(1:kmax, function(x) rep(x, counting$Nik[i, x]))), method = "ML", zero = FALSE))
-
+  
   loglik <- function(par) {
     
     mask <- counting$Nik[i, ] != 0
@@ -32,7 +32,7 @@
   )
   theta0 <- mle$par
   
-  if (!cens.beg && cens.end) {# Censoring at the end
+  if (!cens.beg & cens.end) {# Censoring at the end
     
     loglik <- function(par) {
       
@@ -58,7 +58,7 @@
     )
     theta <- mle$par
     
-  } else if (cens.beg && !cens.end) {# Censoring at the beginning
+  } else if (cens.beg & !cens.end) {# Censoring at the beginning
     
     loglik <- function(par) {
       
@@ -84,7 +84,7 @@
     )
     theta <- mle$par
     
-  } else if (cens.beg && cens.end) {# Censoring at the beginning and at the end
+  } else if (cens.beg & cens.end) {# Censoring at the beginning and at the end
     
     loglik <- function(par) {
       

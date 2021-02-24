@@ -11,18 +11,6 @@
 #' 
 processesSemiMarkov <- function(sequences, states, verbose = TRUE) {
   
-  #############################
-  # Checking parameters
-  #############################
-  
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter 'sequences' should be a list of vectors")
-  }
-  
-  if (!all(unique(unlist(sequences)) %in% states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space 'states'")
-  }
-  
   s <- length(states) # State space size
   L <- length(sequences) # Number of sequences
   
@@ -99,22 +87,6 @@ processesSemiMarkov <- function(sequences, states, verbose = TRUE) {
 #' @noRd
 #' 
 processesMarkov <- function(sequences, states, k, verbose = TRUE) {
-  
-  #############################
-  # Checking parameters
-  #############################
-  
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
-    stop("The parameter 'sequences' should be a list of vectors")
-  }
-  
-  if (!all(unique(unlist(sequences)) %in% states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space 'states'")
-  }
-  
-  if (!((k > 0) && ((k %% 1) == 0))) {
-    stop("'k' must be a strictly positive integer")
-  }
   
   s <- length(states) # State space size
   L <- length(sequences) # Number of sequences

@@ -109,7 +109,7 @@ loglik.markovmodelfit <- function(x, sequences = NULL) {
   # Computing a new value of log-likelihood based on the parameter sequences
   if (!is.null(sequences)) {
     
-    if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+    if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
       stop("The parameter 'sequences' should be a list of vectors")
     }
     

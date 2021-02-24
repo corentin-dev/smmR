@@ -13,55 +13,61 @@
 #' @export
 #' 
 markovmodel <- function(states, init, ptrans, k = 1) {
-
+  
   #############################
   # Checking parameter states
   #############################
-
+  
   s <- length(states)
   
-  if (!(is.vector(states) && (length(unique(states)) == s))) {
+  if (!(is.vector(states) & (length(unique(states)) == s))) {
     stop("The state space 'states' is not a vector of unique elements")
   }
-
+  
   #############################
   # Checking parameter init
   #############################
-
-  if (!(is.vector(init) && (length(init) == s ^ k))) {
-    stop("'init' is not a vector of length s ^ k")
+  
+  if (!(is.numeric(init) & !anyNA(init) & is.vector(init) & length(init) == s ^ k)) {
+    stop("'init' is not a numeric vector of length s ^ k")
   }
   
-  if (!(all(init >= 0) && all(init <= 1))) {
+  if (!(all(init >= 0) & all(init <= 1))) {
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
   if (!(sum(init) == 1)) {
     stop("The sum of 'init' is not equal to one")
   }
-
+  
   #############################
   # Checking parameter k
   #############################
   
-  if (!((k > 0) && ((k %% 1) == 0))) {
+  if (!((k > 0) & ((k %% 1) == 0))) {
     stop("'k' must be a strictly positive integer")
   }
   
   #############################
   # Checking parameter ptrans
   #############################
-
-  if (!is.matrix(ptrans)) {
-    stop("'ptrans' is not a matrix")
+  
+  if (!(is.numeric(ptrans) & !anyNA(ptrans) & is.matrix(ptrans))) {
+    stop("'ptrans' is not a matrix with numeric values")
   }
   
-  if (!(all(ptrans >= 0) && all(ptrans <= 1))) {
+  if (!((dim(ptrans)[1] == s ^ k) & (dim(ptrans)[2] == s))) {
+    stop("The dimension of the matrix 'ptrans' must be equal to (s ^ k, s)")
+  }
+  
+  if (!(all(ptrans >= 0) & all(ptrans <= 1))) {
     stop("Probabilities in 'ptrans' must be between [0, 1]")
   }
   
-  if (!((dim(ptrans)[1] == s ^ k) && (dim(ptrans)[2] == s))) {
-    stop("The dimension of the matrix 'ptrans' must be equal to (s ^ k, s)")
+  if (k == 1) {
+    if (!all(diag(ptrans) == 0)) {
+      stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
+    }
   }
   
   if (!all(apply(ptrans, 1, sum) == 1)) {
@@ -73,7 +79,7 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   colnames(ptrans) <- words(length = 1, alphabet = states)
   row.names(ptrans) <- words(length = k, alphabet = states)
   names(init) <- row.names(ptrans)
-
+  
   ans <- list(states = states, s = s, k = k, init = init, ptrans = ptrans)
   
   class(ans) <- "markovmodel"
@@ -208,7 +214,7 @@ loglik.markovmodel <- function(x, sequences) {
   # Checking parameters sequences and states
   #############################
   
-  if (!(is.list(sequences) && all(sapply(sequences, class) %in% c("character", "numeric")))) {
+  if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
@@ -259,9 +265,26 @@ loglik.markovmodel <- function(x, sequences) {
 #' 
 simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
   
-  if (!is.null(seed)) {
-    set.seed(seed)
+  #############################
+  # Checking parameter nsim
+  #############################
+  
+  if (!all(is.numeric(nsim), is.vector(nsim), !anyNA(nsim), nsim > 0, (nsim %% 1) == 0)) {
+    stop("'nsim' must be a strictly positive integer or a vector of striclty positive integers")
   }
+  
+  #############################
+  # Checking parameter seed
+  #############################
+  
+  if (is.null(seed)) {
+    seed <- round(as.numeric(Sys.time()))
+  }
+  
+  if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
+    stop("'seed' must be a positive integer")
+  }
+  
   
   s <- length(object$states)
   out <- list()
