@@ -297,8 +297,8 @@ system occurs at time $k$, given that the system has worked until time
 $k - 1$.
 
 ```{r}
-trueBMP <- failureRateBMP(x = factory, k = k, upstates = upstates)
-estBMP <- failureRateBMP(x = estimate, k = k, upstates = upstates)
+trueBMP <- failureRate(x = factory, k = k, upstates = upstates)
+estBMP <- failureRate(x = estimate, k = k, upstates = upstates)
 ```
 
 ```{r}
@@ -318,8 +318,8 @@ legend(x = "topright",
 The **RG-failure rate** will be denoted by $r(k),\ k \in \mathbb{N}$.
 
 ```{r}
-trueRG <- failureRateRG(x = factory, k = k, upstates = upstates)
-estRG <- failureRateRG(x = estimate, k = k, upstates = upstates)
+trueRG <- failureRate(x = factory, k = k, upstates = upstates, failure.rate = "RG")
+estRG <- failureRate(x = estimate, k = k, upstates = upstates, failure.rate = "RG")
 ```
 
 ```{r}

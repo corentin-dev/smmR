@@ -411,8 +411,7 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
 }
 
 
-#' @export
-failureRateBMP.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+.failureRateBMP.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
   ###########################################################
   # Compute \lambda, the BMP-failure rate
@@ -453,13 +452,33 @@ failureRateBMP.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon 
 }
 
 
-#' @export
-failureRateRG.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+.failureRateRG.smm <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
-  lbda <- failureRateBMP.smm(x = x, k = k, upstates = upstates, level = 0.95, epsilon = epsilon, klim = klim)
+  lbda <- .failureRateBMP.smm(x = x, k = k, upstates = upstates, level = 0.95, epsilon = epsilon, klim = klim)
   
   out <- cbind(-log(1 - lbda[, 1]), lbda[, 2])
   colnames(out) <- c("RG", "sigma2")
+  
+  return(out)
+  
+}
+
+
+#' @export
+failureRate.smm <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG"), level = 0.95, epsilon = 1e-3, klim = 10000) {
+  
+  #############################
+  # Checking parameters failure.rate
+  #############################
+  
+  failure.rate <- match.arg(failure.rate)
+  
+  
+  if (failure.rate == "BMP") {
+    out <- .failureRateBMP.smm(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
+  } else {
+    out <- .failureRateRG.smm(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
+  }
   
   return(out)
   

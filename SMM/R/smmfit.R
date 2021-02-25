@@ -249,10 +249,9 @@ availability.smmfit <- function(x, k, upstates = x$states, level = 0.95, klim = 
 }
 
 
-#' @export
-failureRateBMP.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+.failureRateBMP.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
-  out <- NextMethod()
+  out <- .failureRateBMP.smm(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
   
   out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
   colnames(out) <- c("BMP", "sigma2", "lwr", "upper")
@@ -261,15 +260,35 @@ failureRateBMP.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsil
 }
 
 
-#' @export
-failureRateRG.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+.failureRateRG.smmfit <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
   
-  out <- NextMethod()
+  out <- .failureRateRG.smm(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
   
   out <- cbind(out, out[, 1] + (sqrt(out[, 2] / x$M) * qnorm(p = 1 - (1 - level) / 2)) %o% c(-1, 1))
   colnames(out) <- c("RG", "sigma2", "lwr", "upper")
   
   return(out)
+}
+
+
+#' @export
+failureRate.smmfit <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG"), level = 0.95, epsilon = 1e-3, klim = 10000) {
+  
+  #############################
+  # Checking parameters failure.rate
+  #############################
+  
+  failure.rate <- match.arg(failure.rate)
+  
+  
+  if (failure.rate == "BMP") {
+    out <- .failureRateBMP.smmfit(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
+  } else {
+    out <- .failureRateRG.smmfit(x = x, k = k, upstates = upstates, level = level, epsilon = epsilon, klim = klim)
+  }
+  
+  return(out)
+  
 }
 
 

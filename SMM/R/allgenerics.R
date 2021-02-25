@@ -472,10 +472,10 @@ availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) 
 #'   the BMP-failure rate, variances, lower and upper asymptotic confidence 
 #'   limits (if `x` is an object of class `smmfit`).
 #'  
-#' @export
+#' @noRd
 #' 
-failureRateBMP <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
-  UseMethod("failureRateBMP", x)
+.failureRateBMP <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+  UseMethod(".failureRateBMP", x)
 }
 
 
@@ -516,10 +516,117 @@ failureRateBMP <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e
 #'   the RG-failure rate, variances, lower and upper asymptotic confidence 
 #'   limits (if `x` is an object of class `smmfit`).
 #'  
+#' @noRd
+#' 
+.failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
+  UseMethod(".failureRateRG", x)
+}
+
+
+#' Failure Rate Function
+#' 
+#' @description Function to compute the BMP-failure rate or the RG-failure rate.
+#' 
+#'   Consider a system \eqn{S_{ystem}} starting to work at time 
+#'   \eqn{k = 0}. The BMP-failure rate at time \eqn{k \in N} is the conditional 
+#'   probability that the failure of the system occurs at time \eqn{k}, given 
+#'   that the system has worked until time \eqn{k - 1}.
+#'   
+#'   The RG-failure rate is a discrete-time adapted failure rate, proposed by 
+#'   D. Roy and R. Gupta. Classification of discrete lives. Microelectronics 
+#'   Reliability, 32(10):1459--1473, 1992. We call it the RG-failure rate and 
+#'   denote it by \eqn{r(k),\ k \in N}.
+#' 
+#' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
+#'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
+#'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
+#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the 
+#'   subset of failure states (the down states), with \eqn{0 < s_1 < s} 
+#'   (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset}, 
+#'   \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states 
+#'   of \eqn{U} as different operating modes or performance levels of the 
+#'   system, whereas the states of \eqn{D} can be seen as failures of the 
+#'   systems with different modes.
+#'   
+#'   We are interested in investigating the failure rate of a discrete-time 
+#'   semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the 
+#'   evolution in time of the system is governed by an E-state space 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at 
+#'   instant \eqn{0} and the state of the system is given at each instant 
+#'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
+#'   \eqn{i \in U}, means that the system \eqn{S_{ystem}} is in operating mode 
+#'   \eqn{i} at time \eqn{k}, whereas \eqn{\{Z_k = j\}}, for a certain 
+#'   \eqn{j \in D}, means that the system is not operational at time \eqn{k} 
+#'   due to the mode of failure \eqn{j} or that the system is under the 
+#'   repairing mode \eqn{j}.
+#'   
+#'   The BMP-failure rate at time \eqn{k \in N} is the conditional probability 
+#'   that the failure of the system occurs at time \eqn{k}, given that the 
+#'   system has worked until time \eqn{k - 1}.
+#'   
+#'   Let \eqn{T_D} denote the first passage time in subset \eqn{D}, called 
+#'   the lifetime of the system, i.e.,
+#'   
+#'   \deqn{T_D := \textrm{inf}\{ n \in N;\ Z_n \in D\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
+#'   
+#'   For a discrete-time semi-Markov system, the failure rate at time 
+#'   \eqn{k \geq 1} has the expression:
+#'   
+#'   \deqn{\lambda(k) := P(T_{D} = k | T_{D} \geq k)}
+#'   
+#'   We can rewrite it as follows :
+#'   
+#'   \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \neq 0;\ \lambda(k) = 0, \textrm{otherwise}}
+#'   
+#'   The failure rate at time \eqn{k = 0} is defined by \eqn{\lambda(0) := 1 - R(0)},
+#'   with \eqn{R} being the reliability function (see [reliability] function).
+#'   
+#'   The calculation of the reliability \eqn{R} involves the computation of 
+#'   many convolutions. It implies that the computation error, may be higher 
+#'   (in value) than the "true" reliability itself for reliability close to 0.
+#'   In order to avoid inconsistent values of the BMP-failure rate, we use the 
+#'   following formula:
+#'   
+#'   \deqn{\lambda(k) = 1 - \frac{R(k)}{R(k - 1)},\ \textrm{if } R(k - 1) \geq \epsilon;\ \lambda(k) = 0, \textrm{otherwise}}
+#'   
+#'   with \eqn{\epsilon}, the threshold, the parameter `epsilon` in the 
+#'   function `failureRate`.
+#'   
+#'   
+#'   Expressing the RG-failure rate \eqn{r(k)} in terms of the reliability 
+#'   \eqn{R} we obtain that the RG-failure rate function for a discrete-time 
+#'   system is given by:
+#'   
+#'   \deqn{r(k) = - \ln \frac{R(k)}{R(k - 1)},\ \textrm{if } k \geq 1;\ r(k) = - \ln R(0),\ \textrm{if } k = 0}
+#'   
+#'   for \eqn{R(k) \neq 0}. If \eqn{R(k) = 0}, we set \eqn{r(k) := 0}.
+#'   
+#'   Note that the RG-failure rate is related to the BMP-failure rate by:
+#'   
+#'   \deqn{r(k) = - \ln (1 - \lambda(k)),\ k \in N}
+#'   
+#' @param x An object of S3 class `smmfit` or `smm`.
+#' @param k A positive integer giving the period \eqn{[0, k]} on which the 
+#'   BMP-failure rate should be computed.
+#' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @param failure.rate Type of failure rate to compute. If `failure.rate = "BMP"` 
+#'   (default value), then BMP-failure-rate is computed. If `failure.rate = "RG"`, 
+#'   the RG-failure rate is computed.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
+#' @param epsilon Value of the reliability above which the latter is supposed 
+#'   to be 0 because of computation errors (see Details).
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes] function) for the asymptotic variance.
+#' @return A matrix with \eqn{k + 1} rows, and with columns giving values of 
+#'   the BMP-failure rate or RG-failure rate, variances, lower and upper 
+#'   asymptotic confidence limits (if `x` is an object of class `smmfit`).
+#'  
 #' @export
 #' 
-failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-3, klim = 10000) {
-  UseMethod("failureRateRG", x)
+failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG"), level = 0.95, epsilon = 1e-3, klim = 10000) {
+  UseMethod("failureRate", x)
 }
 
 
