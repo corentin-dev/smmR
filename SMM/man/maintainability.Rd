@@ -4,7 +4,7 @@
 \alias{maintainability}
 \title{Maintainability Function}
 \usage{
-maintainability(x, k, downstates = x$states, level = 0.95, klim = 10000)
+maintainability(x, k, upstates = x$states, level = 0.95, klim = 10000)
 }
 \arguments{
 \item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
@@ -12,7 +12,7 @@ maintainability(x, k, downstates = x$states, level = 0.95, klim = 10000)
 \item{k}{A positive integer giving the period \eqn{[0, k]} on which the
 maintainability should be computed.}
 
-\item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
+\item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
 \item{level}{Confidence level of the asymptotic confidence interval. Helpful
 for an object \code{x} of class \code{smmfit}.}

@@ -314,7 +314,7 @@ reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
 #'   maintainability should be computed.
-#' @param downstates Vector giving the subset of non-operational states \eqn{D}.
+#' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param level Confidence level of the asymptotic confidence interval. Helpful
 #'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
@@ -326,7 +326,7 @@ reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
 #'  
 #' @export
 #' 
-maintainability <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
+maintainability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("maintainability", x)
 }
 
@@ -738,7 +738,7 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #' Journal of Applied Statistics, 46:10, 1756-1773
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
-#' @param downstates Vector giving the subset of non-operational states \eqn{D}.
+#' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
@@ -751,6 +751,6 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #'  
 #' @export
 #' 
-mttr <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
+mttr <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
   UseMethod("mttr", x)
 }

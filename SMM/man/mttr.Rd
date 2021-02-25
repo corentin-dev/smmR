@@ -4,12 +4,12 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, downstates = x$states, klim = 10000, level = 0.95)
+mttr(x, upstates = x$states, klim = 10000, level = 0.95)
 }
 \arguments{
 \item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
-\item{downstates}{Vector giving the subset of non-operational states \eqn{D}.}
+\item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.

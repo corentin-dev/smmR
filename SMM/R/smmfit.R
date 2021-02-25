@@ -226,7 +226,7 @@ reliability.smmfit <- function(x, k, upstates = x$states, level = 0.95, klim = 1
 
 
 #' @export
-maintainability.smmfit <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
+maintainability.smmfit <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   
   out <- NextMethod()
   
@@ -305,7 +305,7 @@ mttf.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 
 
 #' @export
-mttr.smmfit <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
+mttr.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
   
   out <- NextMethod()
   

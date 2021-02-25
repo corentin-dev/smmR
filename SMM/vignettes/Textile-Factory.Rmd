@@ -235,7 +235,6 @@ $[0, k]$. Let's take $k = 300$.
 ```{r}
 k <- 300
 upstates <- c("1", "2") # Working states of the semi-Markov system
-downstates <- c("3") # Failure state of the semi-Markov system
 ```
 
 ```{r}
@@ -358,8 +357,8 @@ at time $k = 0$. The **mean time to repair (MTTR)** is defined as the
 mean of the repair duration.
 
 ```{r}
-trueMTTR <- mttr(x = factory, downstates = downstates)
-estMTTR <- mttr(x = estimate, downstates = downstates)
+trueMTTR <- mttr(x = factory, upstates = upstates)
+estMTTR <- mttr(x = estimate, upstates = upstates)
 ```
 
 # References

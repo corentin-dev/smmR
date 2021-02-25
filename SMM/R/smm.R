@@ -309,7 +309,7 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
 
 
 #' @export
-maintainability.smm <- function(x, k, downstates = x$states, level = 0.95, klim = 10000) {
+maintainability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
   
   #############################
   # Checking parameters k
@@ -327,13 +327,15 @@ maintainability.smm <- function(x, k, downstates = x$states, level = 0.95, klim 
   # Checking parameters upstates
   #############################
   
-  if (!(is.vector(downstates) & (length(unique(downstates)) == length(downstates)))) {
-    stop("The subset of state space 'downstates' is not a vector of unique elements")
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
   }
   
-  if (!all(downstates %in% x$states)) {
-    stop("Every element of 'downstates' must be in 'states' ('dowstates' is a subset of 'states')")
+  if (!all(upstates %in% x$states)) {
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
+  
+  downstates <- x$states[!(x$states %in% upstates)]
   
   reliab <- reliability.smm(x = x, k = k, upstates = downstates, level = level, klim = klim)
   
@@ -519,7 +521,21 @@ mttf.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 
 
 #' @export
-mttr.smm <- function(x, downstates = x$states, klim = 10000, level = 0.95) {
+mttr.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+  
+  #############################
+  # Checking parameters upstates
+  #############################
+  
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
+  }
+  
+  if (!all(upstates %in% x$states)) {
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
+  }
+  
+  downstates <- x$states[!(x$states %in% upstates)]
   
   out <- mttf.smm(x = x, upstates = downstates, klim = klim, level = 0.95)
   colnames(out) <- c("mttr", "sigma2")
