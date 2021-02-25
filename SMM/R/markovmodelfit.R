@@ -140,7 +140,9 @@ loglik.markovmodelfit <- function(x, sequences = NULL) {
 #' @param object An object of class `markovmodelfit`.
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
-#' @param seed `seed` for the random number generator.
+#' @param seed Optional. `seed` for the random number generator. 
+#'   If no `seed` is given, then seed is set by using the command 
+#'   `set.seed(round(as.numeric(Sys.time()))`.
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 

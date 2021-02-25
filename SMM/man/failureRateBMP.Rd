@@ -46,7 +46,7 @@ that the system has worked until time \eqn{k - 1}.
 Consider a system (or a component) \eqn{S_{ystem}} whose possible
 states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
 Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of
-the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the
+the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the
 subset of failure states (the down states), with \eqn{0 < s_1 < s}
 (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset},
 \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states
@@ -54,9 +54,9 @@ of \eqn{U} as different operating modes or performance levels of the
 system, whereas the states of \eqn{D} can be seen as failures of the
 systems with different modes.
 
-We are interested in investigating the failure rate theory of a
-discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-that the evolution in time of the system is governed by an E-state space
+We are interested in investigating the failure rate of a discrete-time
+semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the
+evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at
 instant \eqn{0} and the state of the system is given at each instant
 \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain

@@ -33,7 +33,7 @@ lifetime.
 Consider a system (or a component) \eqn{S_{ystem}} whose possible
 states during its evolution in time are \eqn{E = \{1,\dots,s\}}.
 Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of
-the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the
+the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the
 subset of failure states (the down states), with \eqn{0 < s_1 < s}
 (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset},
 \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states
@@ -41,7 +41,7 @@ of \eqn{U} as different operating modes or performance levels of the
 system, whereas the states of \eqn{D} can be seen as failures of the
 systems with different modes.
 
-We are interested in investigating the mean time to failure theory of a
+We are interested in investigating the mean time to failure of a
 discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
 that the evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at
@@ -62,4 +62,9 @@ The mean time to failure (MTTF) is defined as the mean lifetime, i.e., the
 expectation of the hitting time to down set \eqn{D},
 
 \deqn{MTTF = E[T_{D}]}
+}
+\references{
+I. Votsi & A. Brouste (2019) Confidence interval for the mean time to
+failure in semi-Markov models: an application to wind energy production,
+Journal of Applied Statistics, 46:10, 1756-1773
 }

@@ -39,7 +39,7 @@ Based on a model specification (an object of class \code{smm}), it is possible t
 
 Estimations of parametric and non-parametric semi-Markov models can be done
 by using the function \code{fitsemimarkovmodel()}. This function returns an
-object of S3 class \code{fitsmm}. \code{fitsmm} inherits from classes
+object of S3 class \code{fitsmm}. The class \code{fitsmm} inherits from classes
 (\code{smm}, \code{smmparametric}) or (\code{smm}, \code{smmnonparametric}).
 
 Based on a fitted/estimated semi-Markov model (an object of class \code{smmfit}),
@@ -57,8 +57,26 @@ it is possible to:
 \code{failureRate()}).
 }
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+
+R.E. Barlow, A.W. Marshall, and F. Prochan. (1963). Properties of probability
+distributions with monotone hazard rate. Ann. Math. Statist., 34, 375-389.
+
+T. Nakagawa and S. Osaki. (1975). The discrete Weibull distribution.
+IEEE Trans. Reliabil., R-24, 300-301.
+
+D. Roy and R. Gupta. (1992). Classification of discrete lives.
+Microelectron. Reliabil., 32 (10), 1459-1473.
+
+I. Votsi & A. Brouste (2019) Confidence interval for the mean time to
+failure in semi-Markov models: an application to wind energy production,
+Journal of Applied Statistics, 46:10, 1756-1773.
+}
+\keyword{Markov}
 \keyword{censored}
 \keyword{estimation}
-\keyword{markov}
-\keyword{semi-markov}
+\keyword{semi-Markov}
 \keyword{simulation}

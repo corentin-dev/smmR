@@ -44,9 +44,9 @@ of \eqn{U} as different operating modes or performance levels of the
 system, whereas the states of \eqn{D} can be seen as failures of the
 systems with different modes.
 
-We are interested in investigating the maintainability theory of a
-discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-that the evolution in time of the system is governed by an E-state space
+We are interested in investigating the maintainability of a discrete-time
+semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the
+evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to fail at
 instant \eqn{0} and the state of the system is given at each instant
 \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain
@@ -65,5 +65,5 @@ duration of repair or repair time, that is,
 The maintainability at time \eqn{k \in N} of a discrete-time semi-Markov
 system is
 
-\deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} \geq k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
+\deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} > k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
 }

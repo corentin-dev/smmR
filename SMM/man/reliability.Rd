@@ -29,9 +29,9 @@ the reliability, variances, lower and upper asymptotic confidence limits
 }
 \description{
 Consider a system \eqn{S_{ystem}} starting to function at time
-\eqn{k = 0}. The reliability of \eqn{S_{ystem}} at time \eqn{k \in N} is
-the probability that the system has functioned without failure in the
-period \eqn{[0, k]}.
+\eqn{k = 0}. The reliability or the survival function of \eqn{S_{ystem}}
+at time \eqn{k \in N} is the probability that the system has functioned
+without failure in the period \eqn{[0, k]}.
 }
 \details{
 Consider a system (or a component) \eqn{S_{ystem}} whose possible
@@ -45,9 +45,9 @@ of \eqn{U} as different operating modes or performance levels of the
 system, whereas the states of \eqn{D} can be seen as failures of the
 systems with different modes.
 
-We are interested in investigating the reliability theory of a
-discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-that the evolution in time of the system is governed by an E-state space
+We are interested in investigating the reliability of a discrete-time
+semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the
+evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at
 instant \eqn{0} and the state of the system is given at each instant
 \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain
@@ -62,7 +62,8 @@ the lifetime of the system, i.e.,
 
 \deqn{T_D := \textrm{inf}\{ n \in N;\ Z_n \in D\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
 
-The reliability at time \eqn{k \in N} of a discrete-time semi-Markov system is
+The reliability or the survival function at time \eqn{k \in N} of a
+discrete-time semi-Markov system is:
 
 \deqn{R(k) := P(T_D > k) = P(Zn \in U,n = 0,\dots,k)}
 

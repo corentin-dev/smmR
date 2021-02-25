@@ -24,7 +24,7 @@
 #'      the beginning of each sequence and \eqn{L} is the number of sequences. 
 #'      This estimator is reliable when the number of sequences \eqn{L} is high.}
 #'    \item{Stationary distribution: }{The stationary distribution is used as 
-#'      a surrogate of the initial distribution. If the order of the markov 
+#'      a surrogate of the initial distribution. If the order of the Markov 
 #'      chain is more than one, the transition matrix is converted into a 
 #'      square block matrix in order to estimate the stationary distribution.
 #'      This method may take time if the order of the Markov chain is high 
@@ -45,13 +45,13 @@
 #' @param states Vector of state space (of length s).
 #' @param k Order of the Markov chain.
 #' @param init.estim Optional. `init.estim` gives the method used to estimate 
-#'   the initial distribution. Various methods are proposed, the following are:
+#'   the initial distribution. The following methods are proposed:
 #'   \itemize{
 #'     \item `init.estim = "mle"`: the classical Maximum Likelihood Estimator 
 #'       is used to estimate the initial distribution `init`;
 #'     \item `init.estim = "stationary"`: the initial distribution is replaced by 
 #'       the stationary distribution of the Markov chain (if the order of the 
-#'       markov chain is more than one, the transition matrix is converted 
+#'       Markov chain is more than one, the transition matrix is converted 
 #'       into a square block matrix in order to estimate the stationary 
 #'       distribution);
 #'     \item `init.estim = "freq"`: the initial distribution is estimated by 

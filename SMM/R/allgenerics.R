@@ -140,14 +140,14 @@ loglik <- function(x, sequences = NULL) {
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
 #'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 #'   
-#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
+#'   Let \eqn{T = (T_{n})_{n \in N}} denote the successive time points when 
 #'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
 #'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
 #'   these time points.
 #'   
 #'   The mean sojourn times vector is defined as follows:
 #'   
-#'   \deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
+#'   \deqn{m_{i} = E[T_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(T_{n + 1} - T_{n} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param states Vector giving the states for which the mean sojourn time 
@@ -178,7 +178,7 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
 #'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 #'   
-#'   Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when 
+#'   Let \eqn{T = (T_{n})_{n \in N}} denote the successive time points when 
 #'   state changes in \eqn{(Z_{n})_{n \in N}} occur and let also 
 #'   \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at 
 #'   these time points.
@@ -187,15 +187,17 @@ meanSojournTimes <- function(x, states = x$states, klim = 10000) {
 #'   
 #'   \deqn{\mu_{jj} = \frac{\sum_{i \in E} \nu(i) m_{i}}{\nu(j)}}
 #'   
-#'   where \eqn{m_{i}} is the mean sojourn time in state \eqn{i \in E} 
-#'   (see [meanSojournTimes] function for the computation).
+#'   where \eqn{(\nu(1),\dots,\nu(s))} is the stationary distribution of the 
+#'   embedded Markov chain \eqn{(J_{n})_{n \in N}} and \eqn{m_{i}} is the mean 
+#'   sojourn time in state \eqn{i \in E} (see [meanSojournTimes] function for 
+#'   the computation).
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function).
 #' @return A vector giving the mean recurrence time 
-#'   \eqn{(\mu_{i})_{i \in [1, \dots, s]}}.
+#'   \eqn{(\mu_{i})_{i \in [1,\dots,s]}}.
 #' 
 #' @export
 #' 
@@ -206,9 +208,9 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #' Reliability Function
 #' 
 #' @description Consider a system \eqn{S_{ystem}} starting to function at time 
-#'   \eqn{k = 0}. The reliability of \eqn{S_{ystem}} at time \eqn{k \in N} is 
-#'   the probability that the system has functioned without failure in the 
-#'   period \eqn{[0, k]}.
+#'   \eqn{k = 0}. The reliability or the survival function of \eqn{S_{ystem}} 
+#'   at time \eqn{k \in N} is the probability that the system has functioned 
+#'   without failure in the period \eqn{[0, k]}.
 #'   
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
@@ -221,9 +223,9 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the reliability theory of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
+#'   We are interested in investigating the reliability of a discrete-time 
+#'   semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the 
+#'   evolution in time of the system is governed by an E-state space 
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at 
 #'   instant \eqn{0} and the state of the system is given at each instant 
 #'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
@@ -238,7 +240,8 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   
 #'  \deqn{T_D := \textrm{inf}\{ n \in N;\ Z_n \in D\}\ \textrm{and}\ \textrm{inf}\ \emptyset := \infty.}
 #'  
-#'  The reliability at time \eqn{k \in N} of a discrete-time semi-Markov system is
+#'  The reliability or the survival function at time \eqn{k \in N} of a 
+#'  discrete-time semi-Markov system is:
 #'  
 #'  \deqn{R(k) := P(T_D > k) = P(Zn \in U,n = 0,\dots,k)}
 #'  
@@ -285,9 +288,9 @@ reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the maintainability theory of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
+#'   We are interested in investigating the maintainability of a discrete-time 
+#'   semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the 
+#'   evolution in time of the system is governed by an E-state space 
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to fail at 
 #'   instant \eqn{0} and the state of the system is given at each instant 
 #'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
@@ -306,7 +309,7 @@ reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
 #'   The maintainability at time \eqn{k \in N} of a discrete-time semi-Markov 
 #'   system is 
 #'   
-#'   \deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} \geq k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
+#'   \deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} > k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the period \eqn{[0, k]} on which the 
@@ -338,7 +341,7 @@ maintainability <- function(x, k, downstates = x$states, level = 0.95, klim = 10
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
-#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the 
+#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the 
 #'   subset of failure states (the down states), with \eqn{0 < s_1 < s} 
 #'   (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset}, 
 #'   \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states 
@@ -346,9 +349,9 @@ maintainability <- function(x, k, downstates = x$states, level = 0.95, klim = 10
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the availability theory of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
+#'   We are interested in investigating the availability of a discrete-time 
+#'   semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the 
+#'   evolution in time of the system is governed by an E-state space 
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given 
 #'   at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, 
 #'   for a certain \eqn{i \in U}, means that the system \eqn{S_{ystem}} is in 
@@ -373,8 +376,8 @@ maintainability <- function(x, k, downstates = x$states, level = 0.95, klim = 10
 #'   \deqn{A_i(k) = P(Z_k \in U | Z_0 = i).}
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
-#' @param k A positive integer giving the period \eqn{[0, k]} on which the 
-#'   availability should be computed.
+#' @param k A positive integer giving the time at which the availability 
+#'   should be computed.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param level Confidence level of the asymptotic confidence interval. Helpful
 #'   for an object `x` of class `smmfit`.
@@ -402,7 +405,7 @@ availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) 
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
-#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the 
+#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the 
 #'   subset of failure states (the down states), with \eqn{0 < s_1 < s} 
 #'   (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset}, 
 #'   \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states 
@@ -410,9 +413,9 @@ availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) 
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the failure rate theory of a 
-#'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
-#'   that the evolution in time of the system is governed by an E-state space 
+#'   We are interested in investigating the failure rate of a discrete-time 
+#'   semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose that the 
+#'   evolution in time of the system is governed by an E-state space 
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at 
 #'   instant \eqn{0} and the state of the system is given at each instant 
 #'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
@@ -529,7 +532,7 @@ failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
-#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the 
+#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the 
 #'   subset of failure states (the down states), with \eqn{0 < s_1 < s} 
 #'   (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset}, 
 #'   \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states 
@@ -537,7 +540,7 @@ failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the mean time to failure theory of a 
+#'   We are interested in investigating the mean time to failure of a 
 #'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
 #'   that the evolution in time of the system is governed by an E-state space 
 #'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to work at 
@@ -558,6 +561,11 @@ failureRateRG <- function(x, k, upstates = x$states, level = 0.95, epsilon = 1e-
 #'   expectation of the hitting time to down set \eqn{D},
 #'   
 #'   \deqn{MTTF = E[T_{D}]}
+#'   
+#' @references
+#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
+#' failure in semi-Markov models: an application to wind energy production, 
+#' Journal of Applied Statistics, 46:10, 1756-1773
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
@@ -580,14 +588,14 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 
 #' Mean Time To Repair (MTTR) Function
 #' 
-#' @description Consider a system \eqn{S_{ystem}} starting to fail at time 
+#' @description Consider a system \eqn{S_{ystem}} that has just failed at time 
 #'   \eqn{k = 0}. The mean time to repair (MTTR) is defined as the mean of the 
 #'   repair duration.
 #'   
 #' @details Consider a system (or a component) \eqn{S_{ystem}} whose possible 
 #'   states during its evolution in time are \eqn{E = \{1,\dots,s\}}. 
 #'   Denote by \eqn{U = \{1,\dots,s_1\}} the subset of operational states of 
-#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots, s\}} the 
+#'   the system (the up states) and by \eqn{D = \{s_1 + 1,\dots,s\}} the 
 #'   subset of failure states (the down states), with \eqn{0 < s_1 < s} 
 #'   (obviously, \eqn{E = U \cup D} and \eqn{U \cap D = \emptyset}, 
 #'   \eqn{U \neq \emptyset,\ D \neq \emptyset}). One can think of the states 
@@ -595,11 +603,11 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #'   system, whereas the states of \eqn{D} can be seen as failures of the 
 #'   systems with different modes.
 #'   
-#'   We are interested in investigating the mean time to repair theory of a 
+#'   We are interested in investigating the mean time to repair of a 
 #'   discrete-time semi-Markov system \eqn{S_{ystem}}. Consequently, we suppose
 #'   that the evolution in time of the system is governed by an E-state space 
-#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system starts to fail at 
-#'   instant \eqn{0} and the state of the system is given at each instant 
+#'   semi-Markov chain \eqn{(Z_k)_{k \in N}}. The system has just failed at 
+#'   instant 0 and the state of the system is given at each instant 
 #'   \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}, for a certain 
 #'   \eqn{i \in U}, means that the system \eqn{S_{ystem}} is in operating mode 
 #'   \eqn{i} at time \eqn{k}, whereas \eqn{\{Z_k = j\}}, for a certain 
@@ -616,6 +624,11 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #'   duration, i.e., the expectation of the hitting time to up set \eqn{U},
 #'   
 #'   \deqn{MTTR = E[T_{U}]}
+#'   
+#' @references
+#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
+#' failure in semi-Markov models: an application to wind energy production, 
+#' Journal of Applied Statistics, 46:10, 1756-1773
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param downstates Vector giving the subset of non-operational states \eqn{D}.

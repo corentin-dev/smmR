@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 //' Set the RNG Seed from within Rcpp
 //' 
-//' @param seed A \code{unsigned int} that is the seed one wishes to use.
+//' @param seed An \code{unsigned int} that is the seed one wishes to use.
 //' @return A set RNG scope.
 //' @examples
 //' set.seed(10)

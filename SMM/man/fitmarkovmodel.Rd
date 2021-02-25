@@ -14,13 +14,13 @@ fitmarkovmodel(sequences, states, k = 1, init.estim = "mle")
 \item{k}{Order of the Markov chain.}
 
 \item{init.estim}{Optional. \code{init.estim} gives the method used to estimate
-the initial distribution. Various methods are proposed, the following are:
+the initial distribution. The following methods are proposed:
 \itemize{
 \item \code{init.estim = "mle"}: the classical Maximum Likelihood Estimator
 is used to estimate the initial distribution \code{init};
 \item \code{init.estim = "stationary"}: the initial distribution is replaced by
 the stationary distribution of the Markov chain (if the order of the
-markov chain is more than one, the transition matrix is converted
+Markov chain is more than one, the transition matrix is converted
 into a square block matrix in order to estimate the stationary
 distribution);
 \item \code{init.estim = "freq"}: the initial distribution is estimated by
@@ -61,7 +61,7 @@ the number of occurences of the word \eqn{i} (of length \eqn{k}) at
 the beginning of each sequence and \eqn{L} is the number of sequences.
 This estimator is reliable when the number of sequences \eqn{L} is high.}
 \item{Stationary distribution: }{The stationary distribution is used as
-a surrogate of the initial distribution. If the order of the markov
+a surrogate of the initial distribution. If the order of the Markov
 chain is more than one, the transition matrix is converted into a
 square block matrix in order to estimate the stationary distribution.
 This method may take time if the order of the Markov chain is high

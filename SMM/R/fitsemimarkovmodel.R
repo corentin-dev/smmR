@@ -20,7 +20,7 @@
 #' In this package, the available distribution for a semi-Markov model are :
 #'  \itemize{
 #'    \item Uniform: \eqn{f(x) = \frac{1}{n}} for \eqn{1 \le x \le n}. \eqn{n} is the parameter;
-#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^{x - 1}} for \eqn{x = 1, 2,\ldots,n}, \eqn{0 < \theta \le 1}, \eqn{\theta} is the probability of success.
+#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^{x - 1}} for \eqn{x = 1, 2,\ldots,n}, \eqn{0 < \theta < 1}, \eqn{\theta} is the probability of success.
 #'      \eqn{\theta} is the parameter;
 #'    \item Poisson: \eqn{f(x) = \frac{\lambda^x exp(-\lambda)}{x!}} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{\lambda > 0}.
 #'      \eqn{\lambda} is the parameter;
@@ -40,7 +40,7 @@
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
 #'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the 
 #'      embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
-#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
+#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Z_1 = i)}, \eqn{i \in 1, 2, \dots, s};
 #'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
 #'      \eqn{f} is specified by the argument `param` in the parametric case 
 #'      and by `distr` in the non-parametric case.
@@ -115,7 +115,7 @@
 #'   The distributions to be used in `distr` must be one of `"unif"`, `"geom"`, 
 #'   `"pois"`, `"dweibull"`, `"nbinom"`.
 #' @param init.estim Optional. `init.estim` gives the method used to estimate 
-#'   the initial distribution. Various methods are proposed, the following are:
+#'   the initial distribution. The following methods are proposed:
 #'   \itemize{
 #'     \item `init.estim = "mle"`: the classical Maximum Likelihood Estimator 
 #'       is used to estimate the initial distribution `init`;

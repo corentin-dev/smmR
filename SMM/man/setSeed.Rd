@@ -7,7 +7,7 @@
 setSeed(seed)
 }
 \arguments{
-\item{seed}{A \code{unsigned int} that is the seed one wishes to use.}
+\item{seed}{An \code{unsigned int} that is the seed one wishes to use.}
 }
 \value{
 A set RNG scope.

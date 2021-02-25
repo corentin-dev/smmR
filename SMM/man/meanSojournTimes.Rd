@@ -33,12 +33,12 @@ that the evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given
 at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 
-Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when
+Let \eqn{T = (T_{n})_{n \in N}} denote the successive time points when
 state changes in \eqn{(Z_{n})_{n \in N}} occur and let also
 \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at
 these time points.
 
 The mean sojourn times vector is defined as follows:
 
-\deqn{m_{i} = E[S_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(Z_{n + 1} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
+\deqn{m_{i} = E[T_{1} | Z_{0} = j] = \sum_{k \geq 0} (1 - P(T_{n + 1} - T_{n} \leq k | J_{n} = j)) = \sum_{k \geq 0} (1 - H_{j}(k)),\ i \in E}
 }

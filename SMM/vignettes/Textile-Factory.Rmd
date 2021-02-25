@@ -285,8 +285,8 @@ Following the lines of **@BarbuLimnios2008**, we consider two different
 definitions of the failure rate function. The first one is the usual
 failure rate, introduced by Barlow, Marshall and Prochan (**@Barlow1963**),
 that we will call BMP-failure rate. The second one is a failure rate
-adapted for the work in discrete time, proposed by Roy and Gupta (cite
-Roy and Gupta), that we will call RG-failure rate.
+adapted for the work in discrete time, proposed by Roy and Gupta 
+(**@Roy1992**), that we will call RG-failure rate.
 
 ### BMP-failure rate
 

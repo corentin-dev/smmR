@@ -15,7 +15,7 @@ computation of the mean sojourn times vector \eqn{m} (cf.
 }
 \value{
 A vector giving the mean recurrence time
-\eqn{(\mu_{i})_{i \in [1, \dots, s]}}.
+\eqn{(\mu_{i})_{i \in [1,\dots,s]}}.
 }
 \description{
 Method to get the mean recurrence times \eqn{\mu}.
@@ -30,7 +30,7 @@ that the evolution in time of the system is governed by an E-state space
 semi-Markov chain \eqn{(Z_k)_{k \in N}}. The state of the system is given
 at each instant \eqn{k \in N} by \eqn{Z_k}: the event \eqn{\{Z_k = i\}}.
 
-Let \eqn{S = (S_{n})_{n \in N}} denote the successive time points when
+Let \eqn{T = (T_{n})_{n \in N}} denote the successive time points when
 state changes in \eqn{(Z_{n})_{n \in N}} occur and let also
 \eqn{J = (J_{n})_{n \in N}} denote the successively visited states at
 these time points.
@@ -39,6 +39,8 @@ The mean recurrence of an arbitrary state \eqn{j \in E} is given by:
 
 \deqn{\mu_{jj} = \frac{\sum_{i \in E} \nu(i) m_{i}}{\nu(j)}}
 
-where \eqn{m_{i}} is the mean sojourn time in state \eqn{i \in E}
-(see \link{meanSojournTimes} function for the computation).
+where \eqn{(\nu(1),\dots,\nu(s))} is the stationary distribution of the
+embedded Markov chain \eqn{(J_{n})_{n \in N}} and \eqn{m_{i}} is the mean
+sojourn time in state \eqn{i \in E} (see \link{meanSojournTimes} function for
+the computation).
 }

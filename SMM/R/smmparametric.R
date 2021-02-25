@@ -14,7 +14,7 @@
 #' In this package, the available distribution for a semi-Markov model are :
 #'  \itemize{
 #'    \item Uniform: \eqn{f(x) = 1/n} for \eqn{a \le x \le b}, with \eqn{n = b-a+1};
-#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^x} for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{0 < \theta \le 1}, with \eqn{n > 0} and \eqn{\theta} is the probability of success;
+#'    \item Geometric: \eqn{f(x) = \theta (1-\theta)^x} for \eqn{x = 0, 1, 2,\ldots,n}, \eqn{0 < \theta < 1}, with \eqn{n > 0} and \eqn{\theta} is the probability of success;
 #'    \item Poisson: \eqn{f(x) = (\lambda^x exp(-\lambda))/x!} for \eqn{x = 0, 1, 2,\ldots,n}, with \eqn{n > 0} and \eqn{\lambda > 0};
 #'    \item Discrete Weibull of type 1: \eqn{f(x)=q^{(x-1)^{\beta}}-q^{x^{\beta}}, x=1,2,3,\ldots,n}, with \eqn{n > 0}, \eqn{q} is the first parameter and \eqn{\beta} is the second parameter;
 #'    \item Negative binomial: \eqn{f(x)=\frac{\Gamma(x+\alpha)}{\Gamma(\alpha) x!} p^{\alpha} (1 - p)^x}, 
@@ -27,7 +27,7 @@
 #'  \itemize{
 #'    \item the semi-Markov kernel \eqn{q_{ij}(k) = P( J_{m+1} = j, T_{m+1} - T_{m} = k | J_{m} = i )};
 #'    \item the transition matrix \eqn{(p_{trans}(i,j))_{i,j} \in states} of the embedded Markov chain \eqn{J = (J_m)_m}, \eqn{p_{trans}(i,j) = P( J_{m+1} = j | J_m = i )};
-#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Y_1 = i)}, \eqn{i \in 1, 2, \dots, s};
+#'    \item the initial distribution \eqn{\mu_i = P(J_1 = i) = P(Z_1 = i)}, \eqn{i \in 1, 2, \dots, s};
 #'    \item the conditional sojourn time distributions \eqn{(f_{ij}(k))_{i,j} \in states,\ k \in N ,\ f_{ij}(k) = P(T_{m+1} - T_m = k | J_m = i, J_{m+1} = j )},
 #'      \eqn{f} is specified by the argument `param` in the parametric case.
 #'  }
@@ -926,11 +926,11 @@ simulate.smmparametric <- function(object, nsim = 1, seed = NULL, ...) {
   ###########################################################
   # The algorithm used to simulate the sequences is the following:
   # 
-  # 1. Set k = 0, S_{0} = 0 and sample J_{0} from the initial distribution \alpha;
+  # 1. Set k = 0, T_{0} = 0 and sample J_{0} from the initial distribution \alpha;
   # 2. Sample the random variable J \sim p(J_{k} , .) and set J_{k+1} = J(\omega);
   # 3. Sample the random variable X \sim F_{J_{k} J_{k+1}}(.)
-  # 4. Set S_{k+1} = S_{k} + X;
-  # 5. If S_{k+1} >= M, then end;
+  # 4. Set T_{k+1} = T_{k} + X;
+  # 5. If T_{k+1} >= M, then end;
   # 6. Else, set k = k + 1 and continue to step 2.
   # 
   ###########################################################
