@@ -1,34 +1,34 @@
-markovmodelfit <- function(markovmodel, M, loglik, sequences) {
+mmfit <- function(mm, M, loglik, sequences) {
   
-  ans <- markovmodel
+  ans <- mm
   ans$M <- M
   ans$loglik <- loglik
   ans$sequences <- sequences
   
-  class(ans) <- c("markovmodelfit", class(ans))
+  class(ans) <- c("mmfit", class(ans))
   
   return(ans)
   
 }
 
 
-#' Function to check if an object is of class `markovmodelfit`
+#' Function to check if an object is of class `mmfit`
 #' 
-#' @description `is.markovmodelfit` returns `TRUE` if `x` is an object of 
-#'   class `markovmodelfit`.
+#' @description `is.mmfit` returns `TRUE` if `x` is an object of 
+#'   class `mmfit`.
 #' 
 #' @param x An arbitrary R object.
 #' 
 #' @export
 #' 
-is.markovmodelfit <- function(x) {
-  inherits(x, "markovmodelfit")
+is.mmfit <- function(x) {
+  inherits(x, "mmfit")
 }
 
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.markovmodelfit <- function(x) {
+.getKpar.mmfit <- function(x) {
   NextMethod(x)
 }
 
@@ -37,7 +37,7 @@ is.markovmodelfit <- function(x) {
 #' 
 #' @description Computation of the Akaike Information Criterion.
 #' 
-#' @param x An object of class `markovmodelfit`.
+#' @param x An object of class `mmfit`.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC will be computed based on `x`.
 #' @return Value of the AIC.
@@ -46,7 +46,7 @@ is.markovmodelfit <- function(x) {
 #' 
 #' @export
 #' 
-aic.markovmodelfit <- function(x, sequences = NULL) {
+aic.mmfit <- function(x, sequences = NULL) {
   
   loglik <- loglik(x, sequences)
   
@@ -63,7 +63,7 @@ aic.markovmodelfit <- function(x, sequences = NULL) {
 #' 
 #' @description Computation of the Bayesian Information Criterion.
 #' 
-#' @param x An object of class `markovmodelfit`.
+#' @param x An object of class `mmfit`.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC will be computed based on `x`.
 #' @return Value of the BIC.
@@ -72,7 +72,7 @@ aic.markovmodelfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-bic.markovmodelfit <- function(x, sequences = NULL) {
+bic.mmfit <- function(x, sequences = NULL) {
   
   loglik <- loglik(x, sequences)
   
@@ -95,7 +95,7 @@ bic.markovmodelfit <- function(x, sequences = NULL) {
 #' 
 #' @description Computation of the log-likelihood for a Markov model.
 #' 
-#' @param x An object of class `markovmodelfit`.
+#' @param x An object of class `mmfit`.
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
@@ -104,7 +104,7 @@ bic.markovmodelfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-loglik.markovmodelfit <- function(x, sequences = NULL) {
+loglik.mmfit <- function(x, sequences = NULL) {
   
   # Computing a new value of log-likelihood based on the parameter sequences
   if (!is.null(sequences)) {
@@ -137,7 +137,7 @@ loglik.markovmodelfit <- function(x, sequences = NULL) {
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
 #' 
-#' @param object An object of class `markovmodelfit`.
+#' @param object An object of class `mmfit`.
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
 #' @param seed Optional. `seed` for the random number generator. 
@@ -146,10 +146,10 @@ loglik.markovmodelfit <- function(x, sequences = NULL) {
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 
-#' @seealso [markovmodel], [fitmarkovmodel]
+#' @seealso [mm], [fitmm]
 #' 
 #' @export
 #' 
-simulate.markovmodelfit <- function(object, nsim = 1, seed = NULL, ...) {
+simulate.mmfit <- function(object, nsim = 1, seed = NULL, ...) {
   NextMethod(object)
 }

@@ -518,14 +518,14 @@ following functions:
 The \pkg{SMM} \proglang{R} package is also devoted to the simulation and 
 estimation of discrete-time Markov models by the following functions:
 \begin{itemize}
-  \item[$\blacksquare$] \fct{markovmodel} for the specification of a $k$th 
+  \item[$\blacksquare$] \fct{mm} for the specification of a $k$th 
     order Markov model specification (object of class S3);
     
-  \item[$\blacksquare$] \fct{simulate.markovmodel} A method of S3 class 
-    \texttt{markovmodel} for the simulation of sequences from a $k$th order 
+  \item[$\blacksquare$] \fct{simulate.mm} A method of S3 class 
+    \texttt{mm} for the simulation of sequences from a $k$th order 
     Markov model;
     
-  \item[$\blacksquare$] \fct{fitmarkovmodel} for the estimation of the 
+  \item[$\blacksquare$] \fct{fitmm} for the estimation of the 
     parameters of a Markov model.
 \end{itemize}
 
@@ -1258,7 +1258,7 @@ As in the semi-Markov case, others functions are available, enabling to
 compute the log-likelihood and also the AIC and BIC of a Markov model.
 
 \begin{itemize}
-  \item[$\blacksquare$] \fct{markovmodel}: Specification of a Markov chain of order $k$
+  \item[$\blacksquare$] \fct{mm}: Specification of a Markov chain of order $k$
 \end{itemize}
 
 <<markov>>=
@@ -1270,19 +1270,19 @@ vect.init <- rep.int(1 / s ^ k, s ^ k)
 p <- matrix(0.25, nrow = s ^ k, ncol = s)
 
 # Specify the Markov model
-markovspec <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
+markovspec <- mm(states = states, init = vect.init, ptrans = p, k = k)
 @
 
 \paragraph{Values:}
-The function \fct{markovmodel} returns an object of class \class{markovmodel}. The S3 
-class \class{markovmodel} contains various methods such as \fct{simulate}.
+The function \fct{mm} returns an object of class \class{mm}. The S3 
+class \class{mm} contains various methods such as \fct{simulate}.
 
 <<markovspec>>=
 markovspec
 @
 
 \begin{itemize}
-\item[$\blacksquare$] \fct{simulate.markovmodel}: Simulation of Markov chains of order $k$
+\item[$\blacksquare$] \fct{simulate.mm}: Simulation of Markov chains of order $k$
 \end{itemize}
 
 Let's use the object \code{markovspec} to simulate 3 sequences of length $1000$,
@@ -1294,18 +1294,18 @@ seqmarkov[[1]][1:15]
 @
 
 \begin{itemize}
-  \item[$\blacksquare$] \fct{fitmarkovmodel}: Estimation of a Markov chain of order $k$
+  \item[$\blacksquare$] \fct{fitmm}: Estimation of a Markov chain of order $k$
 \end{itemize}
 
 <<estmarkov>>=
 # State space
 states <- c("a", "c", "g", "t")
-estmarkov <- fitmarkovmodel(sequences = seqmarkov, states = states, k = 2)
+estmarkov <- fitmm(sequences = seqmarkov, states = states, k = 2)
 @
 
 \paragraph{Values:}
 
-The function \fct{fitmarkovmodel} returns an object of class \class{markovmodel}:
+The function \fct{fitmm} returns an object of class \class{mm}:
 
 <<classestmarkov>>=
 class(estmarkov)
@@ -1319,7 +1319,7 @@ class(estmarkov)
 
 \begin{itemize}
 
-  \item \code{x}: An object of the class \class{markovmodel}.
+  \item \code{x}: An object of the class \class{mm}.
     
   \item \code{sequences}: A list of vectors representing the sequences for which
     the log-likelihood must be computed.
@@ -1343,7 +1343,7 @@ The function \fct{loglik} returns the value of the loglikelihood.
 
 \begin{itemize}
 
-  \item \code{x}: An object of class {\tt markovmodel}.
+  \item \code{x}: An object of class {\tt mm}.
     
   \item \code{sequences}: A list of vectors representing the sequences for which the 
     log-likelihood must be computed.

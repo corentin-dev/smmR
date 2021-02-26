@@ -63,9 +63,9 @@
 #'       equal to \eqn{1 / s}, with \eqn{s} the number of states.
 #'   }
 #'   
-#' @return An object of class [markovmodel].
+#' @return An object of class [mm].
 #' 
-#' @seealso [markovmodel], [simulate.markovmodel]
+#' @seealso [mm], [simulate.mm]
 #' 
 #' @export
 #' 
@@ -77,13 +77,13 @@
 #' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
 #' # Specify the Markov model
-#' markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
+#' markov1 <- mm(states = states, init = vect.init, ptrans = p, k = k)
 #' 
 #' seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
 #' 
-#' est <- fitmarkovmodel(sequences = seq1, states = states, k = 2)
+#' est <- fitmm(sequences = seq1, states = states, k = 2)
 #' 
-fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
+fitmm <- function(sequences, states, k = 1, init.estim = "mle") {
   
   #############################
   # Checking parameters sequences and states
@@ -163,10 +163,10 @@ fitmarkovmodel <- function(sequences, states, k = 1, init.estim = "mle") {
   
   init <- init / sum(init)
   
-  markovmodel <- markovmodel(states = states, init = init, ptrans = ptrans, k = k)
-  loglik <- .loglik(x = markovmodel, processes = processes)
+  mm <- mm(states = states, init = init, ptrans = ptrans, k = k)
+  loglik <- .loglik(x = mm, processes = processes)
   
-  estimate <- markovmodelfit(markovmodel = markovmodel, M = processes$M, loglik = loglik, sequences = sequences)
+  estimate <- mmfit(mm = mm, M = processes$M, loglik = loglik, sequences = sequences)
   
   return(estimate)
 }

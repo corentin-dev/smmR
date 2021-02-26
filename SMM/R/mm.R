@@ -6,13 +6,13 @@
 #' @param k Order of the Markov chain.
 #' @param init Vector of initial distribution of length s ^ k.
 #' @param ptrans Matrix of transition probabilities of dimension \eqn{(s, s)}.
-#' @return An object of class [markovmodel].
+#' @return An object of class [mm].
 #' 
-#' @seealso [simulate.markovmodel], [fitmarkovmodel]
+#' @seealso [simulate.mm], [fitmm]
 #' 
 #' @export
 #' 
-markovmodel <- function(states, init, ptrans, k = 1) {
+mm <- function(states, init, ptrans, k = 1) {
   
   #############################
   # Checking parameter states
@@ -82,29 +82,29 @@ markovmodel <- function(states, init, ptrans, k = 1) {
   
   ans <- list(states = states, s = s, k = k, init = init, ptrans = ptrans)
   
-  class(ans) <- "markovmodel"
+  class(ans) <- "mm"
   
   return(ans)
 }
 
 
-#' Function to check if an object is of class `markovmodel`
+#' Function to check if an object is of class `mm`
 #' 
-#' @description `is.markovmodel` returns `TRUE` if `x` is an object of 
-#'   class `markovmodel`.
+#' @description `is.mm` returns `TRUE` if `x` is an object of 
+#'   class `mm`.
 #' 
 #' @param x An arbitrary R object.
 #' 
 #' @export
 #' 
-is.markovmodel <- function(x) {
-  inherits(x, "markovmodel")
+is.mm <- function(x) {
+  inherits(x, "mm")
 }
 
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.markovmodel <- function(x) {
+.getKpar.mm <- function(x) {
   
   s <- x$s
   
@@ -118,12 +118,12 @@ is.markovmodel <- function(x) {
 #' 
 #' @description Computation of the log-likelihood for a Markov model
 #' 
-#' @param x An object of class [markovmodel].
+#' @param x An object of class [mm].
 #' @param processes An object of class `processesMarkov`.
 #' 
 #' @noRd
 #' 
-.loglik.markovmodel <- function(x, processes) {
+.loglik.mm <- function(x, processes) {
   
   #############################
   # Let's compute the log-likelihood
@@ -146,7 +146,7 @@ is.markovmodel <- function(x) {
 #' 
 #' @description Computation of the Akaike Information Criterion.
 #' 
-#' @param x An object of class [markovmodel].
+#' @param x An object of class [mm].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   AIC will be computed based on `x`.
 #' @return Value of the AIC.
@@ -155,7 +155,7 @@ is.markovmodel <- function(x) {
 #' 
 #' @export
 #' 
-aic.markovmodel <- function(x, sequences) {
+aic.mm <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
@@ -172,7 +172,7 @@ aic.markovmodel <- function(x, sequences) {
 #' 
 #' @description Computation of the Bayesian Information Criterion.
 #' 
-#' @param x An object of class [markovmodel].
+#' @param x An object of class [mm].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   BIC will be computed based on `x`.
 #' @return Value of the BIC.
@@ -181,7 +181,7 @@ aic.markovmodel <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.markovmodel <- function(x, sequences) {
+bic.mm <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
@@ -199,7 +199,7 @@ bic.markovmodel <- function(x, sequences) {
 #' 
 #' @description Computation of the log-likelihood for a Markov model
 #' 
-#' @param x An object of class [markovmodel].
+#' @param x An object of class [mm].
 #' @param sequences A list of vectors representing the sequences for which the 
 #'   log-likelihood will be computed based on `x`.
 #' @return Value of the log-likelihood.
@@ -208,7 +208,7 @@ bic.markovmodel <- function(x, sequences) {
 #' 
 #' @export
 #' 
-loglik.markovmodel <- function(x, sequences) {
+loglik.mm <- function(x, sequences) {
   
   #############################
   # Checking parameters sequences and states
@@ -224,7 +224,7 @@ loglik.markovmodel <- function(x, sequences) {
   }
   
   processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k, verbose = FALSE)
-  loglik <- .loglik.markovmodel(x = x, processes = processes)
+  loglik <- .loglik.mm(x = x, processes = processes)
   
   return(loglik)
   
@@ -239,7 +239,7 @@ loglik.markovmodel <- function(x, sequences) {
 #'   produced. If `nsim` is a vector of integers, then `length(nsim)` 
 #'   sequences are generated with respective lengths.
 #' 
-#' @param object An object of class [markovmodel].
+#' @param object An object of class [mm].
 #' @param nsim An integer or vector of integers (for multiple sequences) 
 #'   specifying the length of the sequence(s).
 #' @param seed Optional. `seed` for the random number generator. 
@@ -248,7 +248,7 @@ loglik.markovmodel <- function(x, sequences) {
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 
-#' @seealso [markovmodel], [fitmarkovmodel]
+#' @seealso [mm], [fitmm]
 #' 
 #' @export
 #' 
@@ -260,12 +260,12 @@ loglik.markovmodel <- function(x, sequences) {
 #' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
 #' # Specify the Markov model
-#' markov1 <- markovmodel(states = states, init = vect.init, ptrans = p, k = k)
+#' markov1 <- mm(states = states, init = vect.init, ptrans = p, k = k)
 #' 
 #' seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
 #' seq1[[1]][1:15]
 #' 
-simulate.markovmodel <- function(object, nsim = 1, seed = NULL, ...) {
+simulate.mm <- function(object, nsim = 1, seed = NULL, ...) {
   
   #############################
   # Checking parameter nsim
