@@ -293,7 +293,7 @@ failureRate.smmfit <- function(x, k, upstates = x$states, failure.rate = c("BMP"
 
 
 #' @export
-mttf.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttf.smmfit <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   
   out <- NextMethod()
   
@@ -305,7 +305,7 @@ mttf.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 
 
 #' @export
-mttr.smmfit <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttr.smmfit <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   
   out <- NextMethod()
   

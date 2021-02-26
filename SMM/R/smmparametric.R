@@ -767,10 +767,46 @@ bic.smmparametric <- function(x, sequences) {
 #' 
 getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
   
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a positive integer")
+  }
+  
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a positive integer")
+  }
+  
+  #############################
+  # Checking parameters var
+  #############################
+  
+  if (!is.logical(var)) {
+    stop("'var' must be TRUE or FALSE")
+  }
+  
+  #############################
+  # Checking parameters klim
+  #############################
+  
+  if (!is.numeric(klim)) {
+    stop("'klim' must be a positive integer")
+  }
+  
+  if ((!((klim >= 0) & ((klim %% 1) == 0)))) {
+    stop("'klim' must be a positive integer")
+  }
+  
+  
   q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
   fijk <- .get.fijk.smmparametric(x, k)
-  q[, , 2:(k + 1)] <- array(x$ptrans, c(x$s, x$s, k)) * fijk
+  
+  if (k > 0) {
+    q[, , 2:(k + 1)] <- array(x$ptrans, c(x$s, x$s, k)) * fijk  
+  }
   
   if (var) {
     

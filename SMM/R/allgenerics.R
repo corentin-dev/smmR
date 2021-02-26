@@ -676,11 +676,11 @@ failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG")
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @param level Confidence level of the asymptotic confidence interval. Helpful
-#'   for an object `x` of class `smmfit`.
 #' @return A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns 
 #'   giving values of the mean time to failure for each state \eqn{i \in U}, 
 #'   variances, lower and upper asymptotic confidence limits (if `x` is an 
@@ -688,7 +688,7 @@ failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG")
 #' 
 #' @export
 #' 
-mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttf <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("mttf", x)
 }
 
@@ -739,11 +739,11 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @param level Confidence level of the asymptotic confidence interval. Helpful
+#'   for an object `x` of class `smmfit`.
 #' @param klim Optional. The time horizon used to approximate the series in the 
 #'   computation of the mean sojourn times vector \eqn{m} (cf. 
 #'   [meanSojournTimes] function) for the asymptotic variance.
-#' @param level Confidence level of the asymptotic confidence interval. Helpful
-#'   for an object `x` of class `smmfit`.
 #' @return A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns 
 #'   giving values of the mean time to repair for each state \eqn{i \in U}, 
 #'   variances, lower and upper asymptotic confidence limits (if `x` is an 
@@ -751,6 +751,6 @@ mttf <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 #'  
 #' @export
 #' 
-mttr <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttr <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   UseMethod("mttr", x)
 }

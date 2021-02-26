@@ -165,6 +165,7 @@ is.smm <- function(x) {
     mu <- meanRecurrenceTimes(x = x, klim = klim)
     
     sigma2 <- varP(mu, q, psi, Psi, H)
+    sigma2[sigma2 < 0] <- 0 # Handle potential computation errors
     
     return(list(x = p, sigma2 = sigma2))
     
@@ -213,6 +214,19 @@ is.smm <- function(x) {
 
 #' @export
 meanSojournTimes.smm <- function(x, states = x$states, klim = 10000) {
+  
+  #############################
+  # Checking parameters states
+  #############################
+  
+  if (!(is.vector(states) & (length(unique(states)) == length(states)))) {
+    stop("The subset of state space 'states' is not a vector of unique elements")
+  }
+  
+  if (!all(states %in% x$states)) {
+    stop("Every element of 'states' must be in the state space of x")
+  }
+  
   
   q <- getKernel(x = x, k = klim)
   H1 <- .get.H(q)[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
@@ -266,6 +280,24 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
     stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
   
+  #############################
+  # Checking parameters level
+  #############################
+  
+  if (!all(is.numeric(level), length(level) == 1, level >= 0, level <= 1)) {
+    stop("'level' must be a numeric value between [0, 1]")
+  }
+  
+  #############################
+  # Checking parameter klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
+      stop("'klim' must be a strictly positive integer")
+    }
+  }
+  
   
   ###########################################################
   # Compute R, the reliability
@@ -286,6 +318,7 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
     apply(X = Py, MARGIN = 3, function(x)
       rowSums(t(c(alpha1, 0)) %*% x[, 1:u, drop = FALSE]))
   
+  reliab[reliab < 0] <- 0 # Handle potential computation errors when R is close to 0
   
   ###########################################################
   # Compute the variance (See equation (5.29), p.116)
@@ -299,9 +332,11 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
   mu1 <- meanRecurrenceTimes(x = x, klim = klim)[which(x$states %in% upstates)]
   
   sigma2 <- as.numeric(varR(alpha1, mu1, q, psi, Psi, H, Q))
+  sigma2[sigma2 < 0] <- 0 # Handle potential computation errors
   
   out <- cbind(reliab, sigma2)
   colnames(out) <- c("reliability", "sigma2")
+  row.names(out) <- 0:k
   
   return(out)
   
@@ -335,12 +370,32 @@ maintainability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 
     stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
   
+  #############################
+  # Checking parameters level
+  #############################
+  
+  if (!all(is.numeric(level), length(level) == 1, level >= 0, level <= 1)) {
+    stop("'level' must be a numeric value between [0, 1]")
+  }
+  
+  #############################
+  # Checking parameter klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
+      stop("'klim' must be a strictly positive integer")
+    }
+  }
+  
+  
   downstates <- x$states[!(x$states %in% upstates)]
   
   reliab <- reliability.smm(x = x, k = k, upstates = downstates, level = level, klim = klim)
   
   out <- cbind(1 - reliab[, 1], reliab[, 2])
   colnames(out) <- c("maintainability", "sigma2")
+  row.names(out) <- 0:k
   
   return(out)
   
@@ -374,6 +429,24 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
     stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
   }
   
+  #############################
+  # Checking parameters level
+  #############################
+  
+  if (!all(is.numeric(level), length(level) == 1, level >= 0, level <= 1)) {
+    stop("'level' must be a numeric value between [0, 1]")
+  }
+  
+  #############################
+  # Checking parameter klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
+      stop("'klim' must be a strictly positive integer")
+    }
+  }
+  
   
   ###########################################################
   # Compute A, the availability
@@ -385,6 +458,8 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
     apply(X = P[which(x$states %in% upstates), which(x$states %in% upstates), , drop = FALSE],
           MARGIN = 3, function(y)
             rowSums(t(x$init[which(x$states %in% upstates)]) %*% y))
+  
+  avail[avail < 0] <- 0 # Handle potential computation errors when A is close to 0
   
   ###########################################################
   # Compute the variance (See equation (5.34), p.118)
@@ -404,9 +479,11 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
   mu <- meanRecurrenceTimes(x = x, klim = klim)
   
   sigma2 <- as.numeric(varA(indices_u, alpha, mu, q, psi, Psi, H, Q))
+  sigma2[sigma2 < 0] <- 0 # Handle potential computation errors
   
   out <- cbind(avail, sigma2)
   colnames(out) <- c("availability", "sigma2")
+  row.names(out) <- 0:k
   
   return(out)
   
@@ -429,6 +506,8 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
     lbda[j] <- ifelse(reliab[j - 1] != 0, 1 - reliab[j] / reliab[j - 1], 0)
   }
   
+  lbda[lbda < 0] <- 0 # Handle potential computation errors when \lambda is close to 0
+  
   ###########################################################
   # Compute the variance (See equation (5.35), p.119)
   ###########################################################
@@ -445,9 +524,11 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
   H <- .get.H(qy)
   
   sigma2 <- as.numeric(varBMP(reliab, alpha1, mu1, qy, psi, Psi, H, Q))
+  sigma2[sigma2 < 0] <- 0 # Handle potential computation errors
   
   out <- cbind(lbda, sigma2)
   colnames(out) <- c("BMP", "sigma2")
+  row.names(out) <- 0:k
   
   return(out)
   
@@ -460,6 +541,7 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
   
   out <- cbind(-log(1 - lbda[, 1]), lbda[, 2])
   colnames(out) <- c("RG", "sigma2")
+  row.names(out) <- 0:k
   
   return(out)
   
@@ -488,7 +570,38 @@ failureRate.smm <- function(x, k, upstates = x$states, failure.rate = c("BMP", "
 
 
 #' @export
-mttf.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttf.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
+  
+  #############################
+  # Checking parameters upstates
+  #############################
+  
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
+  }
+  
+  if (!all(upstates %in% x$states)) {
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
+  }
+  
+  #############################
+  # Checking parameters level
+  #############################
+  
+  if (!all(is.numeric(level), length(level) == 1, level >= 0, level <= 1)) {
+    stop("'level' must be a numeric value between [0, 1]")
+  }
+  
+  #############################
+  # Checking parameter klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
+      stop("'klim' must be a strictly positive integer")
+    }
+  }
+  
   
   p11 <- x$ptrans[which(x$states %in% upstates), which(x$states %in% upstates), drop = FALSE]
   
@@ -511,6 +624,7 @@ mttf.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
   q <- getKernel(x = x, k = klim)
   
   sigma2 <- as.numeric(varMTTF(indices_u, indices_d, m, mu, x$ptrans, q))
+  sigma2[sigma2 < 0] <- 0 # Handle potential computation errors
   
   out <- cbind(mttf, sigma2)
   colnames(out) <- c("mttf", "sigma2")
@@ -521,7 +635,7 @@ mttf.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
 
 
 #' @export
-mttr.smm <- function(x, upstates = x$states, klim = 10000, level = 0.95) {
+mttr.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   
   #############################
   # Checking parameters upstates

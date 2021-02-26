@@ -166,7 +166,10 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     temp <- apply(distr, c(1, 2), sum)
     indexdiag <- seq(1, s * s, by = s + 1)
     
-    if (!all(diag(temp) == 0, temp[-indexdiag] %in% c(0, 1))) {
+    checkTemp <- ((temp[-indexdiag] >= 0) & (temp[-indexdiag] < .Machine$double.eps)) | 
+      ((temp[-indexdiag] > 1 - .Machine$double.eps) & (temp[-indexdiag] < 1 + .Machine$double.eps))
+    
+    if (!all(diag(temp) == 0, checkTemp)) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -178,7 +181,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric matrix of dimension (s, kmax) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
     }
     
-    if (!(all(apply(distr, 1, sum) == 1))) {
+    if (!all((apply(distr, 1, sum) > 1 - .Machine$double.eps) | (apply(distr, 1, sum) < 1 + .Machine$double.eps))) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -190,7 +193,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric vector of length kmax since 'type.sojourn == \"f\"'")  
     }
     
-    if (!(sum(distr) == 1)) {
+    if (!((sum(distr) > 1 - .Machine$double.eps) | (sum(distr) < 1 + .Machine$double.eps))) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -356,13 +359,12 @@ is.smmnonparametric <- function(x) {
     Y <- processes$Y
     U <- processes$U
     
-    
     # Computation of Niujv (couple Markov chain (Y, U))
     Y <- lapply(Y, function(x) x - 1)
     Niujv <- getCountingNiuj(Y, U, s, kmax)
     Niu <- apply(Niujv, c(1, 2), sum)
     
-    phat <- Niujv / array(Niu, c(s, kmax, s, kmax))
+    phat <- Niujv / array(Niu, c(s, kmax, s))
     phat[is.na(phat)] <- 0
     
     piujv <-
@@ -473,22 +475,57 @@ bic.smmnonparametric <- function(x, sequences) {
 #' 
 getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
   
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a positive integer")
+  }
+  
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a positive integer")
+  }
+  
+  #############################
+  # Checking parameters var
+  #############################
+  
+  if (!is.logical(var)) {
+    stop("'var' must be TRUE or FALSE")
+  }
+  
+  #############################
+  # Checking parameters klim
+  #############################
+  
+  if (!is.numeric(klim)) {
+    stop("'klim' must be a positive integer")
+  }
+  
+  if ((!((klim >= 0) & ((klim %% 1) == 0)))) {
+    stop("'klim' must be a positive integer")
+  }
+  
+  
   q <- array(data = 0, dim = c(x$s, x$s, k + 1))
   
-  if (k <= x$kmax) {
+  if (k <= x$kmax & k > 0) {
     end <- k
   } else {
     end <- x$kmax
   }
   
-  if (x$type.sojourn == "fij") {
-    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * x$distr[, , 1:end]
-  } else if (x$type.sojourn == "fi") {
-    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(1, 3, 2))
-  } else if (x$type.sojourn == "fj") {
-    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(3, 1, 2))
-  } else if (x$type.sojourn == "f") {
-    q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[1:end], c(end, x$s, x$s)), c(2, 3, 1))
+  if (k > 0) {
+    if (x$type.sojourn == "fij") {
+      q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * x$distr[, , 1:end]
+    } else if (x$type.sojourn == "fi") {
+      q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(1, 3, 2))
+    } else if (x$type.sojourn == "fj") {
+      q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[, 1:end], c(x$s, end, x$s)), c(3, 1, 2))
+    } else if (x$type.sojourn == "f") {
+      q[, , 2:(end + 1)] <- array(x$ptrans, c(x$s, x$s, end)) * aperm(array(x$distr[1:end], c(end, x$s, x$s)), c(2, 3, 1))
+    }
   }
   
   if (var) {

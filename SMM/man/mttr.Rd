@@ -4,19 +4,19 @@
 \alias{mttr}
 \title{Mean Time To Repair (MTTR) Function}
 \usage{
-mttr(x, upstates = x$states, klim = 10000, level = 0.95)
+mttr(x, upstates = x$states, level = 0.95, klim = 10000)
 }
 \arguments{
 \item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 
+\item{level}{Confidence level of the asymptotic confidence interval. Helpful
+for an object \code{x} of class \code{smmfit}.}
+
 \item{klim}{Optional. The time horizon used to approximate the series in the
 computation of the mean sojourn times vector \eqn{m} (cf.
 \link{meanSojournTimes} function) for the asymptotic variance.}
-
-\item{level}{Confidence level of the asymptotic confidence interval. Helpful
-for an object \code{x} of class \code{smmfit}.}
 }
 \value{
 A matrix with \eqn{\textrm{card}(U) = s_{1}} rows, and with columns
