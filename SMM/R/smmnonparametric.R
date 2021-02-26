@@ -585,7 +585,7 @@ loglik.smmnonparametric <- function(x, sequences) {
 
 
 #' @export
-plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
+plot.smmnonparametric <- function(x, i, j, klim = NULL, ...) {
   
   #############################
   # Checking parameters i and j
@@ -595,28 +595,28 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     
     if (x$type.sojourn == "fi") {
       
-      if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
-        stop(paste0("'i' must be an integer between 1 and ", dim(x$distr)[1]))
+      if (!(i %in% x$states)) {
+        stop("'i' must be a state among the state space of x")
       }
       
     } else if (x$type.sojourn == "fj") {
       
-      if (!((j > 0) & (j <= dim(x$distr)[1]) & ((j %% 1) == 0))) {
-        stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[1]))
+      if (!(j %in% x$states)) {
+        stop("'j' must be a state among the state space of x")
       }
       
     } else {
       
+      if (!(i %in% x$states)) {
+        stop("'i' must be a state among the state space of x")
+      }
+      
+      if (!(j %in% x$states)) {
+        stop("'j' must be a state among the state space of x")
+      }
+      
       if (i == j) {
-        stop(paste0("The conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist"))
-      }
-      
-      if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
-        stop(paste0("'i' must be an integer between 1 and ", dim(x$distr)[1]))
-      }
-      
-      if (!((j > 0) & (j <= dim(x$distr)[2]) & ((j %% 1) == 0))) {
-        stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[2]))
+        stop(paste0("The conditional distribution for the couple (i = \"", i, "\", j = \"", j, "\") doesn't exist"))
       }
       
     }
@@ -635,17 +635,21 @@ plot.smmnonparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   
   if (x$type.sojourn == "fij") {
-    f <- x$distr[i, j, ]
+    ind.i <- which(x$states == i)
+    ind.j <- which(x$states == j)
+    f <- x$distr[ind.i, ind.j, ]
     ylab <- bquote(f["i=" ~ .(i) ~ ", j=" ~ .(j)](k))
-    main <- paste0("Sojourn time density function for the \n current state i = ", i, " and the next state j = ", j)
+    main <- paste0("Sojourn time density function for the \n current state i = \"", i, "\" and the next state j = \"", j, "\"")
   } else if (x$type.sojourn == "fi") {
-    f <- x$distr[i, ]
+    ind.i <- which(x$states == i)
+    f <- x$distr[ind.i, ]
     ylab <- bquote(f["i=" ~ .(i)](k))
-    main <- paste0("Sojourn time density function for the current state i = ", i)
+    main <- paste0("Sojourn time density function for the current state i = \"", i, "\"")
   } else if (x$type.sojourn == "fj") {
-    f <- x$distr[j, ]
+    ind.j <- which(x$states == j)
+    f <- x$distr[ind.j, ]
     ylab <- bquote(f["j=" ~ .(j)](k))
-    main <- paste0("Sojourn time density function for the next state j = ", j)
+    main <- paste0("Sojourn time density function for the next state j = \"", j, "\"")
   } else {
     f <- x$distr
     ylab <- bquote(f(k))

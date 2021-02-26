@@ -4,19 +4,19 @@
 \alias{plot.smm}
 \title{Plot function for an object of class smm}
 \usage{
-\method{plot}{smm}(x, i = 1, j = 1, klim = NULL, ...)
+\method{plot}{smm}(x, i, j, klim = NULL, ...)
 }
 \arguments{
 \item{x}{An object of S3 class \code{smm} (inheriting from the S3 class
 \link{smmnonparametric} or \link{smmparametric}).}
 
-\item{i}{An integer giving the current state in the following cases:
-\code{type.sojourn = "fij"} or \code{type.sojourn = "fi"}, otherwise, \code{i} is
-ignored.}
+\item{i}{An element of the state space vector \code{x$states} giving the current
+state in the following cases: \code{type.sojourn = "fij"} or \code{type.sojourn = "fi"},
+otherwise, \code{i} is ignored.}
 
-\item{j}{An integer giving the next state in the following cases:
-\code{type.sojourn = "fij"} or \code{type.sojourn = "fj"}, otherwise, \code{j} is
-ignored.}
+\item{j}{An element of the state space vector \code{x$states} giving the next
+state in the following cases: \code{type.sojourn = "fij"} or \code{type.sojourn = "fj"},
+otherwise, \code{j} is ignored.}
 
 \item{klim}{An integer giving the limit value for which the density will be
 plotted. If \code{klim} is \code{NULL}, then quantile or order 0.95 is used.}

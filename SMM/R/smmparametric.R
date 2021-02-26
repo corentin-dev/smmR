@@ -860,7 +860,7 @@ loglik.smmparametric <- function(x, sequences) {
 
 
 #' @export
-plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
+plot.smmparametric <- function(x, i, j, klim = NULL, ...) {
   
   #############################
   # Checking parameters i and j
@@ -870,24 +870,28 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
     
     if (x$type.sojourn == "fi") {
       
-      if (!((i > 0) & (i <= length(x$distr)) & ((i %% 1) == 0))) {
-        stop(paste0("'i' must be an integer between 1 and ", length(x$distr)))
+      if (!(i %in% x$states)) {
+        stop("'i' must be a state among the state space of x")
       }
       
     } else if (x$type.sojourn == "fj") {
       
-      if (!((j > 0) & (j <= length(x$distr)) & ((j %% 1) == 0))) {
-        stop(paste0("'j' must be an integer between 1 and ", length(x$distr)))
+      if (!(j %in% x$states)) {
+        stop("'j' must be a state among the state space of x")
       }
       
     } else {
       
-      if (!((i > 0) & (i <= dim(x$distr)[1]) & ((i %% 1) == 0))) {
-        stop(paste0("'i' must be an integer between 1 and ", dim(x$distr)[1]))
+      if (!(i %in% x$states)) {
+        stop("'i' must be a state among the state space of x")
       }
       
-      if (!((j > 0) & (j <= dim(x$distr)[2]) & ((j %% 1) == 0))) {
-        stop(paste0("'j' must be an integer between 1 and ", dim(x$distr)[2]))
+      if (!(j %in% x$states)) {
+        stop("'j' must be a state among the state space of x")
+      }
+      
+      if (i == j) {
+        stop(paste0("The conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist"))
       }
       
     }
@@ -906,28 +910,35 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   
   
   if (x$type.sojourn == "fij") {
-    param1 <- x$param[i, j, 1]
-    param2 <- x$param[i, j, 2]
-    dens <- x$distr[i, j]
+    ind.i <- which(x$states == i)
+    ind.j <- which(x$states == j)
+    
+    param1 <- x$param[ind.i, ind.j, 1]
+    param2 <- x$param[ind.i, ind.j, 2]
+    dens <- x$distr[ind.i, ind.j]
     
     ylab <- bquote(f["i=" ~ .(i) ~ ", j=" ~ .(j)](k))
-    main <- paste0("Sojourn time density function for the \n current state i = ", i, " and the next state j = ", j)
+    main <- paste0("Sojourn time density function for the \n current state i = \"", i, "\" and the next state j = \"", j, "\"")
     
   } else if (x$type.sojourn == "fj") {
-    param1 <- x$param[j, 1]
-    param2 <- x$param[j, 2]
-    dens <- x$distr[j]
+    ind.j <- which(x$states == j)
+    
+    param1 <- x$param[ind.j, 1]
+    param2 <- x$param[ind.j, 2]
+    dens <- x$distr[ind.j]
     
     ylab <- bquote(f["j=" ~ .(j)](k))
-    main <- paste0("Sojourn time density function for the next state j = ", j)
+    main <- paste0("Sojourn time density function for the next state j = \"", j, "\"")
     
   } else if (x$type.sojourn == "fi") {
-    param1 <- x$param[i, 1]
-    param2 <- x$param[i, 2]
-    dens <- x$distr[i]
+    ind.i <- which(x$states == i)
+    
+    param1 <- x$param[ind.i, 1]
+    param2 <- x$param[ind.i, 2]
+    dens <- x$distr[ind.i]
     
     ylab <- bquote(f["i=" ~ .(i)](k))
-    main <- paste0("Sojourn time density function for the current state i = ", i)
+    main <- paste0("Sojourn time density function for the current state i = \"", i, "\"")
     
   } else {
     param1 <- x$param[1]
@@ -939,7 +950,7 @@ plot.smmparametric <- function(x, i = 1, j = 1, klim = NULL, ...) {
   }
   
   if (is.na(dens)) {
-    stop(paste0("The conditional distribution for the couple (i = ", i, ", j = ", j, ") doesn't exist"))
+    stop(paste0("The conditional distribution for the couple (i = \"", i, "\", j = \"", j, "\") doesn't exist"))
   }
   
   # Compute the quantile of order alpha if klim is NULL

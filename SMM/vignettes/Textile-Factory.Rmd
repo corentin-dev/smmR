@@ -208,7 +208,7 @@ us plot the sojourn time distribution $\hat{f}_{23}$:
 
 ```{r}
 par(mar = c(5.1, 4.1, 4.1, 2.1))
-plot(x = estimate, i = 2, j = 3, type = "l", col = "blue")
+plot(x = estimate, i = "2", j = "3", type = "l", col = "blue")
 
 lines(x = 1:estimate$kmax, y = ddweibull(x = 1:estimate$kmax, q = 0.5, beta = 0.7), 
        col = "red", pch = "x")

@@ -667,12 +667,12 @@ mttr.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
 #'   
 #' @param x An object of S3 class `smm` (inheriting from the S3 class 
 #'   [smmnonparametric] or [smmparametric]).
-#' @param i An integer giving the current state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
-#'   ignored.
-#' @param j An integer giving the next state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
-#'   ignored.
+#' @param i An element of the state space vector `x$states` giving the current 
+#'   state in the following cases: `type.sojourn = "fij"` or `type.sojourn = "fi"`, 
+#'   otherwise, `i` is ignored.
+#' @param j An element of the state space vector `x$states` giving the next 
+#'   state in the following cases: `type.sojourn = "fij"` or `type.sojourn = "fj"`, 
+#'   otherwise, `j` is ignored.
 #' @param klim An integer giving the limit value for which the density will be 
 #'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
 #' @param ... Arguments passed to plot.
@@ -681,7 +681,7 @@ mttr.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
 #' 
 #' @import graphics
 #' 
-plot.smm <- function(x, i = 1, j = 1, klim = NULL, ...) {
+plot.smm <- function(x, i, j, klim = NULL, ...) {
   NextMethod(x)
 }
 
