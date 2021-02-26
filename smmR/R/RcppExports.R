@@ -15,7 +15,7 @@
 #' @export
 #' 
 setSeed <- function(seed) {
-    invisible(.Call(`_SMM_setSeed`, seed))
+    invisible(.Call(`_smmR_setSeed`, seed))
 }
 
 #' Return the semi-Markov chain given the processes J and T
@@ -27,7 +27,7 @@ setSeed <- function(seed) {
 #' @noRd
 #' 
 getChain <- function(J, T) {
-    .Call(`_SMM_getChain`, J, T)
+    .Call(`_smmR_getChain`, J, T)
 }
 
 #' Return the processes Y, J, T, L and U given the sequences of states
@@ -38,7 +38,7 @@ getChain <- function(J, T) {
 #' @noRd
 #' 
 getProcesses <- function(sequences) {
-    .Call(`_SMM_getProcesses`, sequences)
+    .Call(`_smmR_getProcesses`, sequences)
 }
 
 #' Give the values of the counting processes Nij, Ni, Nj...
@@ -52,7 +52,7 @@ getProcesses <- function(sequences) {
 #' @noRd
 #' 
 getCountingProcesses <- function(Jm, Lm, s, kmax) {
-    .Call(`_SMM_getCountingProcesses`, Jm, Lm, s, kmax)
+    .Call(`_smmR_getCountingProcesses`, Jm, Lm, s, kmax)
 }
 
 #' Give the values of the counting processes (cf. article 
@@ -67,7 +67,7 @@ getCountingProcesses <- function(Jm, Lm, s, kmax) {
 #' @noRd
 #' 
 getCountingNiuj <- function(Ym, Um, s, kmax) {
-    .Call(`_SMM_getCountingNiuj`, Ym, Um, s, kmax)
+    .Call(`_smmR_getCountingNiuj`, Ym, Um, s, kmax)
 }
 
 #' Give the values of the kernel q (cf. Proposition 3.1 article 
@@ -79,7 +79,7 @@ getCountingNiuj <- function(Ym, Um, s, kmax) {
 #' @noRd
 #' 
 computeKernelNonParamEndcensoring <- function(p) {
-    .Call(`_SMM_computeKernelNonParamEndcensoring`, p)
+    .Call(`_smmR_computeKernelNonParamEndcensoring`, p)
 }
 
 #' Generate random variable from a Discrete Weibull distribution of type 1
@@ -91,7 +91,7 @@ computeKernelNonParamEndcensoring <- function(p) {
 #' @noRd
 #' 
 C_rdweibull <- function(q, beta) {
-    .Call(`_SMM_C_rdweibull`, q, beta)
+    .Call(`_smmR_C_rdweibull`, q, beta)
 }
 
 #' Simulate parametric semi-Markov chain
@@ -126,7 +126,7 @@ C_rdweibull <- function(q, beta) {
 #' @noRd
 #' 
 simulateParam <- function(seed, nsim, init, ptrans, distr, param1, param2, censBeg = FALSE, censEnd = FALSE) {
-    .Call(`_SMM_simulateParam`, seed, nsim, init, ptrans, distr, param1, param2, censBeg, censEnd)
+    .Call(`_smmR_simulateParam`, seed, nsim, init, ptrans, distr, param1, param2, censBeg, censEnd)
 }
 
 #' Simulate nonparametric semi-Markov chain
@@ -147,7 +147,7 @@ simulateParam <- function(seed, nsim, init, ptrans, distr, param1, param2, censB
 #' @noRd
 #' 
 simulateNonParam <- function(seed, nsim, init, ptrans, distr, censBeg = FALSE, censEnd = FALSE) {
-    .Call(`_SMM_simulateNonParam`, seed, nsim, init, ptrans, distr, censBeg, censEnd)
+    .Call(`_smmR_simulateNonParam`, seed, nsim, init, ptrans, distr, censBeg, censEnd)
 }
 
 #' Discrete-time convolution product of \eqn{f} and \eqn{g} 
@@ -164,7 +164,7 @@ simulateNonParam <- function(seed, nsim, init, ptrans, distr, censBeg = FALSE, c
 #' @noRd
 #' 
 convolution <- function(f, g) {
-    .Call(`_SMM_convolution`, f, g)
+    .Call(`_smmR_convolution`, f, g)
 }
 
 #' Discrete-time matrix convolution product 
@@ -179,7 +179,7 @@ convolution <- function(f, g) {
 #' @noRd
 #' 
 matrixConvolution <- function(A, B) {
-    .Call(`_SMM_matrixConvolution`, A, B)
+    .Call(`_smmR_matrixConvolution`, A, B)
 }
 
 #' Compute the variance of the estimator of the transition function P 
@@ -195,7 +195,7 @@ matrixConvolution <- function(A, B) {
 #' @noRd
 #' 
 varP <- function(mu, q, psi, Psi, H) {
-    .Call(`_SMM_varP`, mu, q, psi, Psi, H)
+    .Call(`_smmR_varP`, mu, q, psi, Psi, H)
 }
 
 #' Compute the variance of the estimator of the reliability R 
@@ -216,7 +216,7 @@ varP <- function(mu, q, psi, Psi, H) {
 #' @noRd
 #' 
 varR <- function(alpha1, mu1, qy, psi, Psi, H, Q) {
-    .Call(`_SMM_varR`, alpha1, mu1, qy, psi, Psi, H, Q)
+    .Call(`_smmR_varR`, alpha1, mu1, qy, psi, Psi, H, Q)
 }
 
 #' Compute the variance of the estimator of the availability A
@@ -233,7 +233,7 @@ varR <- function(alpha1, mu1, qy, psi, Psi, H, Q) {
 #' @noRd
 #' 
 varA <- function(indices_u, alpha, mu, q, psi, Psi, H, Q) {
-    .Call(`_SMM_varA`, indices_u, alpha, mu, q, psi, Psi, H, Q)
+    .Call(`_smmR_varA`, indices_u, alpha, mu, q, psi, Psi, H, Q)
 }
 
 #' Compute the variance of the BMP-failure rate \eqn{\lambda}
@@ -254,7 +254,7 @@ varA <- function(indices_u, alpha, mu, q, psi, Psi, H, Q) {
 #' @noRd
 #' 
 varBMP <- function(reliab, alpha1, mu1, qy, psi, Psi, H, Q) {
-    .Call(`_SMM_varBMP`, reliab, alpha1, mu1, qy, psi, Psi, H, Q)
+    .Call(`_smmR_varBMP`, reliab, alpha1, mu1, qy, psi, Psi, H, Q)
 }
 
 #' Compute the variance of the mean time to failure (MTTF)
@@ -269,6 +269,6 @@ varBMP <- function(reliab, alpha1, mu1, qy, psi, Psi, H, Q) {
 #' @noRd
 #' 
 varMTTF <- function(indices_u, indices_d, m, mu, p, q) {
-    .Call(`_SMM_varMTTF`, indices_u, indices_d, m, mu, p, q)
+    .Call(`_smmR_varMTTF`, indices_u, indices_d, m, mu, p, q)
 }
 

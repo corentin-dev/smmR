@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // setSeed
 void setSeed(unsigned int seed);
-RcppExport SEXP _SMM_setSeed(SEXP seedSEXP) {
+RcppExport SEXP _smmR_setSeed(SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
@@ -18,7 +18,7 @@ END_RCPP
 }
 // getChain
 arma::vec getChain(arma::vec J, arma::vec T);
-RcppExport SEXP _SMM_getChain(SEXP JSEXP, SEXP TSEXP) {
+RcppExport SEXP _smmR_getChain(SEXP JSEXP, SEXP TSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // getProcesses
 List getProcesses(List sequences);
-RcppExport SEXP _SMM_getProcesses(SEXP sequencesSEXP) {
+RcppExport SEXP _smmR_getProcesses(SEXP sequencesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -41,7 +41,7 @@ END_RCPP
 }
 // getCountingProcesses
 List getCountingProcesses(List& Jm, List& Lm, arma::uword& s, arma::uword& kmax);
-RcppExport SEXP _SMM_getCountingProcesses(SEXP JmSEXP, SEXP LmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
+RcppExport SEXP _smmR_getCountingProcesses(SEXP JmSEXP, SEXP LmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -55,7 +55,7 @@ END_RCPP
 }
 // getCountingNiuj
 arma::cube getCountingNiuj(List& Ym, List& Um, arma::uword& s, arma::uword& kmax);
-RcppExport SEXP _SMM_getCountingNiuj(SEXP YmSEXP, SEXP UmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
+RcppExport SEXP _smmR_getCountingNiuj(SEXP YmSEXP, SEXP UmSEXP, SEXP sSEXP, SEXP kmaxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -69,7 +69,7 @@ END_RCPP
 }
 // computeKernelNonParamEndcensoring
 arma::cube computeKernelNonParamEndcensoring(arma::cube& p);
-RcppExport SEXP _SMM_computeKernelNonParamEndcensoring(SEXP pSEXP) {
+RcppExport SEXP _smmR_computeKernelNonParamEndcensoring(SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -80,7 +80,7 @@ END_RCPP
 }
 // C_rdweibull
 double C_rdweibull(double& q, double& beta);
-RcppExport SEXP _SMM_C_rdweibull(SEXP qSEXP, SEXP betaSEXP) {
+RcppExport SEXP _smmR_C_rdweibull(SEXP qSEXP, SEXP betaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -92,7 +92,7 @@ END_RCPP
 }
 // simulateParam
 List simulateParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, arma::mat& ptrans, arma::Mat<int>& distr, arma::mat& param1, arma::mat& param2, bool censBeg, bool censEnd);
-RcppExport SEXP _SMM_simulateParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP param1SEXP, SEXP param2SEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
+RcppExport SEXP _smmR_simulateParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP param1SEXP, SEXP param2SEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -111,7 +111,7 @@ END_RCPP
 }
 // simulateNonParam
 List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::vec& init, arma::mat& ptrans, arma::cube& distr, bool censBeg, bool censEnd);
-RcppExport SEXP _SMM_simulateNonParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
+RcppExport SEXP _smmR_simulateNonParam(SEXP seedSEXP, SEXP nsimSEXP, SEXP initSEXP, SEXP ptransSEXP, SEXP distrSEXP, SEXP censBegSEXP, SEXP censEndSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -128,7 +128,7 @@ END_RCPP
 }
 // convolution
 arma::vec convolution(arma::vec& f, arma::vec& g);
-RcppExport SEXP _SMM_convolution(SEXP fSEXP, SEXP gSEXP) {
+RcppExport SEXP _smmR_convolution(SEXP fSEXP, SEXP gSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,7 +140,7 @@ END_RCPP
 }
 // matrixConvolution
 arma::cube matrixConvolution(arma::cube& A, arma::cube& B);
-RcppExport SEXP _SMM_matrixConvolution(SEXP ASEXP, SEXP BSEXP) {
+RcppExport SEXP _smmR_matrixConvolution(SEXP ASEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -152,7 +152,7 @@ END_RCPP
 }
 // varP
 arma::cube varP(arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, arma::cube& H);
-RcppExport SEXP _SMM_varP(SEXP muSEXP, SEXP qSEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP) {
+RcppExport SEXP _smmR_varP(SEXP muSEXP, SEXP qSEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -167,7 +167,7 @@ END_RCPP
 }
 // varR
 arma::vec varR(arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q);
-RcppExport SEXP _SMM_varR(SEXP alpha1SEXP, SEXP mu1SEXP, SEXP qySEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
+RcppExport SEXP _smmR_varR(SEXP alpha1SEXP, SEXP mu1SEXP, SEXP qySEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -184,7 +184,7 @@ END_RCPP
 }
 // varA
 arma::vec varA(arma::uvec& indices_u, arma::vec& alpha, arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q);
-RcppExport SEXP _SMM_varA(SEXP indices_uSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP qSEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
+RcppExport SEXP _smmR_varA(SEXP indices_uSEXP, SEXP alphaSEXP, SEXP muSEXP, SEXP qSEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -202,7 +202,7 @@ END_RCPP
 }
 // varBMP
 arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& psi, arma::cube& Psi, arma::cube& H, arma::cube& Q);
-RcppExport SEXP _SMM_varBMP(SEXP reliabSEXP, SEXP alpha1SEXP, SEXP mu1SEXP, SEXP qySEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
+RcppExport SEXP _smmR_varBMP(SEXP reliabSEXP, SEXP alpha1SEXP, SEXP mu1SEXP, SEXP qySEXP, SEXP psiSEXP, SEXP PsiSEXP, SEXP HSEXP, SEXP QSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -220,7 +220,7 @@ END_RCPP
 }
 // varMTTF
 arma::vec varMTTF(arma::uvec& indices_u, arma::uvec& indices_d, arma::vec& m, arma::vec& mu, arma::mat& p, arma::cube& q);
-RcppExport SEXP _SMM_varMTTF(SEXP indices_uSEXP, SEXP indices_dSEXP, SEXP mSEXP, SEXP muSEXP, SEXP pSEXP, SEXP qSEXP) {
+RcppExport SEXP _smmR_varMTTF(SEXP indices_uSEXP, SEXP indices_dSEXP, SEXP mSEXP, SEXP muSEXP, SEXP pSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -236,26 +236,26 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SMM_setSeed", (DL_FUNC) &_SMM_setSeed, 1},
-    {"_SMM_getChain", (DL_FUNC) &_SMM_getChain, 2},
-    {"_SMM_getProcesses", (DL_FUNC) &_SMM_getProcesses, 1},
-    {"_SMM_getCountingProcesses", (DL_FUNC) &_SMM_getCountingProcesses, 4},
-    {"_SMM_getCountingNiuj", (DL_FUNC) &_SMM_getCountingNiuj, 4},
-    {"_SMM_computeKernelNonParamEndcensoring", (DL_FUNC) &_SMM_computeKernelNonParamEndcensoring, 1},
-    {"_SMM_C_rdweibull", (DL_FUNC) &_SMM_C_rdweibull, 2},
-    {"_SMM_simulateParam", (DL_FUNC) &_SMM_simulateParam, 9},
-    {"_SMM_simulateNonParam", (DL_FUNC) &_SMM_simulateNonParam, 7},
-    {"_SMM_convolution", (DL_FUNC) &_SMM_convolution, 2},
-    {"_SMM_matrixConvolution", (DL_FUNC) &_SMM_matrixConvolution, 2},
-    {"_SMM_varP", (DL_FUNC) &_SMM_varP, 5},
-    {"_SMM_varR", (DL_FUNC) &_SMM_varR, 7},
-    {"_SMM_varA", (DL_FUNC) &_SMM_varA, 8},
-    {"_SMM_varBMP", (DL_FUNC) &_SMM_varBMP, 8},
-    {"_SMM_varMTTF", (DL_FUNC) &_SMM_varMTTF, 6},
+    {"_smmR_setSeed", (DL_FUNC) &_smmR_setSeed, 1},
+    {"_smmR_getChain", (DL_FUNC) &_smmR_getChain, 2},
+    {"_smmR_getProcesses", (DL_FUNC) &_smmR_getProcesses, 1},
+    {"_smmR_getCountingProcesses", (DL_FUNC) &_smmR_getCountingProcesses, 4},
+    {"_smmR_getCountingNiuj", (DL_FUNC) &_smmR_getCountingNiuj, 4},
+    {"_smmR_computeKernelNonParamEndcensoring", (DL_FUNC) &_smmR_computeKernelNonParamEndcensoring, 1},
+    {"_smmR_C_rdweibull", (DL_FUNC) &_smmR_C_rdweibull, 2},
+    {"_smmR_simulateParam", (DL_FUNC) &_smmR_simulateParam, 9},
+    {"_smmR_simulateNonParam", (DL_FUNC) &_smmR_simulateNonParam, 7},
+    {"_smmR_convolution", (DL_FUNC) &_smmR_convolution, 2},
+    {"_smmR_matrixConvolution", (DL_FUNC) &_smmR_matrixConvolution, 2},
+    {"_smmR_varP", (DL_FUNC) &_smmR_varP, 5},
+    {"_smmR_varR", (DL_FUNC) &_smmR_varR, 7},
+    {"_smmR_varA", (DL_FUNC) &_smmR_varA, 8},
+    {"_smmR_varBMP", (DL_FUNC) &_smmR_varBMP, 8},
+    {"_smmR_varMTTF", (DL_FUNC) &_smmR_varMTTF, 6},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_SMM(DllInfo *dll) {
+RcppExport void R_init_smmR(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

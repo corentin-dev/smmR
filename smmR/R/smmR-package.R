@@ -1,4 +1,4 @@
-#' SMM : Semi-Markov Models, Markov Models and Reliability
+#' smmR : Semi-Markov Models, Markov Models and Reliability
 #' 
 #' @description This package performs parametric and non-parametric estimation 
 #' and simulation for multi-state discrete-time semi-Markov processes. For the 
@@ -79,7 +79,7 @@
 #' @import DiscreteWeibull
 #' 
 ## usethis namespace: start
-#' @useDynLib SMM, .registration = TRUE
+#' @useDynLib smmR, .registration = TRUE
 ## usethis namespace: end
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
