@@ -208,6 +208,11 @@ est1 <- fitsemimarkovmodel(sequences = seq1, states = states, type.sojourn = "fi
 est1
 
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+}
 \seealso{
 \link{smmnonparametric}, \link{smmparametric}, \link{simulate.smm},
 \link{simulate.smmfit}, \link{plot.smm}, \link{plot.smmfit}

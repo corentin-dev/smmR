@@ -1,7 +1,7 @@
 Type: Package
 Package: SMM
-Title: Simulation and Estimation of Multi-State Discrete-Time
-        Semi-Markov and Markov Models
+Title: Simulation, Estimation and Reliability of Multi-State 
+    Discrete-Time Semi-Markov Models
 Version: 1.0.2
 Date: 2020-05-11
 Author: Vlad Stefan Barbu,
@@ -20,8 +20,10 @@ Description: Performs parametric and non-parametric estimation and simulation
     where no assumptions are done on the shape of distributions. Moreover, the 
     estimation can be done on the basis of one or several sample paths, with or
     without censoring at the beginning or/and at the end of the sample paths. 
-    The implemented methods are described in Barbu, V.S., 
-    Limnios, N. (2008) <doi:10.1007/978-0-387-73173-5>, 
+    Reliability indicators such as reliability, maintainability, availability, 
+    BMP-failure rate, RG-failure rate, mean time to failure and mean time to 
+    repair are available as well. The implemented methods are described in 
+    Barbu, V.S., Limnios, N. (2008) <doi:10.1007/978-0-387-73173-5>, 
     Barbu, V.S., Limnios, N. (2008) <doi:10.1080/10485250701261913> and 
     Trevezas, S., Limnios, N. (2011) <doi:10.1080/10485252.2011.555543>.
     Estimation and simulation of discrete-time k-th order Markov chains are 
@@ -41,8 +43,6 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 VignetteBuilder: knitr
-Packaged: 2020-01-24 14:04:32 UTC; vergnnic
-Repository: CRAN
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1

@@ -28,6 +28,11 @@ If \code{nsim} is a single integer then a chain of that length is
 produced. If \code{nsim} is a vector of integers, then \code{length(nsim)}
 sequences are generated with respective lengths.
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+}
 \seealso{
 \link{smmnonparametric}, \link{smmparametric}, \link{fitsemimarkovmodel}
 }

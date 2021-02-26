@@ -64,6 +64,10 @@ expectation of the hitting time to down set \eqn{D},
 \deqn{MTTF = E[T_{D}]}
 }
 \references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+
 I. Votsi & A. Brouste (2019) Confidence interval for the mean time to
 failure in semi-Markov models: an application to wind energy production,
 Journal of Applied Statistics, 46:10, 1756-1773

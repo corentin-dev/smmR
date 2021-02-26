@@ -4,7 +4,7 @@
 \name{SMM-package}
 \alias{SMM}
 \alias{SMM-package}
-\title{SMM : Semi-Markov and Markov Models}
+\title{SMM : Semi-Markov Models, Markov Models and Reliability}
 \description{
 This package performs parametric and non-parametric estimation
 and simulation for multi-state discrete-time semi-Markov processes. For the
@@ -76,7 +76,11 @@ failure in semi-Markov models: an application to wind energy production,
 Journal of Applied Statistics, 46:10, 1756-1773.
 }
 \keyword{Markov}
+\keyword{availability}
 \keyword{censored}
 \keyword{estimation}
+\keyword{failure}
+\keyword{maintainability}
+\keyword{reliability}
 \keyword{semi-Markov}
 \keyword{simulation}

@@ -67,3 +67,8 @@ system is
 
 \deqn{M(k) = P(T_U \leq k) = 1 - P(T_{U} > k) = 1 - P(Z_{n} \in D,\ n = 0,\dots,k).}
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+}

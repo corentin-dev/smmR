@@ -263,6 +263,11 @@ meanRecurrenceTimes <- function(x, klim = 10000) {
 #'   the reliability, variances, lower and upper asymptotic confidence limits 
 #'   (if `x` is an object of class `smmfit`).
 #'  
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
 #' @export
 #' 
 reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
@@ -324,6 +329,11 @@ reliability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
 #'   the maintainability, variances, lower and upper asymptotic confidence limits 
 #'   (if `x` is an object of class `smmfit`).
 #'  
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
 #' @export
 #' 
 maintainability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
@@ -388,6 +398,11 @@ maintainability <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
 #'   the availability, variances, lower and upper asymptotic confidence limits 
 #'   (if `x` is an object of class `smmfit`).
 #'  
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
 #' @export
 #' 
 availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) {
@@ -623,6 +638,17 @@ availability <- function(x, k, upstates = x$states, level = 0.95, klim = 10000) 
 #'   the BMP-failure rate or RG-failure rate, variances, lower and upper 
 #'   asymptotic confidence limits (if `x` is an object of class `smmfit`).
 #'  
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
+#' R.E. Barlow, A.W. Marshall, and F. Prochan. (1963). Properties of probability 
+#' distributions with monotone hazard rate. Ann. Math. Statist., 34, 375-389.
+#' 
+#' D. Roy and R. Gupta. (1992). Classification of discrete lives. 
+#' Microelectron. Reliabil., 32 (10), 1459-1473.
+#' 
 #' @export
 #' 
 failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG"), level = 0.95, epsilon = 1e-3, klim = 10000) {
@@ -669,11 +695,6 @@ failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG")
 #'   
 #'   \deqn{MTTF = E[T_{D}]}
 #'   
-#' @references
-#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
-#' failure in semi-Markov models: an application to wind energy production, 
-#' Journal of Applied Statistics, 46:10, 1756-1773
-#'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param level Confidence level of the asymptotic confidence interval. Helpful
@@ -685,6 +706,15 @@ failureRate <- function(x, k, upstates = x$states, failure.rate = c("BMP", "RG")
 #'   giving values of the mean time to failure for each state \eqn{i \in U}, 
 #'   variances, lower and upper asymptotic confidence limits (if `x` is an 
 #'   object of class `smmfit`).
+#' 
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
+#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
+#' failure in semi-Markov models: an application to wind energy production, 
+#' Journal of Applied Statistics, 46:10, 1756-1773
 #' 
 #' @export
 #' 
@@ -732,11 +762,6 @@ mttf <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
 #'   
 #'   \deqn{MTTR = E[T_{U}]}
 #'   
-#' @references
-#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
-#' failure in semi-Markov models: an application to wind energy production, 
-#' Journal of Applied Statistics, 46:10, 1756-1773
-#'   
 #' @param x An object of S3 class `smmfit` or `smm`.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @param level Confidence level of the asymptotic confidence interval. Helpful
@@ -749,6 +774,15 @@ mttf <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
 #'   variances, lower and upper asymptotic confidence limits (if `x` is an 
 #'   object of class `smmfit`).
 #'  
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
+#' I. Votsi & A. Brouste (2019) Confidence interval for the mean time to 
+#' failure in semi-Markov models: an application to wind energy production, 
+#' Journal of Applied Statistics, 46:10, 1756-1773
+#' 
 #' @export
 #' 
 mttr <- function(x, upstates = x$states, level = 0.95, klim = 10000) {

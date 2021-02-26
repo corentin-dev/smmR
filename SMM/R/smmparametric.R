@@ -89,6 +89,11 @@
 #' 
 #' @seealso [simulate], [fitsemimarkovmodel], [smmnonparametric]
 #' 
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
+#' 
 #' @export
 #' 
 #' @examples 

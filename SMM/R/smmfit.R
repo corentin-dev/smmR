@@ -169,21 +169,26 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #'   
 #' @param x An object of class `smmfit` (inheriting from the S3 classes 
 #'   `smm`, [smmnonparametric] or [smmparametric]).
-#' @param i An integer giving the current state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fi"`, otherwise, `i` is
-#'   ignored.
-#' @param j An integer giving the next state in the following cases: 
-#'   `type.sojourn = "fij"` or `type.sojourn = "fj"`, otherwise, `j` is
-#'   ignored.
+#' @param i An element of the state space vector `x$states` giving the current 
+#'   state in the following cases: `type.sojourn = "fij"` or `type.sojourn = "fi"`, 
+#'   otherwise, `i` is ignored.
+#' @param j An element of the state space vector `x$states` giving the next 
+#'   state in the following cases: `type.sojourn = "fij"` or `type.sojourn = "fj"`, 
+#'   otherwise, `j` is ignored.
 #' @param klim An integer giving the limit value for which the density will be 
 #'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
 #' @param ... Arguments passed to plot.
+#' 
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
 #' 
 #' @export
 #' 
 #' @import graphics
 #' 
-plot.smmfit <- function(x, i = 1, j = 1, klim = NULL, ...) {
+plot.smmfit <- function(x, i, j, klim = NULL, ...) {
   NextMethod(x)
 }
 
@@ -205,6 +210,11 @@ plot.smmfit <- function(x, i = 1, j = 1, klim = NULL, ...) {
 #' @return A list of vectors representing the sequences.
 #' 
 #' @seealso [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
+#' 
+#' @references
+#' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
+#' Models Toward Applications - Their Use in Reliability and DNA Analysis. 
+#' New York: Lecture Notes in Statistics, vol. 191, Springer.
 #' 
 #' @export
 #' 

@@ -1,4 +1,4 @@
-#' SMM : Semi-Markov and Markov Models
+#' SMM : Semi-Markov Models, Markov Models and Reliability
 #' 
 #' @description This package performs parametric and non-parametric estimation 
 #' and simulation for multi-state discrete-time semi-Markov processes. For the 
@@ -51,7 +51,7 @@
 #'     `failureRate()`).
 #' }
 #' 
-#' @keywords Markov semi-Markov simulation estimation censored
+#' @keywords Markov semi-Markov simulation estimation censored reliability maintainability availability failure
 #' 
 #' @references
 #' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 

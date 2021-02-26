@@ -122,3 +122,14 @@ Note that the RG-failure rate is related to the BMP-failure rate by:
 
 \deqn{r(k) = - \ln (1 - \lambda(k)),\ k \in N}
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+
+R.E. Barlow, A.W. Marshall, and F. Prochan. (1963). Properties of probability
+distributions with monotone hazard rate. Ann. Math. Statist., 34, 375-389.
+
+D. Roy and R. Gupta. (1992). Classification of discrete lives.
+Microelectron. Reliabil., 32 (10), 1459-1473.
+}

@@ -4,19 +4,19 @@
 \alias{plot.smmfit}
 \title{Plot function for an object of class smmfit}
 \usage{
-\method{plot}{smmfit}(x, i = 1, j = 1, klim = NULL, ...)
+\method{plot}{smmfit}(x, i, j, klim = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{smmfit} (inheriting from the S3 classes
 \code{smm}, \link{smmnonparametric} or \link{smmparametric}).}
 
-\item{i}{An integer giving the current state in the following cases:
-\code{type.sojourn = "fij"} or \code{type.sojourn = "fi"}, otherwise, \code{i} is
-ignored.}
+\item{i}{An element of the state space vector \code{x$states} giving the current
+state in the following cases: \code{type.sojourn = "fij"} or \code{type.sojourn = "fi"},
+otherwise, \code{i} is ignored.}
 
-\item{j}{An integer giving the next state in the following cases:
-\code{type.sojourn = "fij"} or \code{type.sojourn = "fj"}, otherwise, \code{j} is
-ignored.}
+\item{j}{An element of the state space vector \code{x$states} giving the next
+state in the following cases: \code{type.sojourn = "fij"} or \code{type.sojourn = "fj"},
+otherwise, \code{j} is ignored.}
 
 \item{klim}{An integer giving the limit value for which the density will be
 plotted. If \code{klim} is \code{NULL}, then quantile or order 0.95 is used.}
@@ -27,4 +27,9 @@ plotted. If \code{klim} is \code{NULL}, then quantile or order 0.95 is used.}
 Displays the densities for the conditional sojourn time
 distributions depending on the current state \code{i} and on the next state
 \code{j}.
+}
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
 }

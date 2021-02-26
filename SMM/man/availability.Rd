@@ -70,3 +70,8 @@ system at time \eqn{k \in N}, given that it starts in state \eqn{i \in E},
 
 \deqn{A_i(k) = P(Z_k \in U | Z_0 = i).}
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+}

@@ -111,6 +111,11 @@ smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij,
 
 smm2
 }
+\references{
+V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
+Models Toward Applications - Their Use in Reliability and DNA Analysis.
+New York: Lecture Notes in Statistics, vol. 191, Springer.
+}
 \seealso{
 \link{simulate}, \link{fitsemimarkovmodel}, \link{smmparametric}
 }
