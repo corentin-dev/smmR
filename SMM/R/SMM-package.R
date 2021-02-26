@@ -32,8 +32,8 @@
 #' }
 #' 
 #' Estimations of parametric and non-parametric semi-Markov models can be done 
-#' by using the function `fitsemimarkovmodel()`. This function returns an 
-#' object of S3 class `fitsmm`. The class `fitsmm` inherits from classes 
+#' by using the function `fitsmm()`. This function returns an 
+#' object of S3 class `smmfit`. The class `smmfit` inherits from classes 
 #' (`smm`, `smmparametric`) or (`smm`, `smmnonparametric`).
 #' 
 #' Based on a fitted/estimated semi-Markov model (an object of class `smmfit`),

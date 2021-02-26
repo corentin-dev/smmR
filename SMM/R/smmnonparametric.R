@@ -57,7 +57,7 @@
 #'   sequences are censored at the end.
 #' @return Returns an object of class `smm`, [smmnonparametric].
 #' 
-#' @seealso [simulate], [fitsemimarkovmodel], [smmparametric]
+#' @seealso [simulate], [fitsmm], [smmparametric]
 #' 
 #' @references
 #' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 

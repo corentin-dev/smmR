@@ -38,8 +38,8 @@ Based on a model specification (an object of class \code{smm}), it is possible t
 }
 
 Estimations of parametric and non-parametric semi-Markov models can be done
-by using the function \code{fitsemimarkovmodel()}. This function returns an
-object of S3 class \code{fitsmm}. The class \code{fitsmm} inherits from classes
+by using the function \code{fitsmm()}. This function returns an
+object of S3 class \code{smmfit}. The class \code{smmfit} inherits from classes
 (\code{smm}, \code{smmparametric}) or (\code{smm}, \code{smmnonparametric}).
 
 Based on a fitted/estimated semi-Markov model (an object of class \code{smmfit}),

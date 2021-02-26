@@ -36,5 +36,5 @@ Models Toward Applications - Their Use in Reliability and DNA Analysis.
 New York: Lecture Notes in Statistics, vol. 191, Springer.
 }
 \seealso{
-\link{smmparametric}, \link{smmnonparametric}, \link{fitsemimarkovmodel}
+\link{smmparametric}, \link{smmnonparametric}, \link{fitsmm}
 }

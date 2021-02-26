@@ -194,7 +194,7 @@ with one or several discrete sequences. In our case, we are going to
 introduce a **non-parametric estimation**:
 
 ```{r}
-estimate <- fitsemimarkovmodel(sequences = seq, states = states, type.sojourn = "fij")
+estimate <- fitsmm(sequences = seq, states = states, type.sojourn = "fij")
 ```
 
 The estimate $\hat{p}$ of the transition matrix $p$ is:

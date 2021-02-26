@@ -497,7 +497,7 @@ following functions:
     \end{itemize}
     }
     
-  \item[$\blacksquare$] \fct{fitsemimarkovmodel} for the estimation of model parameters
+  \item[$\blacksquare$] \fct{fitsmm} for the estimation of model parameters
     (Section~\ref{estSM}):
     {
     \begin{itemize}
@@ -877,7 +877,7 @@ different types of censoring are also written and coded in the package.
 %For more details, see \citep{BaBeCeSaVe}.
 
 \paragraph{Parameters:}
-The estimation is carried out by the function \fct{fitsemimarkovmodel}. The 
+The estimation is carried out by the function \fct{fitsmm}. The 
 different parameters of the function are:
 
 \begin{itemize}
@@ -923,7 +923,7 @@ distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom",
                          "pois", "geom", "geom", NA), 
                        nrow = s, ncol = s, byrow = TRUE)
 
-estparam <- fitsemimarkovmodel(sequences = seqparam, states = states, 
+estparam <- fitsmm(sequences = seqparam, states = states, 
                                type.sojourn = "fij", distr = distr.matrix)
 @
 
@@ -934,7 +934,7 @@ For more details on the parametric estimation, one can see \cite{BaBeCeSaVe}.
 
 \paragraph{Values:}
 
-The function \fct{fitsemimarkovmodel} returns an object of class \class{smm}, 
+The function \fct{fitsmm} returns an object of class \class{smm}, 
 more precisely an object of class \class{smmparametric} if a parametric 
 estimation is required or an object of class \class{smmnonparametric} otherwise:
 
@@ -1084,13 +1084,13 @@ several parameters must be given.
 \end{itemize}
 
 <<estnonparam>>=
-estnonparam <- fitsemimarkovmodel(sequences = seqnonparam, states = states, 
+estnonparam <- fitsmm(sequences = seqnonparam, states = states, 
                                   type.sojourn = "fj")
 @
 
 Here, we estimate simulated sequences with no censoring.
 
-The function \fct{fitsemimarkovmodel} returns an object of class \class{smm}, more
+The function \fct{fitsmm} returns an object of class \class{smm}, more
 precisely an object of class \class{smmparametric} if a parametric estimation is 
 required or an object of class \class{smmnonparametric} otherwise:
 
@@ -1174,7 +1174,7 @@ smmspec <- smmparametric(states = states, init = vect.init, ptrans = pij,
 seq5000 <- simulate(object = smmspec, nsim = 5000, seed = 150)
 
 # Estimation of the semi-Markov model
-est <- fitsemimarkovmodel(sequences = seq5000, states = states, 
+est <- fitsmm(sequences = seq5000, states = states, 
                           type.sojourn = "f", distr = "pois")
 
 # Computation of  the log-likelihood

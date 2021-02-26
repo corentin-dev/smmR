@@ -189,11 +189,11 @@
 #' seq1 <- simulate(object = smm1, nsim = c(1000, 10000, 2000), seed = 100)
 #' 
 #' # Estimation of simulated sequences
-#' est1 <- fitsemimarkovmodel(sequences = seq1, states = states, type.sojourn = "fij", 
+#' est1 <- fitsmm(sequences = seq1, states = states, type.sojourn = "fij", 
 #'                            distr = distr.matrix)
 #' est1
 #' 
-fitsemimarkovmodel <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
+fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
                                distr = "nonparametric", init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {
   
   

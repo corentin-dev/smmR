@@ -209,7 +209,7 @@ plot.smmfit <- function(x, i, j, klim = NULL, ...) {
 #' @param ... further arguments passed to or from other methods.
 #' @return A list of vectors representing the sequences.
 #' 
-#' @seealso [smmnonparametric], [smmparametric], [fitsemimarkovmodel]
+#' @seealso [smmnonparametric], [smmparametric], [fitsmm]
 #' 
 #' @references
 #' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 
