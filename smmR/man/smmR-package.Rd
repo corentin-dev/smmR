@@ -75,6 +75,20 @@ I. Votsi & A. Brouste (2019) Confidence interval for the mean time to
 failure in semi-Markov models: an application to wind energy production,
 Journal of Applied Statistics, 46:10, 1756-1773.
 }
+\author{
+\strong{Maintainer}: Nicolas Vergne \email{nicolas.vergne@univ-rouen.fr}
+
+Authors:
+\itemize{
+  \item Vlad Stefan Barbu (\href{https://orcid.org/0000-0002-0840-016X}{ORCID})
+  \item Caroline Berard
+  \item Dominique Cellier
+  \item Florian Lecocq
+  \item Corentin Lothode
+  \item Mathilde Sautreuil
+}
+
+}
 \keyword{Markov}
 \keyword{availability}
 \keyword{censored}
