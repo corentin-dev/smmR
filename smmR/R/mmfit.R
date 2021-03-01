@@ -18,6 +18,8 @@ mmfit <- function(mm, M, loglik, sequences) {
 #'   class `mmfit`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.mmfit` returns `TRUE` or `FALSE` depending on whether `x` is an 
+#'   object of class `mmfit` or not.
 #' 
 #' @export
 #' 

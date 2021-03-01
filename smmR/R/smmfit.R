@@ -17,6 +17,8 @@ smmfit <- function(smm, M, loglik, sequences) {
 #' @description `is.smmfit` returns `TRUE` if `x` is an object of class `smmfit`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.smmfit` returns `TRUE` or `FALSE` depending on whether `x` is an 
+#'   object of class `smmfit` or not.
 #' 
 #' @export
 #' 
@@ -178,6 +180,7 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #' @param klim An integer giving the limit value for which the density will be 
 #'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
 #' @param ... Arguments passed to plot.
+#' @return None.
 #' 
 #' @references
 #' V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov 

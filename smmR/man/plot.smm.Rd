@@ -23,6 +23,9 @@ plotted. If \code{klim} is \code{NULL}, then quantile or order 0.95 is used.}
 
 \item{...}{Arguments passed to plot.}
 }
+\value{
+None.
+}
 \description{
 Displays the densities for the conditional sojourn time
 distributions depending on the current state \code{i} and on the next state

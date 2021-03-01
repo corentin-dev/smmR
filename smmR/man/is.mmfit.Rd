@@ -9,6 +9,10 @@ is.mmfit(x)
 \arguments{
 \item{x}{An arbitrary R object.}
 }
+\value{
+\code{is.mmfit} returns \code{TRUE} or \code{FALSE} depending on whether \code{x} is an
+object of class \code{mmfit} or not.
+}
 \description{
 \code{is.mmfit} returns \code{TRUE} if \code{x} is an object of
 class \code{mmfit}.

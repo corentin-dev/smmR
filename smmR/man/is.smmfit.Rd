@@ -9,6 +9,10 @@ is.smmfit(x)
 \arguments{
 \item{x}{An arbitrary R object.}
 }
+\value{
+\code{is.smmfit} returns \code{TRUE} or \code{FALSE} depending on whether \code{x} is an
+object of class \code{smmfit} or not.
+}
 \description{
 \code{is.smmfit} returns \code{TRUE} if \code{x} is an object of class \code{smmfit}.
 }

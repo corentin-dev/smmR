@@ -262,6 +262,8 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
 #'   class `smmnonparametric`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.smmnonparametric` returns `TRUE` or `FALSE` depending on whether
+#'   `x` is an object of class `smmnonparametric` or not.
 #' 
 #' @export
 #' 

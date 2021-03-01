@@ -3,6 +3,8 @@
 #' @description `is.smm` returns `TRUE` if `x` is an object of class `smm`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.smm` returns `TRUE` or `FALSE` depending on whether `x` is an 
+#'   object of class `smm` or not.
 #' 
 #' @export
 #' 
@@ -676,6 +678,7 @@ mttr.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
 #' @param klim An integer giving the limit value for which the density will be 
 #'   plotted. If `klim` is `NULL`, then quantile or order 0.95 is used.
 #' @param ... Arguments passed to plot.
+#' @return None.
 #' 
 #' @export
 #' 

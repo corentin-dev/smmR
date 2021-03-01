@@ -9,6 +9,10 @@ is.smmnonparametric(x)
 \arguments{
 \item{x}{An arbitrary R object.}
 }
+\value{
+\code{is.smmnonparametric} returns \code{TRUE} or \code{FALSE} depending on whether
+\code{x} is an object of class \code{smmnonparametric} or not.
+}
 \description{
 \code{is.smmnonparametric} returns \code{TRUE} if \code{x} is an object of
 class \code{smmnonparametric}.

@@ -9,6 +9,10 @@ is.smm(x)
 \arguments{
 \item{x}{An arbitrary R object.}
 }
+\value{
+\code{is.smm} returns \code{TRUE} or \code{FALSE} depending on whether \code{x} is an
+object of class \code{smm} or not.
+}
 \description{
 \code{is.smm} returns \code{TRUE} if \code{x} is an object of class \code{smm}.
 }

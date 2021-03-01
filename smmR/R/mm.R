@@ -94,6 +94,8 @@ mm <- function(states, init, ptrans, k = 1) {
 #'   class `mm`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.mm` returns `TRUE` or `FALSE` depending on whether `x` is an 
+#'   object of class `mm` or not.
 #' 
 #' @export
 #' 

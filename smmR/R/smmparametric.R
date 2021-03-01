@@ -360,6 +360,8 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
 #'   class `smmparametric`.
 #' 
 #' @param x An arbitrary R object.
+#' @return `is.smmparametric` returns `TRUE` or `FALSE` depending on whether 
+#'   `x` is an object of class `smmparametric` or not.
 #' 
 #' @export
 #' 

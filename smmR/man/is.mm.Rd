@@ -9,6 +9,10 @@ is.mm(x)
 \arguments{
 \item{x}{An arbitrary R object.}
 }
+\value{
+\code{is.mm} returns \code{TRUE} or \code{FALSE} depending on whether \code{x} is an
+object of class \code{mm} or not.
+}
 \description{
 \code{is.mm} returns \code{TRUE} if \code{x} is an object of
 class \code{mm}.
