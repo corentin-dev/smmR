@@ -189,8 +189,6 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-#' @import graphics
-#' 
 plot.smmfit <- function(x, i, j, klim = NULL, ...) {
   NextMethod(x)
 }

@@ -73,10 +73,10 @@
 #' 
 #' 
 #' 
-#' @import utils
-#' @import stats
-#' @import seqinr
 #' @import DiscreteWeibull
+#' @import seqinr
+#' @import stats
+#' @import utils
 #' 
 ## usethis namespace: start
 #' @useDynLib smmR, .registration = TRUE

@@ -29,12 +29,10 @@ Description: Performs parametric and non-parametric estimation and simulation
     Estimation and simulation of discrete-time k-th order Markov chains are 
     also considered.
 License: GPL
-Depends: seqinr,
-    DiscreteWeibull
 Imports:
-    MASS,
-    graphics,
-    Rcpp
+    DiscreteWeibull,
+    Rcpp,
+    seqinr
 Suggests: 
     utils,
     knitr,
