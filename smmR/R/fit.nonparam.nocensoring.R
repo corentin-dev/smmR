@@ -29,8 +29,6 @@
     f <- Nijk / array(Nij, c(s, s, kmax))
     f[is.na(f) | (f < 0)] <- 0
     f <- f / array(apply(f, c(1, 2), sum), c(s, s, kmax)) # Renormalize f
-    f[, , dim(f)[3]] <- 1 - apply(f[, , -dim(f)[3]], c(1, 2), sum) # Renormalize f
-    diag(f[, , dim(f)[3]]) <- 0
     f[is.na(f) | (f < 0)] <- 0
     
     q <- Nijk / array(data = Ni, dim = dim(Nijk))
@@ -40,7 +38,6 @@
     f <- Nik / matrix(data = Ni, nrow = s, ncol = kmax)
     f[is.na(f) | (f < 0)] <- 0
     f <- f / apply(f, 1, sum) # Renormalize f
-    f[, ncol(f)] <- 1 - apply(f[, -ncol(f)], 1, sum) # Renormalize f
     f[is.na(f) | (f < 0)] <- 0
     
     # q <- aperm(a = array(data = Nik, dim = c(s, kmax, s)), perm = c(1, 3, 2)) * array(data = Nij, dim = c(s, s, kmax)) / 
@@ -52,7 +49,6 @@
     f <- Njk / matrix(data = Nj, nrow = s, ncol = kmax)
     f[is.na(f) | (f < 0)] <- 0
     f <- f / apply(f, 1, sum) # Renormalize f
-    f[, ncol(f)] <- 1 - apply(f[, -ncol(f)], 1, sum) # Renormalize f
     f[is.na(f) | (f < 0)] <- 0
     
     # q <- aperm(a = array(data = Njk, dim = c(s, kmax, s)), perm = c(3, 1, 2)) * array(data = Nij, dim = c(s, s, kmax)) / 
@@ -64,7 +60,6 @@
     f <- Nk / N
     f[is.na(f) | (f < 0)] <- 0
     f <- f / sum(f) # Renormalize f
-    f[length(f)] <- 1 - sum(f[-length(f)]) # Renormalize f
     f[is.na(f) | (f < 0)] <- 0
     
     # q <- aperm(a = array(data = Nk, dim = c(kmax, s, s)), perm = c(2, 3, 1)) * array(data = Nij, dim = c(s, s, kmax)) / 
@@ -96,7 +91,7 @@
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     
-    if (!(sum(init.estim) == 1)) {
+    if (!((sum(init.estim) >= 1 - .Machine$double.eps) | (sum(init.estim) <= 1 + .Machine$double.eps))) {
       stop("The sum of 'init.estim' is not equal to one")
     }
     

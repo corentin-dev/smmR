@@ -170,7 +170,7 @@
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     
-    if (!(sum(init.estim) == 1)) {
+    if (!((sum(init.estim) >= 1 - .Machine$double.eps) | (sum(init.estim) <= 1 + .Machine$double.eps))) {
       stop("The sum of 'init.estim' is not equal to one")
     }
     

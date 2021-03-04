@@ -36,7 +36,7 @@ mm <- function(states, init, ptrans, k = 1) {
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
-  if (!(sum(init) == 1)) {
+  if (!((sum(init) >= 1 - .Machine$double.eps) | (sum(init) <= 1 + .Machine$double.eps))) {
     stop("The sum of 'init' is not equal to one")
   }
   
@@ -70,7 +70,7 @@ mm <- function(states, init, ptrans, k = 1) {
     }
   }
   
-  if (!all(apply(ptrans, 1, sum) == 1)) {
+  if (!all((apply(ptrans, 1, sum) >= 1 - .Machine$double.eps) | (apply(ptrans, 1, sum) <= 1 + .Machine$double.eps))) {
     stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   

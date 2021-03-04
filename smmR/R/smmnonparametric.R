@@ -120,7 +120,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
-  if (!(sum(init) == 1)) {
+  if (!((sum(init) >= 1 - .Machine$double.eps) | (sum(init) <= 1 + .Machine$double.eps))) {
     stop("The sum of 'init' is not equal to one")
   }
   
@@ -144,7 +144,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
   }
   
-  if (!all(apply(ptrans, 1, sum) == 1)) {
+  if (!all((apply(ptrans, 1, sum) >= 1 - .Machine$double.eps) | (apply(ptrans, 1, sum) <= 1 + .Machine$double.eps))) {
     stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
@@ -171,8 +171,8 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     temp <- apply(distr, c(1, 2), sum)
     indexdiag <- seq(1, s * s, by = s + 1)
     
-    checkTemp <- ((temp[-indexdiag] >= 0) & (temp[-indexdiag] < .Machine$double.eps)) | 
-      ((temp[-indexdiag] > 1 - .Machine$double.eps) & (temp[-indexdiag] < 1 + .Machine$double.eps))
+    checkTemp <- ((temp[-indexdiag] >= 0) & (temp[-indexdiag] <= .Machine$double.eps)) | 
+      ((temp[-indexdiag] >= 1 - .Machine$double.eps) & (temp[-indexdiag] <= 1 + .Machine$double.eps))
     
     if (!all(diag(temp) == 0, checkTemp)) {
       stop("'distr' is not a stochastic matrix")
@@ -186,7 +186,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric matrix of dimension (s, kmax) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
     }
     
-    if (!all((apply(distr, 1, sum) > 1 - .Machine$double.eps) | (apply(distr, 1, sum) < 1 + .Machine$double.eps))) {
+    if (!all((apply(distr, 1, sum) >= 1 - .Machine$double.eps) | (apply(distr, 1, sum) <= 1 + .Machine$double.eps))) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -198,7 +198,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric vector of length kmax since 'type.sojourn == \"f\"'")  
     }
     
-    if (!((sum(distr) > 1 - .Machine$double.eps) | (sum(distr) < 1 + .Machine$double.eps))) {
+    if (!((sum(distr) >= 1 - .Machine$double.eps) | (sum(distr) <= 1 + .Machine$double.eps))) {
       stop("'distr' is not a stochastic matrix")
     }
     
