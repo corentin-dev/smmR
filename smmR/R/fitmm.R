@@ -164,8 +164,14 @@ fitmm <- function(sequences, states, k = 1, init.estim = "mle") {
   init <- init / sum(init)
   
   mm <- mm(states = states, init = init, ptrans = ptrans, k = k)
-  loglik <- .loglik(x = mm, processes = processes)
   
+  if (any(mm$init == 0)) {
+    message("The probabilities of the initial state(s) \"", 
+            paste0(names(which(mm$init == 0)), collapse = "\", \""),
+            "\" are 0.")
+  }
+  
+  loglik <- .loglik(x = mm, processes = processes)
   estimate <- mmfit(mm = mm, M = processes$M, loglik = loglik, sequences = sequences)
   
   return(estimate)

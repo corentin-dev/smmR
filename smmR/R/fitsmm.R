@@ -304,9 +304,9 @@ fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"),
   }
   
   if (any(smm$init == 0)) {
-    message("The probabilities of the initial state(s) ",
-            paste0(names(which(smm$init == 0)), collapse = ", "),
-            " are 0.")
+    message("The probabilities of the initial state(s) \"", 
+            paste0(names(which(smm$init == 0)), collapse = "\", \""),
+            "\" are 0.")
   }
   
   loglik <- .loglik(x = smm, processes = processes)

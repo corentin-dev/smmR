@@ -45,7 +45,7 @@ processesSemiMarkov <- function(sequences, states, verbose = TRUE) {
       message(
         "Some transitions from state i to state j are not observed: ",
         paste0(sapply(1:length(statesi), function(x)
-          paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", ")
+          paste0("(i = \"", states[statesi[x]], "\" to j = \"", states[statesj[x]], "\")")), collapse = ", ")
       )
     }
   }
@@ -107,27 +107,11 @@ processesMarkov <- function(sequences, states, k, verbose = TRUE) {
   Nij <- apply(Nijl, c(1, 2), sum)
   Ni <- apply(Nijl, 1, sum)
   
-  
   if (verbose) {
-    
-    indexdiag <- seq(1, s * s, by = s + 1)
-    Nij.temp <- as.vector(Nij)[-indexdiag]
-    
-    statesi <- row(Nij)[-indexdiag][which(Nij.temp == 0)]
-    statesj <- col(Nij)[-indexdiag][which(Nij.temp == 0)]
-    
-    # Verify the existence of all transitions
-    if ((length(statesi) != 0) | (length(statesj) != 0)) {
-      message(
-        "Some transitions from state i to state j are not observed: ",
-        paste0(sapply(1:length(statesi), function(x)
-          paste0("(i=", statesi[x], " to j=", statesj[x], ")")), collapse = ", ")
-      )
-    }
     
     # Verify the existence of all states
     if (length(which(Ni == 0)) > 0) {
-      warning("Missing observed states")
+      warning("Missing observed states: \"", paste0(states[which(Ni == 0)]), "\"")
     }
     
   }
