@@ -12,11 +12,12 @@ install.packages('smmR')
 
 You need to have git. Then:
 ```
+git clone https://plmlab.math.cnrs.fr/lmrs/statistique/smmR.git
 ```
 
 ## Build
 
 ```bash
-R CMD build smmR
-R CMD check --as-cran smmR
+R CMD build .
+R CMD check --as-cran .
 ```
