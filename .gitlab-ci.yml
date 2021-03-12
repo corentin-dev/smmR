@@ -4,7 +4,7 @@ test:
     - apt update
     - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
     - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
-    - R CMD build --compact-vignettes=both smmR
+    - R CMD build --compact-vignettes=both .
     - mv smmR*.tar.gz smmR.tar.gz
     - R CMD check --as-cran smmR.tar.gz
   artifacts:
