@@ -63,7 +63,21 @@
 #'       equal to \eqn{1 / s}, with \eqn{s} the number of states.
 #'   }
 #'   
-#' @return An object of class [mm].
+#' @return An object of class S3 `mmfit` (inheriting from the S3 class [mm]).
+#'   The S3 class `mmfit` contains:
+#'   \itemize{
+#'     \item All the attributes of the S3 class [mm];
+#'     \item An attribute `M` which is an integer giving the total length of 
+#'       the set of sequences `sequences` (sum of all the lengths of the list 
+#'       `sequences`);
+#'     \item An attribute `loglik` which is a numeric value giving the value 
+#'       of the log-likelihood of the specified Markov model based on the 
+#'       `sequences`;
+#'     \item An attribute `sequences` which is equal to the parameter 
+#'       `sequences` of the function `fitmm` (i.e. a list of sequences used to 
+#'       estimate the Markov model).
+#'   }
+#'   
 #' 
 #' @seealso [mm], [simulate.mm]
 #' 
@@ -73,15 +87,15 @@
 #' states <- c("a", "c", "g", "t")
 #' s <- length(states)
 #' k <- 2
-#' vect.init <- rep.int(1 / s ^ k, s ^ k)
+#' init <- rep.int(1 / s ^ k, s ^ k)
 #' p <- matrix(0.25, nrow = s ^ k, ncol = s)
 #' 
-#' # Specify the Markov model
-#' markov1 <- mm(states = states, init = vect.init, ptrans = p, k = k)
+#' # Specify a Markov model of order 2
+#' markov <- mm(states = states, init = init, ptrans = p, k = k)
 #' 
-#' seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
+#' seqs <- simulate(object = markov, nsim = c(1000, 10000, 2000), seed = 150)
 #' 
-#' est <- fitmm(sequences = seq1, states = states, k = 2)
+#' est <- fitmm(sequences = seqs, states = states, k = 2)
 #' 
 fitmm <- function(sequences, states, k = 1, init.estim = "mle") {
   

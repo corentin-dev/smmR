@@ -21,6 +21,18 @@ An object of class \link{mm}.
 \description{
 Creates a model specification of a Markov model.
 }
+\examples{
+states <- c("a", "c", "g", "t")
+s <- length(states)
+k <- 1
+init <- rep.int(1 / s, s)
+p <- matrix(c(0, 0, 0.3, 0.4, 0, 0, 0.5, 0.2, 0.7, 0.5, 
+              0, 0.4, 0.3, 0.5, 0.2, 0), ncol = s)
+
+# Specify a Markov model of order 1
+markov <- mm(states = states, init = init, ptrans = p, k = k)
+
+}
 \seealso{
 \link{simulate.mm}, \link{fitmm}
 }

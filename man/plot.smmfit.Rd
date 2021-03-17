@@ -31,6 +31,9 @@ Displays the densities for the conditional sojourn time
 distributions depending on the current state \code{i} and on the next state
 \code{j}.
 }
+\examples{
+states <- c("a", "c", "g", "t")
+}
 \references{
 V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov
 Models Toward Applications - Their Use in Reliability and DNA Analysis.

@@ -132,7 +132,20 @@
 #'   sequences are censored at the end.
 #' @return Returns an object of S3 class `smmfit` (inheriting from the S3 
 #'   class `smm` and [smmnonparametric] class if `distr = "nonparametric"`
-#'   or [smmparametric] otherwise).
+#'   or [smmparametric] otherwise). The S3 class `smmfit` contains:
+#'   \itemize{
+#'     \item All the attributes of the S3 class [smmnonparametric] or 
+#'       [smmparametric] depending on the type of estimation;
+#'     \item An attribute `M` which is an integer giving the total length of 
+#'       the set of sequences `sequences` (sum of all the lengths of the list 
+#'       `sequences`);
+#'     \item An attribute `loglik` which is a numeric value giving the value 
+#'       of the log-likelihood of the specified semi-Markov model based on the 
+#'       `sequences`;
+#'     \item An attribute `sequences` which is equal to the parameter 
+#'       `sequences` of the function `fitsmm` (i.e. a list of sequences used to 
+#'       estimate the Markov model).
+#'   }
 #'   
 #' @seealso [smmnonparametric], [smmparametric], [simulate.smm],
 #'   [simulate.smmfit], [plot.smm], [plot.smmfit]
@@ -151,7 +164,7 @@
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' 
-#' # Creation of transition matrix
+#' # Creation of the transition matrix
 #' pij <- matrix(c(0, 0.2, 0.5, 0.3, 
 #'                 0.2, 0, 0.3, 0.5, 
 #'                 0.3, 0.5, 0, 0.2, 
@@ -182,16 +195,15 @@
 #' param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 #' 
 #' # Specify the semi-Markov model
-#' smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-#'                       type.sojourn = "fij", distr = distr.matrix, 
-#'                       param = param.array)
+#' semimarkov <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+#'                             type.sojourn = "fij", distr = distr.matrix, 
+#'                             param = param.array)
 #' 
-#' seq1 <- simulate(object = smm1, nsim = c(1000, 10000, 2000), seed = 100)
+#' seqs <- simulate(object = semimarkov, nsim = c(1000, 10000, 2000), seed = 100)
 #' 
 #' # Estimation of simulated sequences
-#' est1 <- fitsmm(sequences = seq1, states = states, type.sojourn = "fij", 
-#'                            distr = distr.matrix)
-#' est1
+#' est <- fitsmm(sequences = seqs, states = states, type.sojourn = "fij", 
+#'               distr = distr.matrix)
 #' 
 fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
                                distr = "nonparametric", init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {

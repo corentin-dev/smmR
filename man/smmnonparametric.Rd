@@ -88,7 +88,7 @@ s <- length(states)
 # Creation of the initial distribution
 vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 
-# Creation of transition matrix
+# Creation of the transition matrix
 pij <- matrix(c(0, 0.2, 0.5, 0.3, 
                 0.2, 0, 0.3, 0.5, 
                 0.3, 0.5, 0, 0.2, 
@@ -106,10 +106,10 @@ nparam.matrix <- matrix(c(0.2, 0.1, 0.3, 0.2,
                           0.1, 0.2, 0.2, 0), 
                         nrow = s, ncol = kmax, byrow = TRUE)
 
-smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
-                         type.sojourn = "fj", distr = nparam.matrix)
+semimarkov <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
+                               type.sojourn = "fj", distr = nparam.matrix)
 
-smm2
+semimarkov
 }
 \references{
 V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov

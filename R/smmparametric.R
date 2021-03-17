@@ -103,41 +103,41 @@
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' 
-#' # Creation of transition matrix
-#' pij <- matrix(c(0, 0.2, 0.5, 0.3, 
-#'                 0.2, 0, 0.3, 0.5, 
-#'                 0.3, 0.5, 0, 0.2, 
-#'                 0.4, 0.2, 0.4, 0), 
+#' # Creation of the transition matrix
+#' pij <- matrix(c(0, 0.2, 0.5, 0.3,
+#'                 0.2, 0, 0.3, 0.5,
+#'                 0.3, 0.5, 0, 0.2,
+#'                 0.4, 0.2, 0.4, 0),
 #'               ncol = s, byrow = TRUE)
 #' 
 #' # Creation of the distribution matrix
 #' 
-#' distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom", 
+#' distr.matrix <- matrix(c(NA, "pois", "geom", "nbinom",
 #'                          "geom", NA, "pois", "dweibull",
-#'                          "pois", "pois", NA, "geom", 
-#'                          "pois", "geom", "geom", NA), 
+#'                          "pois", "pois", NA, "geom",
+#'                          "pois", "geom", "geom", NA),
 #'                        nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' # Creation of an array containing the parameters
-#' param1.matrix <- matrix(c(NA, 2, 0.4, 4, 
-#'                           0.7, NA, 5, 0.6, 
-#'                           2, 3, NA, 0.6, 
-#'                           4, 0.3, 0.4, NA), 
+#' param1.matrix <- matrix(c(NA, 2, 0.4, 4,
+#'                           0.7, NA, 5, 0.6,
+#'                           2, 3, NA, 0.6,
+#'                           4, 0.3, 0.4, NA),
 #'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
-#' param2.matrix <- matrix(c(NA, NA, NA, 0.6, 
-#'                           NA, NA, NA, 0.8, 
-#'                           NA, NA, NA, NA, 
-#'                           NA, NA, NA, NA), 
+#' param2.matrix <- matrix(c(NA, NA, NA, 0.6,
+#'                           NA, NA, NA, 0.8,
+#'                           NA, NA, NA, NA,
+#'                           NA, NA, NA, NA),
 #'                         nrow = s, ncol = s, byrow = TRUE)
 #' 
 #' param.array <- array(c(param1.matrix, param2.matrix), c(s, s, 2))
 #' 
 #' # Specify the semi-Markov model
-#' smm1 <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-#'                       type.sojourn = "fij", distr = distr.matrix, 
-#'                       param = param.array)
-#' smm1
+#' semimarkov <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+#'                             type.sojourn = "fij", distr = distr.matrix, 
+#'                             param = param.array)
+#' semimarkov
 #' 
 smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                           distr, param, cens.beg = FALSE, cens.end = FALSE) {

@@ -189,6 +189,34 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
+#' @examples 
+#' states <- c("a", "c", "g", "t")
+# s <- length(states)
+# 
+# # Creation of the initial distribution
+# vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+# 
+# # Creation of the transition matrix
+# pij <- matrix(c(0, 0.2, 0.3, 0.4, 0.2, 0, 0.5, 0.2, 0.5, 
+#                 0.3, 0, 0.4, 0.3, 0.5, 0.2, 0), ncol = s)
+# 
+# # Creation of the distribution matrix
+# distr.vec <- c("pois", "geom", "geom", "geom")
+# parameters <- matrix(c(2, 0.6, 0.8, 0.8, NA, NA, NA, NA), 
+#                      ncol = 2, byrow = FALSE)
+# 
+# # Specify the semi-Markov model
+# smm <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+#                      type.sojourn = "fi", distr = distr.vec, param = parameters)
+# 
+# seqs <- simulate(object = smm, nsim = rep(5000, 100), seed = 10)
+# 
+# est <- fitsmm(sequences = seqs, states = states, type.sojourn = "fi", distr = distr.vec)
+# 
+# class(est)
+# 
+# plot(x = est, i = "a", col = "blue", pch = "+")
+# 
 plot.smmfit <- function(x, i, j, klim = NULL, ...) {
   NextMethod(x)
 }

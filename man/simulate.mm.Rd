@@ -33,14 +33,13 @@ sequences are generated with respective lengths.
 states <- c("a", "c", "g", "t")
 s <- length(states)
 k <- 2
-vect.init <- rep.int(1 / s ^ k, s ^ k)
+init <- rep.int(1 / s ^ k, s ^ k)
 p <- matrix(0.25, nrow = s ^ k, ncol = s)
 
-# Specify the Markov model
-markov1 <- mm(states = states, init = vect.init, ptrans = p, k = k)
+# Specify a Markov model of order 1
+markov <- mm(states = states, init = init, ptrans = p, k = k)
 
-seq1 <- simulate(object = markov1, nsim = c(1000, 10000, 2000), seed = 150)
-seq1[[1]][1:15]
+seqs <- simulate(object = markov, nsim = c(1000, 10000, 2000), seed = 150)
 
 }
 \seealso{

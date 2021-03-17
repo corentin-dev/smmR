@@ -73,7 +73,7 @@
 #' # Creation of the initial distribution
 #' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
 #' 
-#' # Creation of transition matrix
+#' # Creation of the transition matrix
 #' pij <- matrix(c(0, 0.2, 0.5, 0.3, 
 #'                 0.2, 0, 0.3, 0.5, 
 #'                 0.3, 0.5, 0, 0.2, 
@@ -91,10 +91,10 @@
 #'                           0.1, 0.2, 0.2, 0), 
 #'                         nrow = s, ncol = kmax, byrow = TRUE)
 #' 
-#' smm2 <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
-#'                          type.sojourn = "fj", distr = nparam.matrix)
+#' semimarkov <- smmnonparametric(states = states, init = vect.init, ptrans = pij, 
+#'                                type.sojourn = "fj", distr = nparam.matrix)
 #' 
-#' smm2
+#' semimarkov
 smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                              distr, cens.beg = FALSE, cens.end = FALSE) {
   
