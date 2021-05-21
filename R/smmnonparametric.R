@@ -272,6 +272,56 @@ is.smmnonparametric <- function(x) {
 }
 
 
+# Method to get the sojourn time distribution f
+.get.f.smmnonparametric <- function(x, k) {
+  
+  if (k <= x$kmax) {
+    end <- k
+  } else {
+    end <- x$kmax
+  }
+  
+  s <- x$s
+  
+  if (x$type.sojourn == "fij") {
+    f <- array(data = 0, dim = c(s, s, k))
+    f[, , 1:end] <- x$distr[, , 1:end]
+  } else if (x$type.sojourn == "fi" | x$type.sojourn == "fj") {
+    f <- matrix(data = 0, nrow = s, ncol = k)
+    f[, 1:end] <- x$distr[, 1:end]
+  } else if (x$type.sojourn == "f") {
+    f <- rep.int(x = 0, times = k)
+    f[1:end] <- x$distr[1:end]
+  }
+  
+  return(f)
+  
+}
+
+
+# Method to get the sojourn time distribution f
+#' @export
+get.f.smmnonparametric <- function(x, k) {
+  
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a strictly positive integer")
+  }
+  
+  if ((!((k > 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a strictly positive integer")
+  }
+  
+  f <- .get.f.smmnonparametric(x = x, k = k)
+  
+  return(f)
+  
+}
+
+
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
 .getKpar.smmnonparametric <- function(x) {

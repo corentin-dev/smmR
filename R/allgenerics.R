@@ -15,6 +15,25 @@
 }
 
 
+#' Method to get the conditional sojourn time distribution f
+#' 
+#' @description Computes the conditional sojourn time distribution \eqn{f(k)}, 
+#'   \eqn{f_{i}(k)}, \eqn{f_{j}(k)} or \eqn{f_{ij}(k)}.
+#'   
+#' @param x An object of S3 class `smmfit` or `smm`.
+#' @param k A strictly positive integer giving the time horizon (k must be 
+#'   different from 0 since we assume that there are not instantaneous 
+#'   transitions).
+#' @return A vector, matrix or array giving the value of \eqn{f} at each time 
+#'   between 1 and `k`.
+#'   
+#' @export
+#' 
+get.f <- function(x, k) {
+  UseMethod("get.f", x)
+}
+
+
 #' Method to get the number of parameters of the semi-Markov chain
 #' 
 #' @description Method to get the number of parameters of the semi-Markov 
