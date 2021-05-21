@@ -510,6 +510,29 @@ is.smmparametric <- function(x) {
 }
 
 
+# Method to get the sojourn time distribution f
+#' @export
+get.f.smmparametric <- function(x, k) {
+   
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a strictly positive integer")
+  }
+  
+  if ((!((k > 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a strictly positive integer")
+  }
+  
+  f <- .get.f.smmparametric(x = x, k = k)
+  
+  return(f)
+  
+}
+
+
 # Method to get the survival/reliability function Fbar
 # (useful to compute the contribution to the likelihood when censoring)
 .get.Fbar.smmparametric <- function(x, k) {
