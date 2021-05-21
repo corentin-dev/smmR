@@ -84,32 +84,7 @@ is.smm <- function(x) {
 }
 
 
-#' Method to compute the value of \eqn{P}
-#' 
-#' @description Method to compute the value of \eqn{P} 
-#'   (See equation (3.33) p.59).
-#' 
-#' @param x An object of class `smm`.
-#' @param k A positive integer giving the time horizon.
-#' @param states Vector giving the states for which the mean sojourn time 
-#'   should be computed. `states` is a subset of \eqn{E}.
-#' @param var Logical. If `TRUE` the asymptotic variance is computed.
-#' @param klim Optional. The time horizon used to approximate the series in the 
-#'   computation of the mean sojourn times vector \eqn{m} (cf. 
-#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
-#'   variance.
-#' @return An array giving the value of \eqn{P_{i,j}(k)} at each time between 0
-#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
-#'   following components:
-#'   \itemize{
-#'    \item{x: }{an array giving the value of \eqn{P_{ij}(k)} at each time 
-#'      between 0 and `k`;}
-#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
-#'      \eqn{\sigma_{P}^{2}(i, j, k)}.}
-#'  }
-#'  
-#' @noRd
-#' 
+# Method to compute the value of \eqn{P}
 .get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
   
   ###########################################################
@@ -147,6 +122,59 @@ is.smm <- function(x) {
     return(p)
     
   }
+  
+}
+
+
+# Method to compute the value of \eqn{P}
+#' @export
+get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
+  
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a positive integer")
+  }
+  
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a positive integer")
+  }
+  
+  #############################
+  # Checking parameters states
+  #############################
+  
+  if (!(is.vector(states) & (length(unique(states)) == length(states)))) {
+    stop("The subset of state space 'states' is not a vector of unique elements")
+  }
+  
+  if (!all(states %in% x$states)) {
+    stop("Every element of 'states' must be in 'x$states'")
+  }
+  
+  #############################
+  # Checking parameters var
+  #############################
+  
+  if (!is.logical(var)) {
+    stop("'var' must be equal to TRUE or FALSE")
+  }
+  
+  #############################
+  # checking parameters klim
+  #############################
+  
+  if (!is.null(klim)) {
+    if (!((klim > 0) & ((klim %% 1) == 0))) {
+      stop("'klim' must be a strictly positive integer")
+    }
+  }
+  
+  P <- .get.P(x = x, k = k, states = states, var = var, klim = klim)
+  
+  return(P)
   
 }
 
@@ -262,7 +290,7 @@ reliability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 1000
   }
   
   #############################
-  # Checking parameter klim
+  # Checking parameters klim
   #############################
   
   if (!is.null(klim)) {
@@ -352,7 +380,7 @@ maintainability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 
   }
   
   #############################
-  # Checking parameter klim
+  # Checking parameters klim
   #############################
   
   if (!is.null(klim)) {
@@ -411,7 +439,7 @@ availability.smm <- function(x, k, upstates = x$states, level = 0.95, klim = 100
   }
   
   #############################
-  # Checking parameter klim
+  # checking parameters klim
   #############################
   
   if (!is.null(klim)) {
@@ -566,7 +594,7 @@ mttf.smm <- function(x, upstates = x$states, level = 0.95, klim = 10000) {
   }
   
   #############################
-  # Checking parameter klim
+  # checking parameters klim
   #############################
   
   if (!is.null(klim)) {
