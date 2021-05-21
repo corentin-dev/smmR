@@ -30,6 +30,9 @@
 #' 
 get.H <- function(q) {
   
+  #############################
+  # checking parameters q
+  #############################
   .is.kernel(q)
   
   H <- .get.H(q)

@@ -1,15 +1,4 @@
-#' Method to get the sojourn time distribution f
-#' 
-#' @description Computes the conditional sojourn time distribution \eqn{f(k)}, 
-#'   \eqn{f_{i}(k)}, \eqn{f_{j}(k)} or \eqn{f_{ij}(k)}.
-#'   
-#' @param x An object of S3 class `smmfit` or `smm`.
-#' @param k A positive integer giving the time horizon.
-#' @return A vector, matrix or array giving the value of \eqn{f} at each time 
-#'   between 0 and `k`.
-#'   
-#' @noRd
-#' 
+# sMethod to get the conditional sojourn time distribution f
 .get.f <- function(x, k) {
   UseMethod(".get.f", x)
 }
@@ -31,6 +20,43 @@
 #' 
 get.f <- function(x, k) {
   UseMethod("get.f", x)
+}
+
+
+# Method to compute the value of \eqn{P}
+.get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
+  UseMethod(".get.P", x)
+}
+
+
+#' Method to compute the value of \eqn{P}
+#' 
+#' @description Method to compute the value of \eqn{P} 
+#'   (See equation (3.33) p.59).
+#' 
+#' @param x An object of class `smm`.
+#' @param k A positive integer giving the time horizon.
+#' @param states Vector giving the states for which the mean sojourn time 
+#'   should be computed. `states` is a subset of \eqn{E}.
+#' @param var Logical. If `TRUE` the asymptotic variance is computed.
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes][meanSojournTimes] function) for the asymptotic 
+#'   variance.
+#' @return An array giving the value of \eqn{P_{i,j}(k)} at each time between 0
+#'   and `k` if `var = FALSE`. If `var = TRUE`, a list containing the 
+#'   following components:
+#'   \itemize{
+#'    \item{x: }{an array giving the value of \eqn{P_{ij}(k)} at each time 
+#'      between 0 and `k`;}
+#'    \item{sigma2: }{an array giving the asymptotic variance of the estimator 
+#'      \eqn{\sigma_{P}^{2}(i, j, k)}.}
+#'  }
+#'  
+#' @export
+#' 
+get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
+  UseMethod("get.P", x)
 }
 
 
