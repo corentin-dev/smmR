@@ -179,20 +179,7 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
 }
 
 
-#' Method to compute the value of \eqn{P_{Y}}
-#' 
-#' @description Method to compute the value of \eqn{P_{Y}}
-#'   (See Proposition 5.1 p.105-106).
-#' 
-#' @param x An object of class `smm`.
-#' @param k A positive integer giving the time horizon.
-#' @param states Vector giving the states for which the mean sojourn time 
-#'   should be computed. `states` is a subset of \eqn{E}.
-#' @return An array giving the value of \eqn{P_{Y}(k)} at each time between 0
-#'   and `k`.
-#' 
-#' @noRd
-#' 
+# Method to compute the value of \eqn{P_{Y}}
 .get.Py <- function(x, k, upstates = x$states) {
   
   ###########################################################
@@ -209,6 +196,41 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
   p <- matrixConvolution(psi, B)
   
   return(p)
+  
+}
+
+
+# Method to compute the value of \eqn{P_{Y}}
+#' @export
+get.Py <- function(x, k, upstates = x$states) {
+  
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a positive integer")
+  }
+  
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a positive integer")
+  }
+  
+  #############################
+  # Checking parameters upstates
+  #############################
+  
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
+  }
+  
+  if (!all(upstates %in% x$states)) {
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
+  }
+  
+  Py <- .get.Py(x = x, k = k, upstates = upstates)
+  
+  return(Py)
   
 }
 
