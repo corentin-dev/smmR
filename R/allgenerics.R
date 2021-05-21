@@ -1,4 +1,4 @@
-# sMethod to get the conditional sojourn time distribution f
+# Method to get the conditional sojourn time distribution f
 .get.f <- function(x, k) {
   UseMethod(".get.f", x)
 }
@@ -20,6 +20,30 @@
 #' 
 get.f <- function(x, k) {
   UseMethod("get.f", x)
+}
+
+
+# Method to get the semi-Markov kernel \eqn{q_{Y}}
+.get.qy <- function(x, k, upstates = x$states) {
+  UseMethod(".get.qy", x)
+}
+
+
+#' Method to get the semi-Markov kernel \eqn{q_{Y}}
+#' 
+#' @description Computes the semi-Markov kernel \eqn{q_{Y}(k)}
+#'   (See proposition 5.1 p.106).
+#' 
+#' @param x An object of class `smm`.
+#' @param k A positive integer giving the time horizon.
+#' @param upstates Vector giving the subset of operational states \eqn{U}.
+#' @return An array giving the value of \eqn{q_{Y}(k)} at each time between 0 
+#'   and `k`.
+#' 
+#' @export
+#' 
+get.qy <- function(x, k, upstates = x$states) {
+  UseMethod("get.qy", x)
 }
 
 

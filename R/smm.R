@@ -13,20 +13,8 @@ is.smm <- function(x) {
 }
 
 
-#' Method to get the semi-Markov kernel \eqn{q_{Y}}
-#' 
-#' @description Computes the semi-Markov kernel \eqn{q_{Y}(k)}
-#'   (See proposition 5.1 p.106).
-#' 
-#' @param x An object of class `smm`.
-#' @param k A positive integer giving the time horizon.
-#' @param upstates Vector giving the subset of operational states \eqn{U}.
-#' @return An array giving the value of \eqn{q_{Y}(k)} at each time between 0 
-#'   and `k`.
-#' 
-#' @noRd
-#' 
-.get.qy <- function(x, k, upstates = x$upstates) {
+# Method to get the semi-Markov kernel \eqn{q_{Y}}
+.get.qy <- function(x, k, upstates = x$states) {
   
   u <- length(upstates)
   
@@ -43,6 +31,41 @@ is.smm <- function(x) {
         rbind(cbind(q11[, , l], colq12[, l]), 0)
     ),
     dim = c(u + 1, u + 1, k + 1))
+  
+  return(qy)
+  
+}
+
+
+# Method to get the semi-Markov kernel \eqn{q_{Y}}
+#' @export
+get.qy <- function(x, k, upstates = x$states) {
+  
+  #############################
+  # Checking parameters k
+  #############################
+  
+  if (!is.numeric(k)) {
+    stop("'k' must be a positive integer")
+  }
+  
+  if ((!((k >= 0) & ((k %% 1) == 0)))) {
+    stop("'k' must be a positive integer")
+  }
+  
+  #############################
+  # Checking parameters upstates
+  #############################
+  
+  if (!(is.vector(upstates) & (length(unique(upstates)) == length(upstates)))) {
+    stop("The subset of state space 'upstates' is not a vector of unique elements")
+  }
+  
+  if (!all(upstates %in% x$states)) {
+    stop("Every element of 'upstates' must be in 'states' ('upstates' is a subet of 'states')")
+  }
+  
+  qy <- .get.qy(x = x, k = k, upstates = upstates)
   
   return(qy)
   
