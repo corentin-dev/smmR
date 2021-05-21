@@ -60,6 +60,31 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
 }
 
 
+# Method to compute the value of \eqn{P}
+.get.Py <- function(x, k, upstates = x$states) {
+  UseMethod(".get.Py", x)
+}
+
+
+#' Method to compute the value of \eqn{P_{Y}}
+#' 
+#' @description Method to compute the value of \eqn{P_{Y}}
+#'   (See Proposition 5.1 p.105-106).
+#' 
+#' @param x An object of class `smm`.
+#' @param k A positive integer giving the time horizon.
+#' @param states Vector giving the states for which the mean sojourn time 
+#'   should be computed. `states` is a subset of \eqn{E}.
+#' @return An array giving the value of \eqn{P_{Y}(k)} at each time between 0
+#'   and `k`.
+#' 
+#' @export
+#' 
+get.Py <- function(x, k, upstates = x$states) {
+  UseMethod("get.Py", x)
+}
+
+
 #' Method to get the number of parameters of the semi-Markov chain
 #' 
 #' @description Method to get the number of parameters of the semi-Markov 
