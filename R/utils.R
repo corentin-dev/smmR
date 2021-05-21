@@ -1,8 +1,36 @@
 ## __________________________________________________________
-## Functions checking the parameters of the specified distributions
+## Function checking if q is a kernel
 ## __________________________________________________________
 
-checkParameter <- function(distr, param) {
+.is.kernel <- function(q) {
+  
+  if (anyNA(q)) {
+    stop("NA values in 'q'")
+  }
+  
+  if (!(is.numeric(q) & is.array(q) & !is.matrix(q) & dim(q)[1] == dim(q)[2])) {
+    stop("'q' must be a numeric array of dimension (s, s, kmax)")
+  }
+  
+  if (!all(apply(q, 1, sum) <= 1 + .Machine$double.eps)) {
+    stop("'q' is not a stochastic matrix")
+  }
+  
+  if (!all(apply(q, 3, diag) == 0)) {
+    stop("'q' is not a stochastic matrix")
+  }
+  
+  if (!all(q >= -.Machine$double.eps, q <= 1 + .Machine$double.eps)) {
+    stop("Probabilities in 'q' must be between [0, 1]")
+  }
+  
+}
+
+## __________________________________________________________
+## Function checking the parameters of the specified distributions
+## __________________________________________________________
+
+.checkParameters <- function(distr, param) {
   
   out <- NULL
   
