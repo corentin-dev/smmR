@@ -2,7 +2,7 @@
 % Please edit documentation in R/get.H.R
 \name{get.H}
 \alias{get.H}
-\title{Function to compute the value of \eqn{H}}
+\title{Function to compute the value of the sojourn time cumulative distribution \eqn{H}}
 \usage{
 get.H(q)
 }

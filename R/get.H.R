@@ -16,7 +16,7 @@
 }
 
 
-#' Function to compute the value of \eqn{H}
+#' Function to compute the value of the sojourn time cumulative distribution \eqn{H}
 #' 
 #' @description Function to compute the value of \eqn{H} (See equation (3.4) p.46).
 #' 
