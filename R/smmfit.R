@@ -29,7 +29,7 @@ is.smmfit <- function(x) {
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.smmfit <- function(x) {
+.get.Kpar.smmfit <- function(x) {
   NextMethod(x)
 }
 
@@ -52,7 +52,7 @@ aic.smmfit <- function(x, sequences = NULL) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   aic <- -2 * loglik + 2 * kpar
   
@@ -79,7 +79,7 @@ bic.smmfit <- function(x, sequences = NULL) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   if (is.null(sequences)) {
     n <- x$M

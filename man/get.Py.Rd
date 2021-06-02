@@ -11,8 +11,7 @@ get.Py(x, k, upstates = x$states)
 
 \item{k}{A positive integer giving the time horizon.}
 
-\item{states}{Vector giving the states for which the mean sojourn time
-should be computed. \code{states} is a subset of \eqn{E}.}
+\item{upstates}{Vector giving the subset of operational states \eqn{U}.}
 }
 \value{
 An array giving the value of \eqn{P_{Y}(k)} at each time between 0

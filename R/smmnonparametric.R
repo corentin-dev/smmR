@@ -324,7 +324,7 @@ get.f.smmnonparametric <- function(x, k) {
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.smmnonparametric <- function(x) {
+.get.Kpar.smmnonparametric <- function(x) {
   
   s <- x$s
   kmax <- x$kmax
@@ -339,6 +339,17 @@ get.f.smmnonparametric <- function(x, k) {
   } else {
     kpar <- kmax - 1
   }
+  
+  return(kpar)
+}
+
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
+#' @export
+get.Kpar.smmnonparametric <- function(x) {
+  
+  kpar <- .get.Kpar.smmnonparametric(x)
   
   return(kpar)
 }
@@ -469,7 +480,7 @@ aic.smmnonparametric <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   aic <- -2 * loglik + 2 * kpar
   
@@ -495,7 +506,7 @@ bic.smmnonparametric <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   n <- sum(sapply(sequences, length))
   

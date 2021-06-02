@@ -23,6 +23,29 @@ get.f <- function(x, k) {
 }
 
 
+# Method to get the number of parameters of the semi-Markov chain
+.get.Kpar <- function(x) {
+  UseMethod(".get.Kpar", x)
+}
+
+
+#' Method to get the number of parameters of a Markov or semi-Markov chain
+#' 
+#' @description Method to get the number of parameters of a Markov or 
+#'   semi-Markov chain. This method is useful for the computation of criteria 
+#'   such as AIC and BIC.
+#' 
+#' @param x An object for which the number of parameters can be returned (An 
+#'   object of class `smm` or `mm`).
+#' @return A positive integer giving the number of parameters.
+#' 
+#' @export
+#' 
+get.Kpar <- function(x) {
+  UseMethod("get.Kpar", x)
+}
+
+
 # Method to get the semi-Markov kernel \eqn{q_{Y}}
 .get.qy <- function(x, k, upstates = x$states) {
   UseMethod(".get.qy", x)
@@ -97,8 +120,7 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
 #' 
 #' @param x An object of class `smm`.
 #' @param k A positive integer giving the time horizon.
-#' @param states Vector giving the states for which the mean sojourn time 
-#'   should be computed. `states` is a subset of \eqn{E}.
+#' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @return An array giving the value of \eqn{P_{Y}(k)} at each time between 0
 #'   and `k`.
 #' 
@@ -106,22 +128,6 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
 #' 
 get.Py <- function(x, k, upstates = x$states) {
   UseMethod("get.Py", x)
-}
-
-
-#' Method to get the number of parameters of the semi-Markov chain
-#' 
-#' @description Method to get the number of parameters of the semi-Markov 
-#'   chain. This method is useful for the computation of criteria such as AIC 
-#'   and BIC.
-#' 
-#' @param x An object for which the number of parameters can be returned.
-#' @return A positive integer giving the number of parameters.
-#' 
-#' @noRd
-#' 
-.getKpar <- function(x) {
-  UseMethod(".getKpar", x)
 }
 
 
