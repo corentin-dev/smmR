@@ -111,11 +111,22 @@ is.mm <- function(x) {
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.mm <- function(x) {
+.get.Kpar.mm <- function(x) {
   
   s <- x$s
   
   kpar <- (s - 1) * s ^ x$k
+  
+  return(kpar)
+}
+
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
+#' @export
+get.Kpar.mm <- function(x) {
+  
+  kpar <- .get.Kpar.mm(x)
   
   return(kpar)
 }
@@ -166,7 +177,7 @@ aic.mm <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   aic <- -2 * loglik + 2 * kpar
   
@@ -192,7 +203,7 @@ bic.mm <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   n <- sum(sapply(sequences, length))
   

@@ -553,7 +553,7 @@ get.f.smmparametric <- function(x, k) {
 
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
-.getKpar.smmparametric <- function(x) {
+.get.Kpar.smmparametric <- function(x) {
   
   distr <- x$distr
   
@@ -564,6 +564,17 @@ get.f.smmparametric <- function(x, k) {
   nbUnif <- length(which(distr == "unif"))
   
   kpar <- 2 * nbDweibull + nbGeom + 2 * nbNbinom + nbPois + nbUnif
+  
+  return(kpar)
+}
+
+
+# Method to get the number of parameters
+# (useful for the computation of criteria such as AIC and BIC)
+#' @export
+get.Kpar.smmparametric <- function(x) {
+  
+  kpar <- .get.Kpar.smmparametric(x)
   
   return(kpar)
 }
@@ -734,7 +745,7 @@ aic.smmparametric <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   aic <- -2 * loglik + 2 * kpar
   
@@ -760,7 +771,7 @@ bic.smmparametric <- function(x, sequences) {
   
   loglik <- loglik(x, sequences)
   
-  kpar <- .getKpar(x)
+  kpar <- .get.Kpar(x)
   
   n <- sum(sapply(sequences, length))
   
