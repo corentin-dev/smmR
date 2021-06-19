@@ -5,7 +5,7 @@ test:
     - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
     - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
     - R CMD build --compact-vignettes=both .
-    - R -e 'Sys.setenv('_R_CHECK_SYSTEM_CLOCK_' = 0)'
+    - R -e 'Sys.setenv("_R_CHECK_SYSTEM_CLOCK_" = 0)'
     - mv smmR*.tar.gz smmR.tar.gz
     - R CMD check --as-cran smmR.tar.gz
   artifacts:
