@@ -13,6 +13,16 @@ is.smm <- function(x) {
 }
 
 
+# Method to get the limit (stationary) distribution
+#' @export
+get.limitDistribution.smm <- function(x, klim = 10000) {
+  
+  p <- .limitDistribution(q = getKernel(x, k = klim), ptrans = x$ptrans)
+  
+  return(p)
+}
+
+
 # Method to get the semi-Markov kernel \eqn{q_{Y}}
 .get.qy <- function(x, k, upstates = x$states) {
   

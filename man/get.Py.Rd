@@ -7,7 +7,7 @@
 get.Py(x, k, upstates = x$states)
 }
 \arguments{
-\item{x}{An object of class \code{smm}.}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{k}{A positive integer giving the time horizon.}
 

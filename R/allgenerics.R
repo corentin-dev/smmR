@@ -46,6 +46,25 @@ get.Kpar <- function(x) {
 }
 
 
+#' Method to get the limit (stationary) distribution
+#' 
+#' @description Method to get the limit (stationary) distribution of a
+#'   semi-Markov chain.
+#' 
+#' @param x An object of S3 class `smmfit` or `smm`.
+#' @param klim Optional. The time horizon used to approximate the series in the 
+#'   computation of the mean sojourn times vector \eqn{m} (cf. 
+#'   [meanSojournTimes][meanSojournTimes] function).
+#' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
+#'   limit distribution.
+#' 
+#' @export
+#' 
+get.limitDistribution <- function(x, klim = 10000) {
+  UseMethod("get.limitDistribution", x)
+}
+
+
 # Method to get the semi-Markov kernel \eqn{q_{Y}}
 .get.qy <- function(x, k, upstates = x$states) {
   UseMethod(".get.qy", x)
@@ -57,7 +76,7 @@ get.Kpar <- function(x) {
 #' @description Computes the semi-Markov kernel \eqn{q_{Y}(k)}
 #'   (See proposition 5.1 p.106).
 #' 
-#' @param x An object of class `smm`.
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the time horizon.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @return An array giving the value of \eqn{q_{Y}(k)} at each time between 0 
@@ -81,7 +100,7 @@ get.qy <- function(x, k, upstates = x$states) {
 #' @description Method to compute the value of \eqn{P} 
 #'   (See equation (3.33) p.59).
 #' 
-#' @param x An object of class `smm`.
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the time horizon.
 #' @param states Vector giving the states for which the mean sojourn time 
 #'   should be computed. `states` is a subset of \eqn{E}.
@@ -118,7 +137,7 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
 #' @description Method to compute the value of \eqn{P_{Y}}
 #'   (See Proposition 5.1 p.105-106).
 #' 
-#' @param x An object of class `smm`.
+#' @param x An object of S3 class `smmfit` or `smm`.
 #' @param k A positive integer giving the time horizon.
 #' @param upstates Vector giving the subset of operational states \eqn{U}.
 #' @return An array giving the value of \eqn{P_{Y}(k)} at each time between 0
