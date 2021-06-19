@@ -1,9 +1,9 @@
 image: rocker/tidyverse
 test:  
   script:
-    - timedatectl set-timezone Europe/Paris
     - apt update
-    - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
+    - apt install -y systemd zlib1g-dev libjpeg-dev texlive-full qpdf
+    - timedatectl set-timezone Europe/Paris
     - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
     - R CMD build --compact-vignettes=both .
     - mv smmR*.tar.gz smmR.tar.gz
