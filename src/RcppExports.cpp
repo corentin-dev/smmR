@@ -28,14 +28,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// getProcesses
-List getProcesses(List sequences);
-RcppExport SEXP _smmR_getProcesses(SEXP sequencesSEXP) {
+// C_getProcesses
+List C_getProcesses(List sequences);
+RcppExport SEXP _smmR_C_getProcesses(SEXP sequencesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type sequences(sequencesSEXP);
-    rcpp_result_gen = Rcpp::wrap(getProcesses(sequences));
+    rcpp_result_gen = Rcpp::wrap(C_getProcesses(sequences));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -238,7 +238,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_smmR_setSeed", (DL_FUNC) &_smmR_setSeed, 1},
     {"_smmR_getChain", (DL_FUNC) &_smmR_getChain, 2},
-    {"_smmR_getProcesses", (DL_FUNC) &_smmR_getProcesses, 1},
+    {"_smmR_C_getProcesses", (DL_FUNC) &_smmR_C_getProcesses, 1},
     {"_smmR_getCountingProcesses", (DL_FUNC) &_smmR_getCountingProcesses, 4},
     {"_smmR_getCountingNiuj", (DL_FUNC) &_smmR_getCountingNiuj, 4},
     {"_smmR_computeKernelNonParamEndcensoring", (DL_FUNC) &_smmR_computeKernelNonParamEndcensoring, 1},
