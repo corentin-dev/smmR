@@ -7,7 +7,7 @@
 get.P(x, k, states = x$states, var = FALSE, klim = 10000)
 }
 \arguments{
-\item{x}{An object of class \code{smm}.}
+\item{x}{An object of S3 class \code{smmfit} or \code{smm}.}
 
 \item{k}{A positive integer giving the time horizon.}
 
