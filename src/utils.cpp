@@ -589,7 +589,7 @@ List simulateNonParam(unsigned int& seed, arma::Col<arma::uword>& nsim, arma::ve
 //' @noRd
 //' 
 // [[Rcpp::export]]
-arma::vec convolution(arma::vec& f, arma::vec& g) {
+arma::vec C_convolution(arma::vec& f, arma::vec& g) {
   
   arma::uword k = f.n_elem - 1;
   
@@ -721,17 +721,17 @@ arma::cube varP(arma::vec& mu, arma::cube& q, arma::cube& psi, arma::cube& Psi, 
           psi_r_j = psi.tube(r, j);
           q_m_r = q.tube(m, r);
           
-          convolpsi = convolution(psi_i_m, psi_r_j);
+          convolpsi = C_convolution(psi_i_m, psi_r_j);
           
-          part11 = convolution(bar_H_j, convolpsi);
+          part11 = C_convolution(bar_H_j, convolpsi);
           part12 = arma::square(delta_m_j * Psi_i_j - part11);
-          part1 += convolution(part12, q_m_r);
+          part1 += C_convolution(part12, q_m_r);
           
-          part21 += convolution(part11, q_m_r);
+          part21 += C_convolution(part11, q_m_r);
           
         }
         
-        part22 = delta_m_j * convolution(psi_i_j, H_m);
+        part22 = delta_m_j * C_convolution(psi_i_j, H_m);
         
         part1bis += mu(m) * part1;
         part2bis += mu(m) * arma::square(part22 - part21);
@@ -817,9 +817,9 @@ arma::vec varR(arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& ps
           psi_j_r = psi.tube(j, r);
           bar_H_r = 1 - H.tube(r, r);
           
-          convolpsi = convolution(psi_n_i, psi_j_r);
+          convolpsi = C_convolution(psi_n_i, psi_j_r);
           
-          d_u_i_j += alpha1(n) * convolution(convolpsi, bar_H_r);
+          d_u_i_j += alpha1(n) * C_convolution(convolpsi, bar_H_r);
           
         }
       }
@@ -837,14 +837,14 @@ arma::vec varR(arma::vec& alpha1, arma::vec& mu1, arma::cube& qy, arma::cube& ps
           
           part11 += alpha1(t) * Psi_t_i;
           
-          part21 += alpha1(t) * convolution(psi_t_i, Q_i_j);
+          part21 += alpha1(t) * C_convolution(psi_t_i, Q_i_j);
         }
       }
       
       part11 = arma::square(d_u_i_j - part11);
-      part1 += convolution(part11, q_i_j);
+      part1 += C_convolution(part11, q_i_j);
       
-      part22 = convolution(d_u_i_j, q_i_j);
+      part22 = C_convolution(d_u_i_j, q_i_j);
       part2 += part22 - part21;
       
     }
@@ -924,9 +924,9 @@ arma::vec varA(arma::uvec& indices_u, arma::vec& alpha, arma::vec& mu, arma::cub
           psi_j_r = psi.tube(j, indices_u(r));
           bar_H_r = 1 - H.tube(indices_u(r), indices_u(r));
           
-          convolpsi = convolution(psi_n_i, psi_j_r);
+          convolpsi = C_convolution(psi_n_i, psi_j_r);
           
-          d_i_j += alpha(n) * convolution(convolpsi, bar_H_r);
+          d_i_j += alpha(n) * C_convolution(convolpsi, bar_H_r);
           
         }
       }
@@ -944,15 +944,15 @@ arma::vec varA(arma::uvec& indices_u, arma::vec& alpha, arma::vec& mu, arma::cub
           psi_t_i = psi.tube(t, i);
           
           part11 += alpha(t) * Psi_t_i;
-          part21 += alpha(t) * convolution(psi_t_i, Q_i_j);
+          part21 += alpha(t) * C_convolution(psi_t_i, Q_i_j);
           
         }
       }
       
       part11 = arma::square(d_i_j - part11);
-      part1 += convolution(part11, q_i_j);
+      part1 += C_convolution(part11, q_i_j);
       
-      part22 = convolution(d_i_j, q_i_j);
+      part22 = C_convolution(d_i_j, q_i_j);
       part2 += part22 - part21;
       
     }
@@ -1045,9 +1045,9 @@ arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cub
           psi_j_r = psi.tube(j, r);
           bar_H_r = 1 - H.tube(r, r);
           
-          convolpsi = convolution(psi_n_i, psi_j_r);
+          convolpsi = C_convolution(psi_n_i, psi_j_r);
           
-          d_u_i_j += alpha1(n) * convolution(convolpsi, bar_H_r);
+          d_u_i_j += alpha1(n) * C_convolution(convolpsi, bar_H_r);
           
         }
       }
@@ -1065,17 +1065,17 @@ arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cub
           
           alpha_Psi_t_i += alpha1(t) * Psi_t_i; // \sum_{t \in U} alpha_{t} \Psi_{ti}
           
-          partT2 += alpha1(t) * convolution(psi_t_i, Q_i_j);
+          partT2 += alpha1(t) * C_convolution(psi_t_i, Q_i_j);
           
         }
       }
       
       
-      partT1 = convolution(d_u_i_j, q_i_j);
+      partT1 = C_convolution(d_u_i_j, q_i_j);
       T += reliab.subvec(1, k) % partT1.subvec(0, k - 1) - reliab.subvec(0, k - 1) % partT1.subvec(1, k) - reliab.subvec(1, k) % partT2.subvec(0, k - 1) + reliab.subvec(0, k - 1) % partT2.subvec(1, k);
       
       part11 = arma::square(d_u_i_j - alpha_Psi_t_i);
-      part1 += convolution(part11, q_i_j);
+      part1 += C_convolution(part11, q_i_j);
       
       part21 = d_u_i_j.subvec(0, k - 1) % alpha_Psi_t_i.subvec(1, k) + \
         d_u_i_j.subvec(1, k) % alpha_Psi_t_i.subvec(0, k - 1) -        \
@@ -1083,7 +1083,7 @@ arma::vec varBMP(arma::vec& reliab, arma::vec& alpha1, arma::vec& mu1, arma::cub
         alpha_Psi_t_i.subvec(0, k - 1) % alpha_Psi_t_i.subvec(1, k);
       
       temp = q_i_j.subvec(0, k - 1);
-      part2 += convolution(part21, temp);
+      part2 += C_convolution(part21, temp);
       
     }
     
