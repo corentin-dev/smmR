@@ -163,8 +163,8 @@ simulateNonParam <- function(seed, nsim, init, ptrans, distr, censBeg = FALSE, c
 #' 
 #' @noRd
 #' 
-convolution <- function(f, g) {
-    .Call(`_smmR_convolution`, f, g)
+C_convolution <- function(f, g) {
+    .Call(`_smmR_C_convolution`, f, g)
 }
 
 #' Discrete-time matrix convolution product 
