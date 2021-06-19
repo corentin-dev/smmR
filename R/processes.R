@@ -19,7 +19,7 @@ processesSemiMarkov <- function(sequences, states, verbose = TRUE) {
   #############################
   
   numericSequences <- lapply(sequences, function(x) sapply(x, function(y) which(states == y) - 1, USE.NAMES = FALSE))
-  processes <- getProcesses(numericSequences) # Compute the processes
+  processes <- C_getProcesses(numericSequences) # Compute the processes
   
   Ym <- lapply(processes$Ym, function(x) x + 1) # Semi-Markov chain
   Jm <- lapply(processes$Jm, function(x) x + 1) # Successively visited states (coded with numbers)
@@ -56,8 +56,8 @@ processesSemiMarkov <- function(sequences, states, verbose = TRUE) {
   
   ans <-
     list(
-      states = states,
       s = s,
+      states = states,
       M = M,
       L = L,
       kmax = kmax,
@@ -123,8 +123,8 @@ processesMarkov <- function(sequences, states, k, verbose = TRUE) {
   
   ans <-
     list(
-      states = states,
       s = s,
+      states = states,
       L = L,
       M = M, 
       Nij = Nij, 

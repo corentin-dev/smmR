@@ -71,7 +71,7 @@ arma::vec getChain(arma::vec J, arma::vec T) {
 //' @noRd
 //' 
 // [[Rcpp::export]]
-List getProcesses(List sequences) {
+List C_getProcesses(List sequences) {
   
   int nbseq = sequences.size();
   

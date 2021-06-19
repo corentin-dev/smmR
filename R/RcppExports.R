@@ -37,8 +37,8 @@ getChain <- function(J, T) {
 #' 
 #' @noRd
 #' 
-getProcesses <- function(sequences) {
-    .Call(`_smmR_getProcesses`, sequences)
+C_getProcesses <- function(sequences) {
+    .Call(`_smmR_C_getProcesses`, sequences)
 }
 
 #' Give the values of the counting processes Nij, Ni, Nj...
