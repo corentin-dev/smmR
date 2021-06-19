@@ -610,8 +610,8 @@ arma::vec C_convolution(arma::vec& f, arma::vec& g) {
 //' Discrete-time matrix convolution product 
 //'   (See definition 3.5 p. 48)
 //' 
-//' @param A A cube of dimension \eqn{(S, S, k + 1)}.
-//' @param B A cube of dimension \eqn{(S, S, k + 1)}.
+//' @param a A cube of dimension \eqn{(S, S, k + 1)}.
+//' @param b A cube of dimension \eqn{(S, S, k + 1)}.
 //'   
 //' @return A cube of dimension \eqn{(S, S, k + 1)} giving the discrete-time 
 //'   matrix convolution product for each \eqn{k \in \mathbb{N}}.
@@ -619,30 +619,30 @@ arma::vec C_convolution(arma::vec& f, arma::vec& g) {
 //' @noRd
 //' 
 // [[Rcpp::export]]
-arma::cube matrixConvolution(arma::cube& A, arma::cube& B) {
+arma::cube C_matrixConvolution(arma::cube& a, arma::cube& b) {
   
   // ###########################################################
   // ###########################################################
-  // A and B must be of dimension (S, S, k + 1) where:
+  // a and b must be of dimension (S, S, k + 1) where:
   //   - S represents the cardinal of the state space E;
   //   - k represents the time horizon;
   // 
-  // Return: Cube C which is the matrix convolution product 
-  //  A * B for each m, m = 0,..., k
+  // Return: Cube c which is the matrix convolution product 
+  //  a * b for each m, m = 0,..., k
   // ###########################################################
   // ###########################################################
   
-  arma::uword k = A.n_slices - 1;
+  arma::uword k = a.n_slices - 1;
   
-  arma::cube C(arma::size(A), arma::fill::zeros);
+  arma::cube c(arma::size(a), arma::fill::zeros);
   
   for (arma::uword m = 0; m <= k; m++) {
     for (arma::uword l = 0; l <= m; l++) {
-      C.slice(m) += A.slice(m - l) * B.slice(l);
+      c.slice(m) += a.slice(m - l) * b.slice(l);
     }
   }
   
-  return C;
+  return c;
 }
 
 
