@@ -5,6 +5,3 @@ test:
     - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
     - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
     - R -e 'devtools::check(args = "--compact-vignettes=both", env_vars = c("_R_CHECK_SYSTEM_CLOCK_" = 0))'
-  artifacts:
-    paths:
-      - smmR.tar.gz
