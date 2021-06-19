@@ -109,6 +109,16 @@ is.mm <- function(x) {
 }
 
 
+# Method to get the stationary distribution
+#' @export
+get.stationaryDistribution.mm <- function(x) {
+  
+  p <- .stationaryDistribution(ptrans = .blockMatrix(ptrans = x$ptrans))
+  
+  return(p)
+}
+
+
 # Method to get the number of parameters
 # (useful for the computation of criteria such as AIC and BIC)
 .get.Kpar.mm <- function(x) {

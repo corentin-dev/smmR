@@ -65,6 +65,23 @@ get.limitDistribution <- function(x, klim = 10000) {
 }
 
 
+#' Method to get the stationary distribution
+#' 
+#' @description Method to get the stationary distribution of a Markov chain.
+#'   If the order of the Markov chain is higher than one, a block matrix is
+#'   computed to get the stationary distribution.
+#' 
+#' @param x An object of S3 class `mm` or `mmfit`.
+#' @return A vector of length \eqn{\textrm{card}(E)} giving the values of the 
+#'   stationary distribution.
+#' 
+#' @export
+#' 
+get.stationaryDistribution <- function(x) {
+  UseMethod("get.stationaryDistribution", x)
+}
+
+
 # Method to get the semi-Markov kernel \eqn{q_{Y}}
 .get.qy <- function(x, k, upstates = x$states) {
   UseMethod(".get.qy", x)
