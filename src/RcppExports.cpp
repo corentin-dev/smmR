@@ -138,15 +138,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// matrixConvolution
-arma::cube matrixConvolution(arma::cube& A, arma::cube& B);
-RcppExport SEXP _smmR_matrixConvolution(SEXP ASEXP, SEXP BSEXP) {
+// C_matrixConvolution
+arma::cube C_matrixConvolution(arma::cube& a, arma::cube& b);
+RcppExport SEXP _smmR_C_matrixConvolution(SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube& >::type A(ASEXP);
-    Rcpp::traits::input_parameter< arma::cube& >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(matrixConvolution(A, B));
+    Rcpp::traits::input_parameter< arma::cube& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< arma::cube& >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_matrixConvolution(a, b));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -246,7 +246,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_smmR_simulateParam", (DL_FUNC) &_smmR_simulateParam, 9},
     {"_smmR_simulateNonParam", (DL_FUNC) &_smmR_simulateNonParam, 7},
     {"_smmR_C_convolution", (DL_FUNC) &_smmR_C_convolution, 2},
-    {"_smmR_matrixConvolution", (DL_FUNC) &_smmR_matrixConvolution, 2},
+    {"_smmR_C_matrixConvolution", (DL_FUNC) &_smmR_C_matrixConvolution, 2},
     {"_smmR_varP", (DL_FUNC) &_smmR_varP, 5},
     {"_smmR_varR", (DL_FUNC) &_smmR_varR, 7},
     {"_smmR_varA", (DL_FUNC) &_smmR_varA, 8},

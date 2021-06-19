@@ -170,16 +170,16 @@ C_convolution <- function(f, g) {
 #' Discrete-time matrix convolution product 
 #'   (See definition 3.5 p. 48)
 #' 
-#' @param A A cube of dimension \eqn{(S, S, k + 1)}.
-#' @param B A cube of dimension \eqn{(S, S, k + 1)}.
+#' @param a A cube of dimension \eqn{(S, S, k + 1)}.
+#' @param b A cube of dimension \eqn{(S, S, k + 1)}.
 #'   
 #' @return A cube of dimension \eqn{(S, S, k + 1)} giving the discrete-time 
 #'   matrix convolution product for each \eqn{k \in \mathbb{N}}.
 #' 
 #' @noRd
 #' 
-matrixConvolution <- function(A, B) {
-    .Call(`_smmR_matrixConvolution`, A, B)
+C_matrixConvolution <- function(a, b) {
+    .Call(`_smmR_C_matrixConvolution`, a, b)
 }
 
 #' Compute the variance of the estimator of the transition function P 

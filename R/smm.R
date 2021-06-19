@@ -98,7 +98,7 @@ get.qy <- function(x, k, upstates = x$states) {
   H1 <- H[which(x$states %in% states), which(x$states %in% states), , drop = FALSE]
   B <- array(data = diag(nrow(H1)), dim = dim(H1)) - H1
   
-  p <- matrixConvolution(psi, B)
+  p <- C_matrixConvolution(psi, B)
   
   
   ###########################################################
@@ -191,7 +191,7 @@ get.P <- function(x, k, states = x$states, var = FALSE, klim = 10000) {
   H <- .get.H(q = qy)
   B <- array(data = diag(nrow(H)), dim = dim(H)) - H
   
-  p <- matrixConvolution(psi, B)
+  p <- C_matrixConvolution(psi, B)
   
   return(p)
   
