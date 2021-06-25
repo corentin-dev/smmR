@@ -9,14 +9,14 @@ convolution(f, g)
 }
 \arguments{
 \item{f}{A vector giving the values of the function \eqn{f} for each
-\eqn{k \in \mathbb{N}}.}
+\eqn{k \in N}.}
 
 \item{g}{A vector giving the values of the function \eqn{g} for each
-\eqn{k \in \mathbb{N}}.}
+\eqn{k \in N}.}
 }
 \value{
 A vector giving the values of the discrete-time convolution of
-\eqn{f} and \eqn{g} for each \eqn{k \in \mathbb{N}}.
+\eqn{f} and \eqn{g} for each \eqn{k \in N}.
 }
 \description{
 Discrete-time convolution product of \eqn{f} and \eqn{g}

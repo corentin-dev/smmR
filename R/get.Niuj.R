@@ -8,7 +8,7 @@
 #' 
 #' @export
 #' 
-getNiuj <- function(sequences) {
+get.Niuj <- function(sequences) {
  
   #############################
   # Checking parameters sequences

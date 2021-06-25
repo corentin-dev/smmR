@@ -2,12 +2,12 @@
 #'   (See definition 2.2 p. 20)
 #'
 #' @param f A vector giving the values of the function \eqn{f} for each
-#'   \eqn{k \in \mathbb{N}}.
+#'   \eqn{k \in N}.
 #' @param g A vector giving the values of the function \eqn{g} for each
-#'   \eqn{k \in \mathbb{N}}.
+#'   \eqn{k \in N}.
 #'
 #' @return A vector giving the values of the discrete-time convolution of
-#'   \eqn{f} and \eqn{g} for each \eqn{k \in \mathbb{N}}.
+#'   \eqn{f} and \eqn{g} for each \eqn{k \in N}.
 #'
 #' @export
 #'
