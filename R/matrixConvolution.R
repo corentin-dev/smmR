@@ -5,7 +5,7 @@
 #' @param b An array of dimension \eqn{(S, S, k + 1)}.
 #'
 #' @return An array of dimension \eqn{(S, S, k + 1)} giving the discrete-time
-#'   matrix convolution product for each \eqn{k \in \mathbb{N}}.
+#'   matrix convolution product for each \eqn{k \in N}.
 #'
 #' @export
 #'
