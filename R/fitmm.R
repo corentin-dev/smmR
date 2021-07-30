@@ -168,14 +168,14 @@ fitmm <- function(sequences, states, k = 1, init.estim = "mle") {
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     
-    if (!((sum(init.estim) >= 1 - .Machine$double.eps) | (sum(init.estim) <= 1 + .Machine$double.eps))) {
+    if (!((sum(init.estim) >= 1 - sqrt(.Machine$double.eps)) | (sum(init.estim) <= 1 + sqrt(.Machine$double.eps)))) {
       stop("The sum of 'init.estim' is not equal to one")
     }
     
     init <- init.estim
   }
   
-  init <- init / sum(init)
+  init <- as.vector(init / sum(init))
   
   mm <- mm(states = states, init = init, ptrans = ptrans, k = k)
   

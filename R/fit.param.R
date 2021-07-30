@@ -22,7 +22,7 @@
     } else {
       
       # Estimation of the transition matrix - component #1
-      ptrans <- counting$Nij / counting$Ni
+      ptrans <- counting$Nij / matrix(data = counting$Ni, nrow = nrow(counting$Nij), ncol = ncol(counting$Nij))
       ptrans[which(is.na(ptrans))] <- 0
       
       # Estimation of the parameters of each distribution
@@ -51,7 +51,7 @@
   } else if (type.sojourn == "fi") {
     
     # Estimation of the transition matrix - component #1
-    ptrans <- counting$Nij / counting$Ni
+    ptrans <- counting$Nij / matrix(data = counting$Ni, nrow = nrow(counting$Nij), ncol = ncol(counting$Nij))
     ptrans[which(is.na(ptrans))] <- 0
     
     # Estimation of the parameters of each distribution
@@ -84,7 +84,7 @@
     } else {
       
       # Estimation of the transition matrix - component #1
-      ptrans <- counting$Nij / counting$Ni
+      ptrans <- counting$Nij / matrix(data = counting$Ni, nrow = nrow(counting$Nij), ncol = ncol(counting$Nij))
       ptrans[which(is.na(ptrans))] <- 0
       
       # Estimation of the parameters of each distribution
@@ -111,7 +111,7 @@
   } else if (type.sojourn == "f") {
     
     # Estimation of the transition matrix
-    ptrans <- counting$Nij / counting$Ni
+    ptrans <- counting$Nij / matrix(data = counting$Ni, nrow = nrow(counting$Nij), ncol = ncol(counting$Nij))
     ptrans[which(is.na(ptrans))] <- 0
     
     # Estimation of the parameters of each distribution
@@ -170,7 +170,7 @@
       stop("Probabilities in 'init.estim' must be between [0, 1]")
     }
     
-    if (!((sum(init.estim) >= 1 - .Machine$double.eps) | (sum(init.estim) <= 1 + .Machine$double.eps))) {
+    if (!((sum(init.estim) >= 1 - sqrt(.Machine$double.eps)) | (sum(init.estim) <= 1 + sqrt(.Machine$double.eps)))) {
       stop("The sum of 'init.estim' is not equal to one")
     }
     
