@@ -1,3 +1,5 @@
+# smmR 1.0.2.9000
+
 # smmR 1.0.2
 
 ## Bug fixes
