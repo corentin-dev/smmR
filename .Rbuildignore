@@ -4,3 +4,5 @@
 ^Meta$
 ^\.editorconfig$
 ^\.gitlab-ci\.yml$
+^paper\/.*
+^LICENSE
