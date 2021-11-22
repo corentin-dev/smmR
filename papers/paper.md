@@ -55,9 +55,10 @@ Based on a fitted/estimated semi-Markov model (an object of class `smmfit`), it 
 * compute estimated reliability, maintainability, availability, failure rates and their confidence intervals (methods `reliability()`, `maintainability()`, `availability()`, `failureRate()`).
 
 The implemented methods are described in:
-* `@limnios_semi-markov_2008`
-* `@BL06`
-* `@TL11`
+
+* [@Barbu:2008]
+* [@Barbu:2006]
+* [@Trevezas:2011]
 
 # Acknowledgements
 
