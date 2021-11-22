@@ -1,7 +1,8 @@
-image: rocker/tidyverse
+image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver:3.6.3
 test:  
   script:
     - apt update
+    - apt install -y libxml2-dev libcairo2-dev libsqlite-dev libmariadbd-dev libmariadbclient-dev libpq-dev libssh2-1-dev unixodbc-dev libsasl2-dev && install2.r --error --deps TRUE tidyverse dplyr devtools formatR remotes selectr caTools BiocManager
     - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
     - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
     - R -e 'devtools::check(args = "--compact-vignettes=both", env_vars = c("_R_CHECK_SYSTEM_CLOCK_" = 0))'
