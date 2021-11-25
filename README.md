@@ -1,6 +1,10 @@
 # Semi Markov Model
 
-[![PLMLab build status](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/badges/master/pipeline.svg)](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/pipelines) [![CRAN versions](https://www.r-pkg.org/badges/version/smmR)](https://CRAN.R-project.org/package=smmR) [![CRAN logs](https://cranlogs.r-pkg.org/badges/smmR)](https://CRAN.R-project.org/package=smmR)
+[![PLMLab build status](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/badges/master/pipeline.svg)](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/-/pipelines) [![CRAN versions](https://www.r-pkg.org/badges/version/smmR)](https://CRAN.R-project.org/package=smmR) [![CRAN logs](https://cranlogs.r-pkg.org/badges/smmR)](https://CRAN.R-project.org/package=smmR)
+
+## Contribute
+
+The official repository is at [PLMLab](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/). But to help with issues and contributions, a mirror has been setup at [Github](https://github.com/corentin-dev/smmR).
 
 ## Install
 
