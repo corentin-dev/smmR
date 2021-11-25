@@ -6,3 +6,6 @@
 ^\.gitlab-ci\.yml$
 ^papers\/.*
 ^LICENSE
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
