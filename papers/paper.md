@@ -10,15 +10,7 @@ authors:
   - name: Vlad Stefan Barbu
     orcid: 0000-0002-0840-016X
     affiliation: 1
-  - name: Caroline Berard
-    orcid: 0000-0003-1386-488X
-    affiliation: 1
-  - name: Dominique Cellier
-    affiliation: 1
   - name: Florian Lecocq
-    affiliation: 1
-  - name: Mathilde Sautreuil
-    orcid: 0000-0003-1985-0307
     affiliation: 1
   - name: Corentin Lothode
     orcid: 0000-0002-8209-317X
@@ -66,6 +58,6 @@ Few R packages have been developed to handle semi-Markov models or hidden semi-M
 
 # Acknowledgements
 
-We acknowledge financial contributions from
+We acknowledge Mathilde Sautreuil, Caroline Berdard and Dominique Cellier for the help they provided in creating the first working package SMM [@Barbu:2018]. We acknowledge financial contributions from
 
 # References
