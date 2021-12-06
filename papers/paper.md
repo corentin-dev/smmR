@@ -37,7 +37,7 @@ Based on a model specification (an object of class `smm`), it is possible to:
 * compute log-likelihood, AIC and BIC criteria (methods `loglik()`, `aic()`, `bic()`);
 * compute reliability, maintainability, availability, failure rates (methods `reliability()`, `maintainability()`, `availability()`, `failureRate()`).
 
-Estimations of parametric and non-parametric semi-Markov models can be done by using the function `fitsmm()`. This function returns an object of S3 class `smmfit`. The class smmfit inherits from classes (`smm`, `smmparametric`) or (`smm`, `smmnonparametric`).
+Estimations of parametric and non-parametric semi-Markov models can be done by using the function `fitsmm()`. This function returns an object of S3 class `smmfit`. The class `smmfit` inherits from classes (`smm`, `smmparametric`) or (`smm`, `smmnonparametric`).
 
 Based on a fitted/estimated semi-Markov model (an object of class `smmfit`), it is possible to:
 
@@ -54,7 +54,7 @@ The implemented methods are described in:
 
 # Statement of need
 
-The semi-Markov processes represent a versatile tool that apply in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent semiMarkov R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Two R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods: the hsmm R package [@Bulla:2010] and the mhsmm R package [@OConnell:2011]. Package SMM [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but note that there is no R package developed for discrete-time multi-state semi-Markov models that computes reliability, maintainability, availability and failure rates. Thus the purpose of this package is to fill this need.
+The semi-Markov processes represent a versatile tool that apply in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Two R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods: the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. Package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but note that there is no R package developed for discrete-time multi-state semi-Markov models that computes reliability, maintainability, availability and failure rates and was not object oriented. Thus the purpose of this package is to fill this need.
 
 # Acknowledgements
 
