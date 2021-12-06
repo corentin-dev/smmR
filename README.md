@@ -58,7 +58,7 @@ M <- 10000
 seq <- simulate(object = factory, nsim = M)
 ```
 
-Thanks to the **SMM** package, we can estimate any semi-Markov model
+Thanks to the `smmR` package, we can estimate any semi-Markov model
 with one or several discrete sequences. In our case, we are going to
 introduce a **non-parametric estimation**:
 
