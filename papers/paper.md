@@ -60,6 +60,6 @@ The semi-Markov processes represent a versatile tool that apply in many fields o
 
 We acknowledge the project AStERiCs _Apprentissage Statistique à l'Echelle pour la Représentation et la Classification non-supervisées_ (RIN project funded by the Normandy Region), DAISI on Biomedical Data Classification (co-financed by the European Union with the European Regional Development Fund (ERDF) and by the Normandy Region).
 
-We also acknowledge Mathilde Sautreuil, Caroline Berdard and Dominique Cellier for the help they provided in creating the first working package SMM [@Barbu:2018].
+We also acknowledge Mathilde Sautreuil, Caroline Berard and Dominique Cellier for the help they provided in creating the first working package SMM [@Barbu:2018].
 
 # References

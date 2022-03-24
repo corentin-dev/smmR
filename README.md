@@ -51,7 +51,7 @@ factory <- smmparametric(states = states, init = alpha, ptrans = p,
                          type.sojourn = "fij", distr = distr, param = parameters)
 ```
 
-After that, we are able to simulate a sequence of sample sizes $`M = 10,000`$:
+After that, we are able to simulate a sequence of sample sizes $M = 10,000$:
 
 ```r
 M <- 10000
@@ -66,7 +66,7 @@ introduce a **non-parametric estimation**:
 estimate <- fitsmm(sequences = seq, states = states, type.sojourn = "fij")
 ```
 
-The estimate $`\hat{p}`$ of the transition matrix $`p`$ is:
+The estimate $\hat{p}$ of the transition matrix $p$ is:
 
 ```r
 print(x = estimate$ptrans, digits = 2)

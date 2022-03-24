@@ -1,7 +1,24 @@
-image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/tidyverse:3.6.3
-test:  
+build_package:
+  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/rmd:4.1.2
+  stage: build
   script:
     - apt update
-    - apt install -y zlib1g-dev libjpeg-dev texlive-full qpdf
-    - R -e 'install.packages(c("DiscreteWeibull","seqinr", "roxygen2", "Rcpp", "RcppArmadillo"))'
-    - R -e 'devtools::check(args = "--compact-vignettes=both", env_vars = c("_R_CHECK_SYSTEM_CLOCK_" = 0))'
+    - apt install -y build-essential libfontconfig1-dev libcurl4-gnutls-dev libxml2-dev libssl-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+    - R -e 'install.packages(c("DiscreteWeibull", "seqinr", "roxygen2", "Rcpp", "RcppArmadillo", "rmarkdown", "pkgdown", "devtools"))'
+    - R -e 'devtools::build()'
+    - R -e 'devtools::install_local()'
+    - R -e 'devtools::document()'
+    - R -e 'pkgdown::build_site(devel=TRUE, preview=FALSE)'
+    - R -e 'devtools::check(env_vars = c("_R_CHECK_SYSTEM_CLOCK_" = 0))'
+  artifacts:
+    paths:
+      - docs
+pages:
+  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/rmd:4.1.2
+  stage: deploy
+  script:
+    - mkdir public
+    - mv docs/* public
+  artifacts:
+    paths:
+      - public

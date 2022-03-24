@@ -2,7 +2,11 @@
 .Rproj.user
 .Rhistory
 .RData
+.vscode
 .Ruserdata
 doc
 Meta
 inst/doc
+/doc/
+/Meta/
+docs
