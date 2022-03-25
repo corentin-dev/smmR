@@ -48,9 +48,9 @@ Based on a fitted/estimated semi-Markov model (an object of class `smmfit`), it 
 
 The implemented methods are described in:
 
-* [@Barbu:2008]
-* [@Barbu:2006]
-* [@Trevezas:2011]
+* @Barbu:2008
+* @Barbu:2006
+* @Trevezas:2011
 
 # Statement of need
 
