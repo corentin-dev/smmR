@@ -1,3 +1,7 @@
 template:
   bootstrap: 5
 url: https://lmrs.pages.math.cnrs.fr/statistique/smmR
+home:
+  links:
+  - text: LMRS website
+    href: https://lmrs.univ-rouen.fr
