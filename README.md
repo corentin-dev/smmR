@@ -47,7 +47,7 @@ if (!require("devtools")) {
 devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", dependencies = TRUE, build_vignettes = FALSE)
 ```
 
-## Get started
+## Getting started
 
 First, load the needed libraries:
 ```r

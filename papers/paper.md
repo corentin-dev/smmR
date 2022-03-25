@@ -3,7 +3,7 @@ title: 'smmR: A Semi-Markov R package'
 tags:
   - R
   - statistics
-  - markov-chains
+  - Markov-chains
   - sequence
   - estimation
 authors:
@@ -54,12 +54,12 @@ The implemented methods are described in:
 
 # Statement of need
 
-The semi-Markov processes represent a versatile tool that apply in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Two R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods: the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. Package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Few R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
 
 # Acknowledgements
 
 We acknowledge the project AStERiCs _Apprentissage Statistique à l'Echelle pour la Représentation et la Classification non-supervisées_ (RIN project funded by the Normandy Region), DAISI on Biomedical Data Classification (co-financed by the European Union with the European Regional Development Fund (ERDF) and by the Normandy Region).
 
-We also acknowledge Mathilde Sautreuil, Caroline Bérard and Dominique Cellier for the help they provided in creating the first working package SMM [@Barbu:2018].
+We also acknowledge Mathilde Sautreuil, Caroline Bérard and Dominique Cellier for the help they provided in creating the first working package `SMM` [@Barbu:2018].
 
 # References
