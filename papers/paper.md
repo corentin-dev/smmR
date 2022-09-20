@@ -52,15 +52,89 @@ The implemented methods are described in:
 * @Barbu:2006
 * @Trevezas:2011
 
+# Statement of need
+
+The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Few R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+
+# Functionnalities
+
+Based on a model specification (an object of class `smm`), it is possible to:
+
+- simulate one or several sequences with the method `simulate.smm()`;
+- plot conditional sojourn time distributions (method `plot.smm()`);
+- compute log-likelihood, AIC and BIC criteria (methods `loglik()`, `aic()`, `bic()`);
+- compute reliability, maintainability, availability, failure rates (methods `reliability()`,
+`maintainability()`, `availability()`, `failureRate())`.
+
+A quick example is shown in the following section.
+
+# Quickstart
+
 It can be easily installed by launching a `R` prompt and running the following command:
 
 ```R
 install.packages('smmR')
 ```
 
-# Statement of need
+Load the library:
 
-The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Few R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+```r
+library(smmR)
+library(DiscreteWeibull)
+```
+
+Then, let us create a **smmparametric** object to represent the semi-Markov chain associated to the system:
+
+```r
+states <- c("1", "2", "3") # State space
+
+alpha <- c(1, 0, 0) # Initial distribution
+
+p <- matrix(data = c(0, 1, 0, 
+                     0.95, 0, 0.05, 
+                     1, 0, 0), nrow = 3, byrow = TRUE) # Transition matrix
+
+distr <- matrix(c(NA, "geom", NA, 
+                  "dweibull", NA, "dweibull", 
+                  "dweibull", NA, NA), 
+                nrow = 3, ncol = 3, byrow = TRUE) # Distribution matrix
+
+param1 <- matrix(c(NA, 0.8, NA, 
+                   0.3, NA, 0.5,
+                   0.6, NA, NA), 
+                 nrow = 3, ncol = 3, byrow = TRUE)
+
+param2 <- matrix(c(NA, NA, NA, 
+                   0.5, NA, 0.7,
+                   0.9, NA, NA), 
+                 nrow = 3, ncol = 3, byrow = TRUE)
+
+parameters <- array(c(param1, param2), c(3, 3, 2))
+
+factory <- smmparametric(states = states, init = alpha, ptrans = p, 
+                         type.sojourn = "fij", distr = distr, param = parameters)
+```
+
+After that, we are able to simulate a sequence of sample sizes $M = 10,000$:
+
+```r
+M <- 10000
+seq <- simulate(object = factory, nsim = M)
+```
+
+Thanks to the `smmR` package, we can estimate any semi-Markov model
+with one or several discrete sequences. In our case, we are going to
+introduce a **non-parametric estimation**:
+
+```r
+estimate <- fitsmm(sequences = seq, states = states, type.sojourn = "fij")
+```
+
+The estimate $\hat{p}$ of the transition matrix $p$ is:
+
+```r
+print(x = estimate$ptrans, digits = 2)
+```
 
 # Contributing
 
