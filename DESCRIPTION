@@ -31,7 +31,7 @@ Description: Performs parametric and non-parametric estimation and simulation
     also considered.
 URL: https://plmlab.math.cnrs.fr/lmrs/statistique/smmR
 BugReports: https://github.com/corentin-dev/smmR/issues
-License: GPL
+License: GPL-3
 Imports:
     DiscreteWeibull,
     Rcpp,
@@ -39,7 +39,8 @@ Imports:
 Suggests: 
     utils,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 LinkingTo: 
     Rcpp,
     RcppArmadillo

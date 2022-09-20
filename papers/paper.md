@@ -52,9 +52,23 @@ The implemented methods are described in:
 * @Barbu:2006
 * @Trevezas:2011
 
+It can be easily installed by launching a `R` prompt and running the following command:
+
+```R
+install.packages('smmR')
+```
+
 # Statement of need
 
 The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Few R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+
+# Contributing
+
+Contributions to this package are warmly welcome. Do not hesitate to open an issue to discuss new features. 
+
+If you want to contribute to the code, you can fork the repository, make some changes and create a pull request to have them integrated into the package. You can use the `devtools::check()` function in order to verify that tests are still passing. See also the contributing guidelines.
+
+If you encounter a problem, open a new issue. Try to be concise and explain what the problem is. If you have an example code that shows the error, it can be helpful.
 
 # Acknowledgements
 

@@ -108,3 +108,16 @@ print(x = estimate$ptrans, digits = 2)
 ```
 
 See the vignette `textile-factory` for more details.
+
+## Contributing
+
+Contributions to this package are warmly welcome. Do not hesitate to open an issue to discuss new features. 
+
+If you want to contribute to the code, you can fork the repository, make some changes and create a pull request to have them integrated into the package. You can use the `devtools::check()` function in order to verify that tests are still passing. See also the contributing guidelines.
+
+If you encounter a problem, open a new issue. Try to be concise and explain what the problem is. If you have an example code that shows the error, it can be helpful.
+
+
+## Acknowledgements
+
+We acknowledge the project AStERiCs _Apprentissage Statistique à l'Echelle pour la Représentation et la Classification non-supervisées_ (RIN project funded by the Normandy Region), DAISI on Biomedical Data Classification (co-financed by the European Union with the European Regional Development Fund (ERDF) and by the Normandy Region).
