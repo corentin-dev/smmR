@@ -1,5 +1,5 @@
 ---
-title: 'smmR: A Semi-Markov R package'
+title: 'smmR: A Semi-Markov `R` package'
 tags:
   - R
   - statistics
@@ -54,26 +54,32 @@ The implemented methods are described in:
 
 # Statement of need
 
-The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. Few R packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` R package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model. Few R packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` R package [@Bulla:2010] and the `mhsmm` R package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+The semi-Markov processes represent a versatile tool that is applied in many fields of science like reliability, survival analysis, bioinformatics, engineering, finance, etc. The community of sequence modeling and analysis could be interested by this package, in addition to all the applied community already listed. 
 
-# Functionnalities
+In order to complete the work of the packages listed in the following section, the package `smmR` is the first one to perform parametric (with different sojourn time distributions : Uniform, Geometric, Poisson, Discrete Weibull of type 1 and Negative Binomial) and non-parametric estimation and simulation for multi-state discrete-time semi-Markov processes, with the computation of reliability, maintainability, availability  and failure rates. The estimation can be done on the basis of one or several sample paths, with or without censoring at the beginning or/and at the end of the sample paths.
 
-Based on a model specification (an object of class `smm`), it is possible to:
+# State of the field
 
-- simulate one or several sequences with the method `simulate.smm()`;
-- plot conditional sojourn time distributions (method `plot.smm()`);
-- compute log-likelihood, AIC and BIC criteria (methods `loglik()`, `aic()`, `bic()`);
-- compute reliability, maintainability, availability, failure rates (methods `reliability()`,
-`maintainability()`, `availability()`, `failureRate())`.
+Few `R` packages have been developed to handle semi-Markov models or hidden semi-Markov models. For semi-Markov models we have the recent `semiMarkov` `R` package [@Listwon:2015] that performs maximum likelihood estimation for parametric continuous-time semi-Markov processes, where the distribution can be chosen between Exponential, Weibull or exponentiated Weibull. That package computes associated hazard rates; covariates can also be taken into account through the Cox proportional hazard model.
 
-A quick example is shown in the following section.
+Few `R` packages are also dedicated to hidden semi-Markov models, implementing estimation and prediction methods. Among them, we can cite the `hsmm` `R` package [@Bulla:2010] and the `mhsmm` `R` package [@OConnell:2011]. The package `SMM` [@Barbu:2018] deals with discrete-time multi-state semi-Markov models but does not compute reliability, maintainability, availability and failure rates and was not object oriented.
+
 
 # Quickstart
 
 It can be easily installed by launching a `R` prompt and running the following command:
 
-```R
+```r
 install.packages('smmR')
+```
+
+or directly from the repository in order to get the `git` version:
+
+```r
+if (!require("devtools")) {
+  install.packages("devtools")
+}
+devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", dependencies = TRUE, build_vignettes = FALSE)
 ```
 
 Load the library:
