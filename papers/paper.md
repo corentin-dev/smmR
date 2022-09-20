@@ -87,30 +87,23 @@ Then, let us create a **smmparametric** object to represent the semi-Markov chai
 
 ```r
 states <- c("1", "2", "3") # State space
-
 alpha <- c(1, 0, 0) # Initial distribution
-
 p <- matrix(data = c(0, 1, 0, 
                      0.95, 0, 0.05, 
                      1, 0, 0), nrow = 3, byrow = TRUE) # Transition matrix
-
 distr <- matrix(c(NA, "geom", NA, 
                   "dweibull", NA, "dweibull", 
                   "dweibull", NA, NA), 
                 nrow = 3, ncol = 3, byrow = TRUE) # Distribution matrix
-
 param1 <- matrix(c(NA, 0.8, NA, 
                    0.3, NA, 0.5,
                    0.6, NA, NA), 
                  nrow = 3, ncol = 3, byrow = TRUE)
-
 param2 <- matrix(c(NA, NA, NA, 
                    0.5, NA, 0.7,
                    0.9, NA, NA), 
                  nrow = 3, ncol = 3, byrow = TRUE)
-
 parameters <- array(c(param1, param2), c(3, 3, 2))
-
 factory <- smmparametric(states = states, init = alpha, ptrans = p, 
                          type.sojourn = "fij", distr = distr, param = parameters)
 ```
