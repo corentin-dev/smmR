@@ -5,7 +5,7 @@
   
   if (cens.beg) {# Censoring at the beginning
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nijk[i, j, ] != 0
       kmask <- (0:(kmax - 1))[mask]
@@ -20,7 +20,7 @@
       return(-(sum(counting$Nijk[i, j, ] * fk) + sum(counting$Nbijk[i, j, ] * Fk)))
     }
     
-    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+    mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
   } else {# No censoring

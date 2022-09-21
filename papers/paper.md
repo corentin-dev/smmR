@@ -34,7 +34,7 @@ Based on a model specification (an object of class `smm`), it is possible to:
 
 * simulate one or several sequences with the method `simulate.smm()`;
 * plot conditional sojourn time distributions (method `plot.smm()`);
-* compute log-likelihood, AIC and BIC criteria (methods `loglik()`, `aic()`, `bic()`);
+* compute log-likelihood, AIC and BIC criteria (methods `logLik()`, `AIC()`, `BIC()`);
 * compute reliability, maintainability, availability, failure rates (methods `reliability()`, `maintainability()`, `availability()`, `failureRate()`).
 
 Estimations of parametric and non-parametric semi-Markov models can be done by using the function `fitsmm()`. This function returns an object of S3 class `smmfit`. The class `smmfit` inherits from classes (`smm`, `smmparametric`) or (`smm`, `smmnonparametric`).
@@ -43,7 +43,7 @@ Based on a fitted/estimated semi-Markov model (an object of class `smmfit`), it 
 
 * simulate one or several sequences with the method `simulate.smmfit()`;
 * plot estimated conditional sojourn time distributions (method `plot.smmfit()`);
-* compute log-likelihood, AIC and BIC criteria (methods `loglik()`, `aic()`, `bic()`);
+* compute log-likelihood, AIC and BIC criteria (methods `logLik()`, `AIC()`, `BIC()`);
 * compute estimated reliability, maintainability, availability, failure rates and their confidence intervals (methods `reliability()`, `maintainability()`, `availability()`, `failureRate()`).
 
 The implemented methods are described in:

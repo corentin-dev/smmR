@@ -15,6 +15,5 @@ A positive integer giving the number of parameters.
 }
 \description{
 Method to get the number of parameters of a Markov or
-semi-Markov chain. This method is useful for the computation of criteria
 such as AIC and BIC.
 }

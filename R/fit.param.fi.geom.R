@@ -5,7 +5,7 @@
   
   if (!cens.beg & cens.end) {# Censoring at the end
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (0:(kmax - 1))[mask]
@@ -20,12 +20,12 @@
       return(-(sum(counting$Nik[i, ] * fk) + sum(counting$Neik[i, ] * Fk)))
     }
     
-    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+    mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
   } else if (cens.beg & !cens.end) {# Censoring at the beginning
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (0:(kmax - 1))[mask]
@@ -40,12 +40,12 @@
       return(-(sum(counting$Nik[i, ] * fk) + sum(counting$Nbik[i, ] * Fk)))
     }
     
-    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+    mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
   } else if (cens.beg & cens.end) {# Censoring at the beginning and at the end
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (0:(kmax - 1))[mask]
@@ -60,7 +60,7 @@
       return(-(sum(counting$Nik[i, ] * fk) + sum(counting$Nebik[i, ] * Fk)))
     }
     
-    mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+    mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
     theta <- mle$par
     
   } else {# No censoring

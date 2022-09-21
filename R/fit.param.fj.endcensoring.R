@@ -47,7 +47,7 @@
           
           if (cens.beg) {
             
-            loglik <- function(par) {
+            logLik <- function(par) {
               
               fv <- matrix(data = 0, nrow = s, ncol = kmax)
               Fv <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -85,7 +85,7 @@
             
           } else {
             
-            loglik <- function(par) {
+            logLik <- function(par) {
               
               fv <- matrix(data = 0, nrow = s, ncol = kmax)
               Fv <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -136,7 +136,7 @@
             
             mle <- constrOptim(
               theta = theta0,
-              f = loglik,
+              f = logLik,
               ui = rbind(u0, u1),
               ci = c(c0, c1),
               method = "Nelder-Mead"
@@ -146,7 +146,7 @@
             
           } else if (distr[j] == "geom") {
             
-            mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+            mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
             param[j, ] <- mle$par
             
           } else if (distr[j] == "nbinom") {
@@ -163,7 +163,7 @@
             
             mle <- constrOptim(
               theta = theta0,
-              f = loglik,
+              f = logLik,
               ui = rbind(u0, u1),
               ci = c(c0, c1),
               method = "Nelder-Mead"
@@ -172,7 +172,7 @@
             
           } else if (distr[j] == "pois") {
             
-            mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = kmax - 1)
+            mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = kmax - 1)
             param[j, ] <- mle$par
             
           }
@@ -186,7 +186,7 @@
       
       if (cens.beg) {
         
-        loglik <- function(par) {
+        logLik <- function(par) {
           
           fv <- matrix(data = 0, nrow = s, ncol = kmax)
           Fv <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -225,7 +225,7 @@
         
       } else {
         
-        loglik <- function(par) {
+        logLik <- function(par) {
           
           fv <- matrix(data = 0, nrow = s, ncol = kmax)
           Fv <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -312,7 +312,7 @@
       mle <-
         constrOptim(
           theta = theta0,
-          f = loglik,
+          f = logLik,
           ui = u2,
           ci = c2,
           method = "Nelder-Mead"
@@ -340,7 +340,7 @@
     
     if (cens.beg) {
       
-      loglik <- function(par) {
+      logLik <- function(par) {
         
         parpuv <- matrix(par[1:(s * (s - 2))], nrow = s, ncol = s - 2, byrow = T)
         parpuv <- cbind(parpuv, 1 - apply(parpuv, 1, sum))
@@ -394,7 +394,7 @@
       
     } else {
       
-      loglik <- function(par) {
+      logLik <- function(par) {
         
         parpuv <- matrix(par[1:(s * (s - 2))], nrow = s, ncol = s - 2, byrow = T)
         parpuv <- cbind(parpuv, 1 - apply(parpuv, 1, sum))
@@ -504,7 +504,7 @@
     mle <-
       constrOptim(
         theta = c(rep(1 / (s - 1), s * (s - 2)), theta0),
-        f = loglik,
+        f = logLik,
         ui = u4,
         ci = c4,
         method = "Nelder-Mead"

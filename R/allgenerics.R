@@ -32,7 +32,6 @@ get.f <- function(x, k) {
 #' Method to get the number of parameters of a Markov or semi-Markov chain
 #' 
 #' @description Method to get the number of parameters of a Markov or 
-#'   semi-Markov chain. This method is useful for the computation of criteria 
 #'   such as AIC and BIC.
 #' 
 #' @param x An object for which the number of parameters can be returned (An 
@@ -176,46 +175,9 @@ get.Py <- function(x, k, upstates = x$states) {
 #' 
 #' @noRd
 #' 
-.loglik <- function(x, processes) {
-  UseMethod(".loglik", x)
+.logLik <- function(x, processes) {
+  UseMethod(".logLik", x)
 }
-
-
-#' Akaike Information Criterion (AIC)
-#' 
-#' @description Generic function computing the Akaike Information Criterion of 
-#'   the model `x`, with the list of sequences `sequences`.
-#' 
-#' @param x An object for which there exists a `loglik` attribute if 
-#'   `sequences = NULL` or a `loglik` method otherwise.
-#' @param sequences Optional. A list of vectors representing the sequences for 
-#'   which the AIC will be computed based on `x` using the method `loglik`.
-#' @return Value of the AIC.
-#' 
-#' @export
-#' 
-aic <- function(x, sequences = NULL) {
-  UseMethod("aic", x)
-}
-
-
-#' Bayesian Information Criterion (BIC)
-#' 
-#' @description Generic function computing the Bayesian Information Criterion 
-#'   of the model `x`, with the list of sequences `sequences`.
-#' 
-#' @param x An object for which there exists a `loglik` attribute if 
-#'   `sequences = NULL` or a `loglik` method otherwise.
-#' @param sequences Optional. A list of vectors representing the sequences for 
-#'   which the AIC will be computed based on `x` using the method `loglik`.
-#' @return Value of the BIC.
-#' 
-#' @export
-#' 
-bic <- function(x, sequences = NULL) {
-  UseMethod("bic", x)
-}
-
 
 #' Method to get the semi-Markov kernel \eqn{q}
 #' 
@@ -242,26 +204,6 @@ bic <- function(x, sequences = NULL) {
 getKernel <- function(x, k, var = FALSE, klim = 10000) {
   UseMethod("getKernel", x)
 }
-
-
-#' Log-likelihood Function
-#' 
-#' @description Generic function computing the log-likelihood of the model `x`,
-#'   with the list of sequences `sequences`.
-#' 
-#' @param x An object for which there exists a `loglik` attribute if 
-#'   `sequences = NULL`. Otherwise, the log-likelihood will be computed using 
-#'   the model `x` and the sequences `sequences`.
-#' @param sequences Optional. A list of vectors representing the sequences for 
-#'   which the log-likelihood will be computed based on `x`.
-#' @return Value of the log-likelihood.
-#' 
-#' @export
-#' 
-loglik <- function(x, sequences = NULL) {
-  UseMethod("loglik", x)
-}
-
 
 #' Mean Sojourn Times Function
 #' 

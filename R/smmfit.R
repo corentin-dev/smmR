@@ -1,8 +1,8 @@
-smmfit <- function(smm, M, loglik, sequences) {
+smmfit <- function(smm, M, logLik, sequences) {
   
   ans <- smm
   ans$M <- M
-  ans$loglik <- loglik
+  ans$logLik <- logLik
   ans$sequences <- sequences
   
   class(ans) <- c("smmfit", class(ans))
@@ -48,15 +48,15 @@ is.smmfit <- function(x) {
 #' 
 #' @export
 #' 
-aic.smmfit <- function(x, sequences = NULL) {
+AIC.smmfit <- function(x, sequences = NULL) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -75,9 +75,9 @@ aic.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-bic.smmfit <- function(x, sequences = NULL) {
+BIC.smmfit <- function(x, sequences = NULL) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
@@ -87,9 +87,9 @@ bic.smmfit <- function(x, sequences = NULL) {
     n <- sum(sapply(sequences, length))  
   }
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -138,7 +138,7 @@ getKernel.smmfit <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-loglik.smmfit <- function(x, sequences = NULL) {
+logLik.smmfit <- function(x, sequences = NULL) {
   
   # Computing a new value of log-likelihood based on the parameter sequences
   if (!is.null(sequences)) {
@@ -156,7 +156,7 @@ loglik.smmfit <- function(x, sequences = NULL) {
     
   } else {# Return the value of the log-likelihood
     
-    return(x$loglik)
+    return(x$logLik)
     
   }
   

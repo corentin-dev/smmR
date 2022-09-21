@@ -151,7 +151,7 @@ get.Kpar.mm <- function(x) {
 #' 
 #' @noRd
 #' 
-.loglik.mm <- function(x, processes) {
+.logLik.mm <- function(x, processes) {
   
   #############################
   # Let's compute the log-likelihood
@@ -163,9 +163,9 @@ get.Kpar.mm <- function(x) {
   Nij <- processes$Nij
   maskNij <- processes$Nij != 0 & x$ptrans != 0
   
-  loglik <- sum(Nstarti[maskNstarti] * log(x$init[maskNstarti])) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
+  logLik <- sum(Nstarti[maskNstarti] * log(x$init[maskNstarti])) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -183,15 +183,15 @@ get.Kpar.mm <- function(x) {
 #' 
 #' @export
 #' 
-aic.mm <- function(x, sequences) {
+AIC.mm <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -209,17 +209,17 @@ aic.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.mm <- function(x, sequences) {
+BIC.mm <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
   n <- sum(sapply(sequences, length))
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
 }
 
 
@@ -236,7 +236,7 @@ bic.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-loglik.mm <- function(x, sequences) {
+logLik.mm <- function(x, sequences) {
   
   #############################
   # Checking parameters sequences and states
@@ -252,9 +252,9 @@ loglik.mm <- function(x, sequences) {
   }
   
   processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k, verbose = FALSE)
-  loglik <- .loglik.mm(x = x, processes = processes)
+  logLik <- .logLik.mm(x = x, processes = processes)
   
-  return(loglik)
+  return(logLik)
   
 }
 

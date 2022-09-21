@@ -70,7 +70,7 @@
 #'     \item An attribute `M` which is an integer giving the total length of 
 #'       the set of sequences `sequences` (sum of all the lengths of the list 
 #'       `sequences`);
-#'     \item An attribute `loglik` which is a numeric value giving the value 
+#'     \item An attribute `logLik` which is a numeric value giving the value 
 #'       of the log-likelihood of the specified Markov model based on the 
 #'       `sequences`;
 #'     \item An attribute `sequences` which is equal to the parameter 
@@ -185,8 +185,8 @@ fitmm <- function(sequences, states, k = 1, init.estim = "mle") {
             "\" are 0.")
   }
   
-  loglik <- .loglik(x = mm, processes = processes)
-  estimate <- mmfit(mm = mm, M = processes$M, loglik = loglik, sequences = sequences)
+  logLik <- .logLik(x = mm, processes = processes)
+  estimate <- mmfit(mm = mm, M = processes$M, logLik = logLik, sequences = sequences)
   
   return(estimate)
 }

@@ -364,7 +364,7 @@ get.Kpar.smmnonparametric <- function(x) {
 #' 
 #' @noRd
 #' 
-.loglik.smmnonparametric <- function(x, processes) {
+.logLik.smmnonparametric <- function(x, processes) {
   
   kmax <- processes$kmax
   type.sojourn <- x$type.sojourn
@@ -386,7 +386,7 @@ get.Kpar.smmnonparametric <- function(x) {
     
     # Contribution of the initial distribution and 
     # the transition matrix to the log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij]))
     
     
@@ -396,28 +396,28 @@ get.Kpar.smmnonparametric <- function(x) {
       Nijk <- processes$counting$Nijk
       maskNijk <- Nijk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nijk[maskNijk] * log(x$distr[maskNijk]))
+      logLik <- logLik + sum(Nijk[maskNijk] * log(x$distr[maskNijk]))
       
     } else if (type.sojourn == "fi") {
       
       Nik <- processes$counting$Nik
       maskNik <- Nik != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nik[maskNik] * log(x$distr[maskNik]))
+      logLik <- logLik + sum(Nik[maskNik] * log(x$distr[maskNik]))
       
     } else if (type.sojourn == "fj") {
       
       Njk <- processes$counting$Njk
       maskNjk <- Njk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Njk[maskNjk] * log(x$distr[maskNjk]))
+      logLik <- logLik + sum(Njk[maskNjk] * log(x$distr[maskNjk]))
       
     } else {
       
       Nk <- processes$counting$Nk
       maskNk <- Nk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nk[maskNk] * log(x$distr[maskNk]))
+      logLik <- logLik + sum(Nk[maskNk] * log(x$distr[maskNk]))
       
     }
     
@@ -453,12 +453,12 @@ get.Kpar.smmnonparametric <- function(x) {
     
     maskNiub <- Niub != 0 & piujv != 0
     
-    loglik <- sum(Nstarti * log(init)) +
+    logLik <- sum(Nstarti * log(init)) +
       sum(Niub[maskNiub] * log(piujv[maskNiub]))
     
   }
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -476,15 +476,15 @@ get.Kpar.smmnonparametric <- function(x) {
 #' 
 #' @export
 #' 
-aic.smmnonparametric <- function(x, sequences) {
+AIC.smmnonparametric <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -502,17 +502,17 @@ aic.smmnonparametric <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.smmnonparametric <- function(x, sequences) {
+BIC.smmnonparametric <- function(x, sequences) {
   
-  loglik <- loglik(x, sequences)
+  logLik <- logLik(x, sequences)
   
   kpar <- .get.Kpar(x)
   
   n <- sum(sapply(sequences, length))
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -625,7 +625,7 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-loglik.smmnonparametric <- function(x, sequences) {
+logLik.smmnonparametric <- function(x, sequences) {
   
   #############################
   # Checking parameters sequences and states
@@ -645,9 +645,9 @@ loglik.smmnonparametric <- function(x, sequences) {
     stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
   }
   
-  loglik <- .loglik.smmnonparametric(x = x, processes = processes)
+  logLik <- .logLik.smmnonparametric(x = x, processes = processes)
   
-  return(loglik)
+  return(logLik)
   
 }
 
