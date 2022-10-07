@@ -183,11 +183,12 @@ get.Kpar.mm <- function(x) {
 #' 
 #' @export
 #' 
-AIC.mm <- function(x, sequences) {
+AIC.mm <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   AIC <- -2 * logLik + 2 * kpar
   
@@ -209,11 +210,12 @@ AIC.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-BIC.mm <- function(x, sequences) {
+BIC.mm <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
@@ -236,7 +238,9 @@ BIC.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-logLik.mm <- function(x, sequences) {
+logLik.mm <- function(object, ...) {
+
+  sequences = list(...)[1]
   
   #############################
   # Checking parameters sequences and states
@@ -246,13 +250,13 @@ logLik.mm <- function(x, sequences) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
     stop("Some states in the list of observed sequences 'sequences' 
-         are not in the state space given by the model 'x'")
+         are not in the state space given by the model 'object'")
   }
   
-  processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k, verbose = FALSE)
-  logLik <- .logLik.mm(x = x, processes = processes)
+  processes <- processesMarkov(sequences = sequences, states = object$states, k = object$k, verbose = FALSE)
+  logLik <- .logLik.mm(x = object, processes = processes)
   
   return(logLik)
   

@@ -48,11 +48,12 @@ is.mmfit <- function(x) {
 #' 
 #' @export
 #' 
-AIC.mmfit <- function(x, sequences = NULL) {
+AIC.mmfit <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   AIC <- -2 * logLik + 2 * kpar
   
@@ -74,14 +75,15 @@ AIC.mmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-BIC.mmfit <- function(x, sequences = NULL) {
+BIC.mmfit <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   if (is.null(sequences)) {
-    n <- x$M
+    n <- object$M
   } else {
     n <- sum(sapply(sequences, length))  
   }
@@ -106,25 +108,26 @@ BIC.mmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-logLik.mmfit <- function(x, sequences = NULL) {
+logLik.mmfit <- function(object, ...) {
   
   # Computing a new value of log-likelihood based on the parameter sequences
+  sequences = list(...)[1]
   if (!is.null(sequences)) {
     
     if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
       stop("The parameter 'sequences' should be a list of vectors")
     }
     
-    if (!all(unique(unlist(sequences)) %in% x$states)) {
+    if (!all(unique(unlist(sequences)) %in% object$states)) {
       stop("Some states in the list of observed sequences 'sequences' 
-         are not in the state space given by the model 'x'")
+         are not in the state space given by the model 'object'")
     }
     
-    NextMethod(x)
+    NextMethod(object)
     
   } else {# Return the value of the log-likelihood
     
-    return(x$logLik)
+    return(object$logLik)
     
   }
   

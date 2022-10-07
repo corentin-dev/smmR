@@ -741,11 +741,12 @@ get.Kpar.smmparametric <- function(x) {
 #' 
 #' @export
 #' 
-AIC.smmparametric <- function(x, sequences) {
+AIC.smmparametric <- function(object, ...) {
+
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  logLik <- logLik(x, sequences)
-  
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   AIC <- -2 * logLik + 2 * kpar
   
@@ -767,11 +768,12 @@ AIC.smmparametric <- function(x, sequences) {
 #' 
 #' @export
 #' 
-BIC.smmparametric <- function(x, sequences) {
+BIC.smmparametric <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
@@ -878,22 +880,23 @@ getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-logLik.smmparametric <- function(x, sequences) {
+logLik.smmparametric <- function(object, ...) {
   
   #############################
   # Checking parameters sequences and states
   #############################
-  
+
+  sequences = list(...)[1]
   if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'object'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
-  logLik <- .logLik.smmparametric(x = x, processes = processes)
+  processes <- processesSemiMarkov(sequences = sequences, states = object$states, verbose = FALSE)
+  logLik <- .logLik.smmparametric(x = object, processes = processes)
   
   return(logLik)
   

@@ -476,11 +476,12 @@ get.Kpar.smmnonparametric <- function(x) {
 #' 
 #' @export
 #' 
-AIC.smmnonparametric <- function(x, sequences) {
+AIC.smmnonparametric <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   AIC <- -2 * logLik + 2 * kpar
   
@@ -502,11 +503,12 @@ AIC.smmnonparametric <- function(x, sequences) {
 #' 
 #' @export
 #' 
-BIC.smmnonparametric <- function(x, sequences) {
+BIC.smmnonparametric <- function(object, ...) {
   
-  logLik <- logLik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
@@ -625,27 +627,28 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-logLik.smmnonparametric <- function(x, sequences) {
+logLik.smmnonparametric <- function(object, ...) {
   
   #############################
   # Checking parameters sequences and states
   #############################
   
+  sequences = list(...)[1]
   if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'object'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
+  processes <- processesSemiMarkov(sequences = sequences, states = object$states, verbose = FALSE)
   
-  if (!(processes$kmax == x$kmax)) {
-    stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
+  if (!(processes$kmax == object$kmax)) {
+    stop("kmax of the given sequences is different from the kmax of the estimated model 'object'")
   }
   
-  logLik <- .logLik.smmnonparametric(x = x, processes = processes)
+  logLik <- .logLik.smmnonparametric(x = object, processes = processes)
   
   return(logLik)
   
