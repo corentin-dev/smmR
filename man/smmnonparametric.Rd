@@ -110,6 +110,7 @@ semimarkov <- smmnonparametric(states = states, init = vect.init, ptrans = pij,
                                type.sojourn = "fj", distr = nparam.matrix)
 
 semimarkov
+
 }
 \references{
 V. S. Barbu, N. Limnios. (2008). Semi-Markov Chains and Hidden Semi-Markov

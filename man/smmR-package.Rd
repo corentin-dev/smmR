@@ -79,6 +79,7 @@ Journal of Applied Statistics, 46:10, 1756-1773.
 Useful links:
 \itemize{
   \item \url{https://plmlab.math.cnrs.fr/lmrs/statistique/smmR}
+  \item \url{https://lmrs.pages.math.cnrs.fr/statistique/smmR}
   \item Report bugs at \url{https://github.com/corentin-dev/smmR/issues}
 }
 

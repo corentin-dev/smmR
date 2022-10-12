@@ -1,0 +1,86 @@
+---
+title: "Introduction to smmR"
+output: rmarkdown::html_vignette
+description: >
+  This will help you start with smmR. Some functions are exposed here,
+  but do not hesitate to go further navigating the reference.
+vignette: >
+  %\VignetteIndexEntry{Introduction to smmR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+    fig.align = "center",
+    fig.height = 5.5,
+    fig.width = 6,
+    warning = FALSE,
+    collapse = TRUE,
+    dev.args = list(pointsize = 10),
+    out.width = "65%"
+)
+```
+
+Start by loading the needed libraries:
+```r
+library(smmR)
+```
+
+In our case, we will need a special distribution:
+```r
+library(DiscreteWeibull)
+```
+
+Then, let us create a **smmparametric** object to represent the semi-Markov chain associated to the system:
+```r
+# State space
+states <- c("1", "2", "3")
+# Initial distribution
+alpha <- c(1, 0, 0)
+# Transition matrix
+p <- matrix(data = c(0, 1, 0, 
+                     0.95, 0, 0.05, 
+                     1, 0, 0), nrow = 3, byrow = TRUE)
+# Distribution matrix
+distr <- matrix(c(NA, "geom", NA, 
+                  "dweibull", NA, "dweibull", 
+                  "dweibull", NA, NA), 
+                nrow = 3, ncol = 3, byrow = TRUE)
+param1 <- matrix(c(NA, 0.8, NA, 
+                   0.3, NA, 0.5,
+                   0.6, NA, NA), 
+                 nrow = 3, ncol = 3, byrow = TRUE)
+param2 <- matrix(c(NA, NA, NA, 
+                   0.5, NA, 0.7,
+                   0.9, NA, NA), 
+                 nrow = 3, ncol = 3, byrow = TRUE)
+parameters <- array(c(param1, param2), c(3, 3, 2))
+# Create smmparametric model
+factory <- smmparametric(states = states, init = alpha, ptrans = p, 
+                         type.sojourn = "fij", distr = distr, param = parameters)
+```
+
+After that, we are able to simulate a sequence of sample sizes $M = 10,000$:
+
+```r
+M <- 10000
+seq <- simulate(object = factory, nsim = M)
+```
+
+Thanks to the `smmR` package, we can estimate any semi-Markov model
+with one or several discrete sequences. In our case, we are going to
+introduce a **non-parametric estimation**:
+
+```r
+estimate <- fitsmm(sequences = seq, states = states, type.sojourn = "fij")
+```
+
+The estimate $\hat{p}$ of the transition matrix $p$ is:
+
+```r
+print(x = estimate$ptrans, digits = 2)
+```
+
+See the vignette `textile-factory` for more details.

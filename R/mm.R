@@ -22,6 +22,10 @@
 #' 
 #' # Specify a Markov model of order 1
 #' markov <- mm(states = states, init = init, ptrans = p, k = k)
+#'
+#' @testexamples
+#' expect_true(all(markov$param == p))
+#' expect_true(all(markov$init == init))
 #' 
 mm <- function(states, init, ptrans, k = 1) {
   
@@ -295,7 +299,12 @@ logLik.mm <- function(object, ...) {
 #' markov <- mm(states = states, init = init, ptrans = p, k = k)
 #' 
 #' seqs <- simulate(object = markov, nsim = c(1000, 10000, 2000), seed = 150)
-#' 
+#'
+#' @testexamples
+#' expect_equal(length(seqs), 3)
+#' expect_equal(sapply(seqs, length), c(1000, 10000, 2000))
+#' expect_equal(seqs[[1]][995:1000], c("g","c","a","c","a","t"))
+#'
 simulate.mm <- function(object, nsim = 1, seed = NULL, ...) {
   
   #############################
@@ -310,12 +319,13 @@ simulate.mm <- function(object, nsim = 1, seed = NULL, ...) {
   # Checking parameter seed
   #############################
   
-  if (is.null(seed)) {
-    seed <- round(as.numeric(Sys.time()))
-  }
-  
-  if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
-    stop("'seed' must be a positive integer")
+  if (!is.null(seed)) {
+    if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
+      stop("'seed' must be a positive integer")
+    }
+    {
+      set.seed(seed)
+    }
   }
   
   

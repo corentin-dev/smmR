@@ -40,11 +40,13 @@ Suggests:
     utils,
     knitr,
     rmarkdown,
-    testthat
+    testthat (>= 3.0.0),
+    roxytest
 LinkingTo: 
     Rcpp,
     RcppArmadillo
 VignetteBuilder: knitr
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd", "roxytest::testthat_roclet"))
 RoxygenNote: 7.2.0
+Config/testthat/edition: 3

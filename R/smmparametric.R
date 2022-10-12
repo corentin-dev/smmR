@@ -138,7 +138,14 @@
 #'                             type.sojourn = "fij", distr = distr.matrix, 
 #'                             param = param.array)
 #' semimarkov
-#' 
+#'
+#' @testexamples
+#' expect_true(all(semimarkov$init - vect.init == 0))
+#' expect_true(all(semimarkov$ptrans - pij == 0))
+#' expect_true(is.smm(semimarkov))
+#' expect_true(is.smmparametric(semimarkov))
+#' expect_false(is.smmnonparametric(semimarkov))
+#'
 smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                           distr, param, cens.beg = FALSE, cens.end = FALSE) {
   
