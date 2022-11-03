@@ -31,7 +31,7 @@ Based on a model specification (an object of class \code{smm}), it is possible t
 \item \strong{plot} conditional sojourn time distributions (method
 \code{plot.smm()});
 \item compute \strong{log-likelihood}, \strong{AIC} and \strong{BIC} criteria (methods
-\code{loglik()}, \code{aic()}, \code{bic()});
+\code{logLik()}, \code{AIC()}, \code{BIC()});
 \item compute \strong{reliability}, \strong{maintainability}, \strong{availability},
 \strong{failure rates} (methods \code{reliability()}, \code{maintainability()},
 \code{availability()}, \code{failureRate()}).
@@ -50,7 +50,7 @@ it is possible to:
 \item \strong{plot} estimated conditional sojourn time distributions
 (method \code{plot.smmfit()});
 \item compute \strong{log-likelihood}, \strong{AIC} and \strong{BIC} criteria (methods
-\code{loglik()}, \code{aic()}, \code{bic()});
+\code{logLik()}, \code{AIC()}, \code{BIC()});
 \item compute estimated \strong{reliability}, \strong{maintainability},
 \strong{availability}, \strong{failure rates} and their \strong{confidence intervals}
 (methods \code{reliability()}, \code{maintainability()}, \code{availability()},
@@ -75,17 +75,30 @@ I. Votsi & A. Brouste (2019) Confidence interval for the mean time to
 failure in semi-Markov models: an application to wind energy production,
 Journal of Applied Statistics, 46:10, 1756-1773.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://plmlab.math.cnrs.fr/lmrs/statistique/smmR}
+  \item \url{https://lmrs.pages.math.cnrs.fr/statistique/smmR}
+  \item Report bugs at \url{https://github.com/corentin-dev/smmR/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Nicolas Vergne \email{nicolas.vergne@univ-rouen.fr}
 
 Authors:
 \itemize{
   \item Vlad Stefan Barbu (\href{https://orcid.org/0000-0002-0840-016X}{ORCID})
-  \item Caroline Berard
-  \item Dominique Cellier
   \item Florian Lecocq
-  \item Corentin Lothode
-  \item Mathilde Sautreuil
+  \item Corentin Lothode (\href{https://orcid.org/0000-0002-8209-317X}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Caroline Berard [contributor]
+  \item Dominique Cellier [contributor]
+  \item Mathilde Sautreuil [contributor]
 }
 
 }

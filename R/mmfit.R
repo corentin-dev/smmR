@@ -1,8 +1,8 @@
-mmfit <- function(mm, M, loglik, sequences) {
+mmfit <- function(mm, M, logLik, sequences) {
   
   ans <- mm
   ans$M <- M
-  ans$loglik <- loglik
+  ans$logLik <- logLik
   ans$sequences <- sequences
   
   class(ans) <- c("mmfit", class(ans))
@@ -48,15 +48,16 @@ is.mmfit <- function(x) {
 #' 
 #' @export
 #' 
-aic.mmfit <- function(x, sequences = NULL) {
+AIC.mmfit <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -74,21 +75,22 @@ aic.mmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-bic.mmfit <- function(x, sequences = NULL) {
+BIC.mmfit <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   if (is.null(sequences)) {
-    n <- x$M
+    n <- object$M
   } else {
     n <- sum(sapply(sequences, length))  
   }
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -106,25 +108,26 @@ bic.mmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-loglik.mmfit <- function(x, sequences = NULL) {
+logLik.mmfit <- function(object, ...) {
   
   # Computing a new value of log-likelihood based on the parameter sequences
+  sequences = list(...)[1]
   if (!is.null(sequences)) {
     
     if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
       stop("The parameter 'sequences' should be a list of vectors")
     }
     
-    if (!all(unique(unlist(sequences)) %in% x$states)) {
+    if (!all(unique(unlist(sequences)) %in% object$states)) {
       stop("Some states in the list of observed sequences 'sequences' 
-         are not in the state space given by the model 'x'")
+         are not in the state space given by the model 'object'")
     }
     
-    NextMethod(x)
+    NextMethod(object)
     
   } else {# Return the value of the log-likelihood
     
-    return(x$loglik)
+    return(object$logLik)
     
   }
   

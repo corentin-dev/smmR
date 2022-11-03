@@ -3,7 +3,7 @@
   # Estimation of the parameters of the distribution (No censoring case)
   theta0 <- suppressWarnings(estdweibull(x = unlist(sapply(1:kmax, function(x) rep(x, counting$Nik[i, x]))), method = "ML", zero = FALSE))
   
-  loglik <- function(par) {
+  logLik <- function(par) {
     
     mask <- counting$Nik[i, ] != 0
     kmask <- (1:kmax)[mask]
@@ -25,7 +25,7 @@
   
   mle <- constrOptim(
     theta = theta0,
-    f = loglik,
+    f = logLik,
     ui = rbind(u0, u1),
     ci = c(c0, c1),
     method = "Nelder-Mead"
@@ -34,7 +34,7 @@
   
   if (!cens.beg & cens.end) {# Censoring at the end
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (1:kmax)[mask]
@@ -51,7 +51,7 @@
     
     mle <- constrOptim(
       theta = theta0,
-      f = loglik,
+      f = logLik,
       ui = rbind(u0, u1),
       ci = c(c0, c1),
       method = "Nelder-Mead"
@@ -60,7 +60,7 @@
     
   } else if (cens.beg & !cens.end) {# Censoring at the beginning
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (1:kmax)[mask]
@@ -77,7 +77,7 @@
     
     mle <- constrOptim(
       theta = theta0,
-      f = loglik,
+      f = logLik,
       ui = rbind(u0, u1),
       ci = c(c0, c1),
       method = "Nelder-Mead"
@@ -86,7 +86,7 @@
     
   } else if (cens.beg & cens.end) {# Censoring at the beginning and at the end
     
-    loglik <- function(par) {
+    logLik <- function(par) {
       
       mask <- counting$Nik[i, ] != 0
       kmask <- (1:kmax)[mask]
@@ -103,7 +103,7 @@
     
     mle <- constrOptim(
       theta = theta0,
-      f = loglik,
+      f = logLik,
       ui = rbind(u0, u1),
       ci = c(c0, c1),
       method = "Nelder-Mead"

@@ -1,15 +1,16 @@
 Type: Package
 Package: smmR
 Title: Simulation, Estimation and Reliability of Semi-Markov Models
-Version: 1.0.2.9000
+Version: 1.0.2.9
 Date: 2021-02-26
 Authors@R: c(person("Vlad Stefan", "Barbu", role = c("aut"),
     comment = c(ORCID = "0000-0002-0840-016X")),
-    person("Caroline", "Berard", role = c("aut")),
-    person("Dominique", "Cellier", role = c("aut")),
+    person("Caroline", "Berard", role = c("ctb")),
+    person("Dominique", "Cellier", role = c("ctb")),
     person("Florian", "Lecocq", role = c("aut")),
-    person("Corentin", "Lothode", role = c("aut")),
-    person("Mathilde", "Sautreuil", role = c("aut")),
+    person("Corentin", "Lothode", role = c("aut"),
+    comment = c(ORCID = "0000-0002-8209-317X")),
+    person("Mathilde", "Sautreuil", role = c("ctb")),
     person("Nicolas", "Vergne", role = c("aut", "cre"),
     email = "nicolas.vergne@univ-rouen.fr"))
 Description: Performs parametric and non-parametric estimation and simulation 
@@ -28,7 +29,9 @@ Description: Performs parametric and non-parametric estimation and simulation
     Trevezas, S., Limnios, N. (2011) <doi:10.1080/10485252.2011.555543>.
     Estimation and simulation of discrete-time k-th order Markov chains are 
     also considered.
-License: GPL
+URL: https://plmlab.math.cnrs.fr/lmrs/statistique/smmR, https://lmrs.pages.math.cnrs.fr/statistique/smmR
+BugReports: https://github.com/corentin-dev/smmR/issues
+License: GPL-3
 Imports:
     DiscreteWeibull,
     Rcpp,
@@ -36,11 +39,14 @@ Imports:
 Suggests: 
     utils,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0),
+    roxytest
 LinkingTo: 
     Rcpp,
     RcppArmadillo
 VignetteBuilder: knitr
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+Roxygen: list(markdown = TRUE, roclets = c("namespace", "rd", "roxytest::testthat_roclet"))
+RoxygenNote: 7.2.0
+Config/testthat/edition: 3

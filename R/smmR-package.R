@@ -25,7 +25,7 @@
 #'   \item **plot** conditional sojourn time distributions (method 
 #'     `plot.smm()`);
 #'   \item compute **log-likelihood**, **AIC** and **BIC** criteria (methods 
-#'     `loglik()`, `aic()`, `bic()`);
+#'     `logLik()`, `AIC()`, `BIC()`);
 #'   \item compute **reliability**, **maintainability**, **availability**, 
 #'     **failure rates** (methods `reliability()`, `maintainability()`, 
 #'     `availability()`, `failureRate()`).
@@ -44,7 +44,7 @@
 #'   \item **plot** estimated conditional sojourn time distributions 
 #'     (method `plot.smmfit()`);
 #'   \item compute **log-likelihood**, **AIC** and **BIC** criteria (methods 
-#'     `loglik()`, `aic()`, `bic()`);
+#'     `logLik()`, `AIC()`, `BIC()`);
 #'   \item compute estimated **reliability**, **maintainability**, 
 #'     **availability**, **failure rates** and their **confidence intervals** 
 #'     (methods `reliability()`, `maintainability()`, `availability()`, 
@@ -82,6 +82,7 @@
 #' @useDynLib smmR, .registration = TRUE
 ## usethis namespace: end
 ## usethis namespace: start
+#' @importFrom stats logLik AIC BIC
 #' @importFrom Rcpp sourceCpp
 ## usethis namespace: end
 "_PACKAGE"

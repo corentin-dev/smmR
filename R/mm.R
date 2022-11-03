@@ -22,6 +22,10 @@
 #' 
 #' # Specify a Markov model of order 1
 #' markov <- mm(states = states, init = init, ptrans = p, k = k)
+#'
+#' @testexamples
+#' expect_true(all(markov$param == p))
+#' expect_true(all(markov$init == init))
 #' 
 mm <- function(states, init, ptrans, k = 1) {
   
@@ -47,7 +51,7 @@ mm <- function(states, init, ptrans, k = 1) {
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
-  if (!((sum(init) >= 1 - .Machine$double.eps) | (sum(init) <= 1 + .Machine$double.eps))) {
+  if (!((sum(init) >= 1 - sqrt(.Machine$double.eps)) | (sum(init) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("The sum of 'init' is not equal to one")
   }
   
@@ -75,7 +79,7 @@ mm <- function(states, init, ptrans, k = 1) {
     stop("Probabilities in 'ptrans' must be between [0, 1]")
   }
   
-  if (!all((apply(ptrans, 1, sum) >= 1 - .Machine$double.eps) | (apply(ptrans, 1, sum) <= 1 + .Machine$double.eps))) {
+  if (!all((apply(ptrans, 1, sum) >= 1 - sqrt(.Machine$double.eps)) | (apply(ptrans, 1, sum) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
@@ -151,7 +155,7 @@ get.Kpar.mm <- function(x) {
 #' 
 #' @noRd
 #' 
-.loglik.mm <- function(x, processes) {
+.logLik.mm <- function(x, processes) {
   
   #############################
   # Let's compute the log-likelihood
@@ -163,9 +167,9 @@ get.Kpar.mm <- function(x) {
   Nij <- processes$Nij
   maskNij <- processes$Nij != 0 & x$ptrans != 0
   
-  loglik <- sum(Nstarti[maskNstarti] * log(x$init[maskNstarti])) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
+  logLik <- sum(Nstarti[maskNstarti] * log(x$init[maskNstarti])) + sum(Nij[maskNij] * log(x$ptrans[maskNij]))
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -183,15 +187,16 @@ get.Kpar.mm <- function(x) {
 #' 
 #' @export
 #' 
-aic.mm <- function(x, sequences) {
+AIC.mm <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -209,17 +214,18 @@ aic.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.mm <- function(x, sequences) {
+BIC.mm <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
 }
 
 
@@ -236,7 +242,9 @@ bic.mm <- function(x, sequences) {
 #' 
 #' @export
 #' 
-loglik.mm <- function(x, sequences) {
+logLik.mm <- function(object, ...) {
+
+  sequences = list(...)[1]
   
   #############################
   # Checking parameters sequences and states
@@ -246,15 +254,15 @@ loglik.mm <- function(x, sequences) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
     stop("Some states in the list of observed sequences 'sequences' 
-         are not in the state space given by the model 'x'")
+         are not in the state space given by the model 'object'")
   }
   
-  processes <- processesMarkov(sequences = sequences, states = x$states, k = x$k, verbose = FALSE)
-  loglik <- .loglik.mm(x = x, processes = processes)
+  processes <- processesMarkov(sequences = sequences, states = object$states, k = object$k, verbose = FALSE)
+  logLik <- .logLik.mm(x = object, processes = processes)
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -291,7 +299,12 @@ loglik.mm <- function(x, sequences) {
 #' markov <- mm(states = states, init = init, ptrans = p, k = k)
 #' 
 #' seqs <- simulate(object = markov, nsim = c(1000, 10000, 2000), seed = 150)
-#' 
+#'
+#' @testexamples
+#' expect_equal(length(seqs), 3)
+#' expect_equal(sapply(seqs, length), c(1000, 10000, 2000))
+#' expect_equal(seqs[[1]][995:1000], c("g","c","a","c","a","t"))
+#'
 simulate.mm <- function(object, nsim = 1, seed = NULL, ...) {
   
   #############################
@@ -306,12 +319,13 @@ simulate.mm <- function(object, nsim = 1, seed = NULL, ...) {
   # Checking parameter seed
   #############################
   
-  if (is.null(seed)) {
-    seed <- round(as.numeric(Sys.time()))
-  }
-  
-  if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
-    stop("'seed' must be a positive integer")
+  if (!is.null(seed)) {
+    if (!all(is.numeric(seed), seed >= 0, (seed %% 1) == 0)) {
+      stop("'seed' must be a positive integer")
+    }
+    {
+      set.seed(seed)
+    }
   }
   
   

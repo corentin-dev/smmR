@@ -1,8 +1,8 @@
-smmfit <- function(smm, M, loglik, sequences) {
+smmfit <- function(smm, M, logLik, sequences) {
   
   ans <- smm
   ans$M <- M
-  ans$loglik <- loglik
+  ans$logLik <- logLik
   ans$sequences <- sequences
   
   class(ans) <- c("smmfit", class(ans))
@@ -48,15 +48,16 @@ is.smmfit <- function(x) {
 #' 
 #' @export
 #' 
-aic.smmfit <- function(x, sequences = NULL) {
+AIC.smmfit <- function(object, ...) {
+
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences=sequences)
   
-  loglik <- loglik(x, sequences)
+  kpar <- .get.Kpar(object)
   
-  kpar <- .get.Kpar(x)
+  AIC <- -2 * logLik + 2 * kpar
   
-  aic <- -2 * loglik + 2 * kpar
-  
-  return(aic)
+  return(AIC)
   
 }
 
@@ -75,21 +76,22 @@ aic.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @export
 #' 
-bic.smmfit <- function(x, sequences = NULL) {
+BIC.smmfit <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences=sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   if (is.null(sequences)) {
-    n <- x$M
+    n <- object$M
   } else {
     n <- sum(sapply(sequences, length))  
   }
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -138,25 +140,26 @@ getKernel.smmfit <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-loglik.smmfit <- function(x, sequences = NULL) {
-  
+logLik.smmfit <- function(object, ...) {
+
   # Computing a new value of log-likelihood based on the parameter sequences
+  sequences = list(...)[1]
   if (!is.null(sequences)) {
     
     if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
       stop("The parameter 'sequences' should be a list of vectors")
     }
     
-    if (!all(unique(unlist(sequences)) %in% x$states)) {
+    if (!all(unique(unlist(sequences)) %in% object$states)) {
       stop("Some states in the list of observed sequences 'sequences' 
-         are not in the state space given by the model 'x'")
+         are not in the state space given by the model 'object'")
     }
     
-    NextMethod(x)
+    NextMethod(object)
     
   } else {# Return the value of the log-likelihood
     
-    return(x$loglik)
+    return(object$logLik)
     
   }
   
@@ -191,32 +194,32 @@ loglik.smmfit <- function(x, sequences = NULL) {
 #' 
 #' @examples 
 #' states <- c("a", "c", "g", "t")
-# s <- length(states)
-# 
-# # Creation of the initial distribution
-# vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
-# 
-# # Creation of the transition matrix
-# pij <- matrix(c(0, 0.2, 0.3, 0.4, 0.2, 0, 0.5, 0.2, 0.5, 
-#                 0.3, 0, 0.4, 0.3, 0.5, 0.2, 0), ncol = s)
-# 
-# # Creation of the distribution matrix
-# distr.vec <- c("pois", "geom", "geom", "geom")
-# parameters <- matrix(c(2, 0.6, 0.8, 0.8, NA, NA, NA, NA), 
-#                      ncol = 2, byrow = FALSE)
-# 
-# # Specify the semi-Markov model
-# smm <- smmparametric(states = states, init = vect.init, ptrans = pij, 
-#                      type.sojourn = "fi", distr = distr.vec, param = parameters)
-# 
-# seqs <- simulate(object = smm, nsim = rep(5000, 100), seed = 10)
-# 
-# est <- fitsmm(sequences = seqs, states = states, type.sojourn = "fi", distr = distr.vec)
-# 
-# class(est)
-# 
-# plot(x = est, i = "a", col = "blue", pch = "+")
-# 
+#' s <- length(states)
+#' 
+#' # Creation of the initial distribution
+#' vect.init <- c(1 / 4, 1 / 4, 1 / 4, 1 / 4)
+#' 
+#' # Creation of the transition matrix
+#' pij <- matrix(c(0, 0.2, 0.3, 0.4, 0.2, 0, 0.5, 0.2, 0.5, 
+#'                 0.3, 0, 0.4, 0.3, 0.5, 0.2, 0), ncol = s)
+#' 
+#' # Creation of the distribution matrix
+#' distr.vec <- c("pois", "geom", "geom", "geom")
+#' parameters <- matrix(c(2, 0.6, 0.8, 0.8, NA, NA, NA, NA), 
+#'                      ncol = 2, byrow = FALSE)
+#' 
+#' # Specify the semi-Markov model
+#' smm <- smmparametric(states = states, init = vect.init, ptrans = pij, 
+#'                      type.sojourn = "fi", distr = distr.vec, param = parameters)
+#' 
+#' seqs <- simulate(object = smm, nsim = rep(5000, 100), seed = 10)
+#' 
+#' est <- fitsmm(sequences = seqs, states = states, type.sojourn = "fi", distr = distr.vec)
+#' 
+#' class(est)
+#' 
+#' plot(x = est, i = "a", col = "blue", pch = "+")
+#'
 plot.smmfit <- function(x, i, j, klim = NULL, ...) {
   NextMethod(x)
 }

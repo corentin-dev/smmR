@@ -40,7 +40,7 @@ The S3 class \code{mmfit} contains:
 \item An attribute \code{M} which is an integer giving the total length of
 the set of sequences \code{sequences} (sum of all the lengths of the list
 \code{sequences});
-\item An attribute \code{loglik} which is a numeric value giving the value
+\item An attribute \code{logLik} which is a numeric value giving the value
 of the log-likelihood of the specified Markov model based on the
 \code{sequences};
 \item An attribute \code{sequences} which is equal to the parameter

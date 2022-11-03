@@ -139,7 +139,7 @@
 #'     \item An attribute `M` which is an integer giving the total length of 
 #'       the set of sequences `sequences` (sum of all the lengths of the list 
 #'       `sequences`);
-#'     \item An attribute `loglik` which is a numeric value giving the value 
+#'     \item An attribute `logLik` which is a numeric value giving the value 
 #'       of the log-likelihood of the specified semi-Markov model based on the 
 #'       `sequences`;
 #'     \item An attribute `sequences` which is equal to the parameter 
@@ -205,6 +205,11 @@
 #' est <- fitsmm(sequences = seqs, states = states, type.sojourn = "fij", 
 #'               distr = distr.matrix)
 #' 
+#' @testexamples
+#' expect_equal(length(seqs), 3)
+#' #expect_equal(sapply(seqs, length), c(1000, 10000, 2000))
+#' expect_equal(seqs[[1]][995:1000], c("t","t","t","t","c","t"))
+#'
 fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
                                distr = "nonparametric", init.estim = "mle", cens.beg = FALSE, cens.end = FALSE) {
   
@@ -321,8 +326,8 @@ fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"),
             "\" are 0.")
   }
   
-  loglik <- .loglik(x = smm, processes = processes)
-  estimate <- smmfit(smm = smm, M = processes$M, loglik = loglik, sequences = sequences)
+  logLik <- .logLik(x = smm, processes = processes)
+  estimate <- smmfit(smm = smm, M = processes$M, logLik = logLik, sequences = sequences)
   
   return(estimate)
   

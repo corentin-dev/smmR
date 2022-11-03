@@ -42,7 +42,7 @@
       
       if (cens.beg) {
         
-        loglik <- function(par) {
+        logLik <- function(par) {
           
           fv <- matrix(data = 0, nrow = s, ncol = kmax)
           Fv <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -99,7 +99,7 @@
         
       } else {
         
-        loglik <- function(par) {
+        logLik <- function(par) {
           
           fv <- matrix(data = 0, nrow = s, ncol = kmax)
           fv2 <- matrix(data = 0, nrow = s, ncol = kmax)
@@ -161,7 +161,7 @@
         
         mle <- constrOptim(
           theta = theta0,
-          f = loglik,
+          f = logLik,
           ui = rbind(u0, u1),
           ci = c(c0, c1),
           method = "Nelder-Mead"
@@ -170,7 +170,7 @@
         
       } else if (distr[i, abs(i - 3)] == "geom") {
         
-        mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = 1)
+        mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = 1)
         param[abs(i - 3), ] <- mle$par
         
       } else if (distr[i, abs(i - 3)] == "nbinom") {
@@ -187,7 +187,7 @@
         
         mle <- constrOptim(
           theta = theta0,
-          f = loglik,
+          f = logLik,
           ui = rbind(u0, u1),
           ci = c(c0, c1),
           method = "Nelder-Mead"
@@ -196,7 +196,7 @@
         
       } else if (distr[i, abs(i - 3)] == "pois") {
         
-        mle <- optim(par = theta0, loglik, method = "Brent", lower = 0, upper = kmax - 1)
+        mle <- optim(par = theta0, logLik, method = "Brent", lower = 0, upper = kmax - 1)
         param[abs(i - 3), ] <- mle$par
         
       }
@@ -210,7 +210,7 @@
     
     if (cens.beg) {
       
-      loglik <- function(par) {
+      logLik <- function(par) {
         
         parpuv <- par[1:(s - 2)]
         parpuv <- c(parpuv, 1 - sum(parpuv))
@@ -271,7 +271,7 @@
       
     } else {
       
-      loglik <- function(par) {
+      logLik <- function(par) {
         
         parpuv <- par[1:(s - 2)]
         parpuv <- c(parpuv, 1 - sum(parpuv))
@@ -386,7 +386,7 @@
     mle <-
       constrOptim(
         theta = c(rep(1 / (s - 1), (s - 2)), theta0),
-        loglik,
+        logLik,
         ui = u4,
         ci = c4,
         method = "Nelder-Mead"

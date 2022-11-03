@@ -95,6 +95,13 @@
 #'                                type.sojourn = "fj", distr = nparam.matrix)
 #' 
 #' semimarkov
+#'
+#' @testexamples
+#' expect_true(all(semimarkov$init - vect.init == 0))
+#' expect_true(all(semimarkov$ptrans - pij == 0))
+#' expect_true(is.smm(semimarkov))
+#' expect_false(is.smmparametric(semimarkov))
+#' expect_true(is.smmnonparametric(semimarkov))
 smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                              distr, cens.beg = FALSE, cens.end = FALSE) {
   
@@ -120,7 +127,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
-  if (!((sum(init) >= 1 - .Machine$double.eps) & (sum(init) <= 1 + .Machine$double.eps))) {
+  if (!((sum(init) >= 1 - sqrt(.Machine$double.eps)) & (sum(init) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("The sum of 'init' is not equal to one")
   }
   
@@ -144,7 +151,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
   }
   
-  if (!all((apply(ptrans, 1, sum) >= 1 - .Machine$double.eps) & (apply(ptrans, 1, sum) <= 1 + .Machine$double.eps))) {
+  if (!all((apply(ptrans, 1, sum) >= 1 - sqrt(.Machine$double.eps)) & (apply(ptrans, 1, sum) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
@@ -171,8 +178,8 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
     temp <- apply(distr, c(1, 2), sum)
     indexdiag <- seq(1, s * s, by = s + 1)
     
-    checkTemp <- ((temp[-indexdiag] >= 0) | (temp[-indexdiag] <= .Machine$double.eps)) & 
-      ((temp[-indexdiag] >= 1 - .Machine$double.eps) | (temp[-indexdiag] <= 1 + .Machine$double.eps))
+    checkTemp <- ((temp[-indexdiag] >= 0) | (temp[-indexdiag] <= sqrt(.Machine$double.eps))) & 
+      ((temp[-indexdiag] >= 1 - sqrt(.Machine$double.eps)) | (temp[-indexdiag] <= 1 + sqrt(.Machine$double.eps)))
     
     if (!all(diag(temp) == 0, checkTemp)) {
       stop("'distr' is not a stochastic matrix")
@@ -186,7 +193,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric matrix of dimension (s, kmax) since 'type.sojourn == \"fi\"' or 'type.sojourn == \"fj\"'")
     }
     
-    if (!all((apply(distr, 1, sum) >= 1 - .Machine$double.eps) & (apply(distr, 1, sum) <= 1 + .Machine$double.eps))) {
+    if (!all((apply(distr, 1, sum) >= 1 - sqrt(.Machine$double.eps)) & (apply(distr, 1, sum) <= 1 + sqrt(.Machine$double.eps)))) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -198,7 +205,7 @@ smmnonparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi",
       stop("'distr' must be a numeric vector of length kmax since 'type.sojourn == \"f\"'")  
     }
     
-    if (!((sum(distr) >= 1 - .Machine$double.eps) & (sum(distr) <= 1 + .Machine$double.eps))) {
+    if (!((sum(distr) >= 1 - sqrt(.Machine$double.eps)) & (sum(distr) <= 1 + sqrt(.Machine$double.eps)))) {
       stop("'distr' is not a stochastic matrix")
     }
     
@@ -364,7 +371,7 @@ get.Kpar.smmnonparametric <- function(x) {
 #' 
 #' @noRd
 #' 
-.loglik.smmnonparametric <- function(x, processes) {
+.logLik.smmnonparametric <- function(x, processes) {
   
   kmax <- processes$kmax
   type.sojourn <- x$type.sojourn
@@ -386,7 +393,7 @@ get.Kpar.smmnonparametric <- function(x) {
     
     # Contribution of the initial distribution and 
     # the transition matrix to the log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij]))
     
     
@@ -396,28 +403,28 @@ get.Kpar.smmnonparametric <- function(x) {
       Nijk <- processes$counting$Nijk
       maskNijk <- Nijk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nijk[maskNijk] * log(x$distr[maskNijk]))
+      logLik <- logLik + sum(Nijk[maskNijk] * log(x$distr[maskNijk]))
       
     } else if (type.sojourn == "fi") {
       
       Nik <- processes$counting$Nik
       maskNik <- Nik != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nik[maskNik] * log(x$distr[maskNik]))
+      logLik <- logLik + sum(Nik[maskNik] * log(x$distr[maskNik]))
       
     } else if (type.sojourn == "fj") {
       
       Njk <- processes$counting$Njk
       maskNjk <- Njk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Njk[maskNjk] * log(x$distr[maskNjk]))
+      logLik <- logLik + sum(Njk[maskNjk] * log(x$distr[maskNjk]))
       
     } else {
       
       Nk <- processes$counting$Nk
       maskNk <- Nk != 0 & x$distr != 0
       
-      loglik <- loglik + sum(Nk[maskNk] * log(x$distr[maskNk]))
+      logLik <- logLik + sum(Nk[maskNk] * log(x$distr[maskNk]))
       
     }
     
@@ -453,12 +460,12 @@ get.Kpar.smmnonparametric <- function(x) {
     
     maskNiub <- Niub != 0 & piujv != 0
     
-    loglik <- sum(Nstarti * log(init)) +
+    logLik <- sum(Nstarti * log(init)) +
       sum(Niub[maskNiub] * log(piujv[maskNiub]))
     
   }
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -476,15 +483,16 @@ get.Kpar.smmnonparametric <- function(x) {
 #' 
 #' @export
 #' 
-aic.smmnonparametric <- function(x, sequences) {
+AIC.smmnonparametric <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
-  aic <- -2 * loglik + 2 * kpar
+  AIC <- -2 * logLik + 2 * kpar
   
-  return(aic)
+  return(AIC)
   
 }
 
@@ -502,17 +510,18 @@ aic.smmnonparametric <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.smmnonparametric <- function(x, sequences) {
+BIC.smmnonparametric <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -625,29 +634,30 @@ getKernel.smmnonparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-loglik.smmnonparametric <- function(x, sequences) {
+logLik.smmnonparametric <- function(object, ...) {
   
   #############################
   # Checking parameters sequences and states
   #############################
   
+  sequences = list(...)[1]
   if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'object'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
+  processes <- processesSemiMarkov(sequences = sequences, states = object$states, verbose = FALSE)
   
-  if (!(processes$kmax == x$kmax)) {
-    stop("kmax of the given sequences is different from the kmax of the estimated model 'x'")
+  if (!(processes$kmax == object$kmax)) {
+    stop("kmax of the given sequences is different from the kmax of the estimated model 'object'")
   }
   
-  loglik <- .loglik.smmnonparametric(x = x, processes = processes)
+  logLik <- .logLik.smmnonparametric(x = object, processes = processes)
   
-  return(loglik)
+  return(logLik)
   
 }
 

@@ -138,7 +138,14 @@
 #'                             type.sojourn = "fij", distr = distr.matrix, 
 #'                             param = param.array)
 #' semimarkov
-#' 
+#'
+#' @testexamples
+#' expect_true(all(semimarkov$init - vect.init == 0))
+#' expect_true(all(semimarkov$ptrans - pij == 0))
+#' expect_true(is.smm(semimarkov))
+#' expect_true(is.smmparametric(semimarkov))
+#' expect_false(is.smmnonparametric(semimarkov))
+#'
 smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "fj", "f"), 
                           distr, param, cens.beg = FALSE, cens.end = FALSE) {
   
@@ -164,7 +171,7 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
     stop("Probabilities in 'init' must be between [0, 1]")
   }
   
-  if (!((sum(init) >= 1 - .Machine$double.eps) & (sum(init) <= 1 + .Machine$double.eps))) {
+  if (!((sum(init) >= 1 - sqrt(.Machine$double.eps)) & (sum(init) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("The sum of 'init' is not equal to one")
   }
   
@@ -188,7 +195,7 @@ smmparametric <- function(states, init, ptrans, type.sojourn = c("fij", "fi", "f
     stop("All the diagonal elements of 'ptrans' must be equal to 0 since transitions to the same state are not allowed")
   }
   
-  if (!all((apply(ptrans, 1, sum) >= 1 - .Machine$double.eps) & (apply(ptrans, 1, sum) <= 1 + .Machine$double.eps))) {
+  if (!all((apply(ptrans, 1, sum) >= 1 - sqrt(.Machine$double.eps)) & (apply(ptrans, 1, sum) <= 1 + sqrt(.Machine$double.eps)))) {
     stop("'ptrans' is not a stochastic matrix (column sums accross rows must be equal to one for each row)")
   }
   
@@ -589,7 +596,7 @@ get.Kpar.smmparametric <- function(x) {
 #' 
 #' @noRd
 #' 
-.loglik.smmparametric <- function(x, processes) {
+.logLik.smmparametric <- function(x, processes) {
   
   kmax <- processes$kmax
   type.sojourn <- x$type.sojourn
@@ -617,7 +624,7 @@ get.Kpar.smmparametric <- function(x) {
     maskNijk <- Nijk != 0 & f != 0
     
     # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nijk[maskNijk] * log(f[maskNijk]))
     
@@ -635,7 +642,7 @@ get.Kpar.smmparametric <- function(x) {
       Neik <- processes$counting$Neik
       maskNeik <- Neik != 0 & Fbarj != 0
       
-      loglik <- loglik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
+      logLik <- logLik + (1 * cens.beg) * sum(Nbijk[maskNbijk] * log(Fbar[maskNbijk])) +
         (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
       
     }
@@ -646,7 +653,7 @@ get.Kpar.smmparametric <- function(x) {
     maskNik <- Nik != 0 & f != 0
     
     # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nik[maskNik] * log(f[maskNik]))
     
@@ -661,7 +668,7 @@ get.Kpar.smmparametric <- function(x) {
       Neik <- processes$counting$Neik
       maskNeik <- Neik != 0 & Fbar != 0
       
-      loglik <- loglik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
+      logLik <- logLik + (1 * cens.beg) * sum(Nbik[maskNbik] * log(Fbar[maskNbik])) +
         (1 * cens.end) * sum(Neik[maskNeik] * log(Fbar[maskNeik]))
       
     }
@@ -672,7 +679,7 @@ get.Kpar.smmparametric <- function(x) {
     maskNjk <- Njk != 0 & f != 0
     
     # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Njk[maskNjk] * log(f[maskNjk]))
     
@@ -690,7 +697,7 @@ get.Kpar.smmparametric <- function(x) {
       Neik <- processes$counting$Neik
       maskNeik <- Neik != 0 & Fbar != 0
       
-      loglik <- loglik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
+      logLik <- logLik + (1 * cens.beg) * sum(Nbjk[maskNbjk] * log(Fbar[maskNbjk])) +
         (1 * cens.end) * sum(Neik[maskNeik] * log(Fbarj[maskNeik]))
       
     }
@@ -701,7 +708,7 @@ get.Kpar.smmparametric <- function(x) {
     maskNk <- Nk != 0 & f != 0
     
     # Uncensored log-likelihood
-    loglik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
+    logLik <- sum(Nstarti[maskNstarti] * log(init[maskNstarti])) +
       sum(Nij[maskNij] * log(pij[maskNij])) +
       sum(Nk[maskNk] * log(f[maskNk]))
     
@@ -716,14 +723,14 @@ get.Kpar.smmparametric <- function(x) {
       Nek <- processes$counting$Nek
       maskNek <- Nek != 0 & Fbar != 0
       
-      loglik <- loglik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
+      logLik <- logLik + (1 * cens.beg) * sum(Nbk[maskNbk] * log(Fbar[maskNbk])) +
         (1 * cens.end) * sum(Nek[maskNek] * log(Fbar[maskNek]))
       
     }
     
   }
   
-  return(loglik)
+  return(logLik)
   
 }
 
@@ -741,15 +748,16 @@ get.Kpar.smmparametric <- function(x) {
 #' 
 #' @export
 #' 
-aic.smmparametric <- function(x, sequences) {
+AIC.smmparametric <- function(object, ...) {
+
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  loglik <- loglik(x, sequences)
+  kpar <- .get.Kpar(object)
   
-  kpar <- .get.Kpar(x)
+  AIC <- -2 * logLik + 2 * kpar
   
-  aic <- -2 * loglik + 2 * kpar
-  
-  return(aic)
+  return(AIC)
   
 }
 
@@ -767,17 +775,18 @@ aic.smmparametric <- function(x, sequences) {
 #' 
 #' @export
 #' 
-bic.smmparametric <- function(x, sequences) {
+BIC.smmparametric <- function(object, ...) {
   
-  loglik <- loglik(x, sequences)
+  sequences = list(...)[1]
+  logLik <- logLik(object, sequences)
   
-  kpar <- .get.Kpar(x)
+  kpar <- .get.Kpar(object)
   
   n <- sum(sapply(sequences, length))
   
-  bic <- -2 * loglik + log(n) * kpar
+  BIC <- -2 * logLik + log(n) * kpar
   
-  return(bic)
+  return(BIC)
   
 }
 
@@ -878,24 +887,25 @@ getKernel.smmparametric <- function(x, k, var = FALSE, klim = 10000) {
 #' 
 #' @export
 #' 
-loglik.smmparametric <- function(x, sequences) {
+logLik.smmparametric <- function(object, ...) {
   
   #############################
   # Checking parameters sequences and states
   #############################
-  
+
+  sequences = list(...)[1]
   if (!(is.list(sequences) & all(sapply(sequences, class) %in% c("character", "numeric")))) {
     stop("The parameter 'sequences' should be a list of vectors")
   }
   
-  if (!all(unique(unlist(sequences)) %in% x$states)) {
-    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'x'")
+  if (!all(unique(unlist(sequences)) %in% object$states)) {
+    stop("Some states in the list of observed sequences 'sequences' are not in the state space given by the model 'object'")
   }
   
-  processes <- processesSemiMarkov(sequences = sequences, states = x$states, verbose = FALSE)
-  loglik <- .loglik.smmparametric(x = x, processes = processes)
+  processes <- processesSemiMarkov(sequences = sequences, states = object$states, verbose = FALSE)
+  logLik <- .logLik.smmparametric(x = object, processes = processes)
   
-  return(loglik)
+  return(logLik)
   
 }
 
