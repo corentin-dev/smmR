@@ -4,17 +4,22 @@
 
 ## Description
 
-Performs parametric and non-parametric estimation and simulation 
-for multi-state discrete-time semi-Markov processes. For the parametric 
-estimation, several discrete distributions are considered for the sojourn 
-times: Uniform, Geometric, Poisson, Discrete Weibull and Negative Binomial.
-The non-parametric estimation concerns the sojourn time distributions, 
-where no assumptions are done on the shape of distributions. Moreover, the 
-estimation can be done on the basis of one or several sample paths, with or
-without censoring at the beginning or/and at the end of the sample paths. 
-Reliability indicators such as reliability, maintainability, availability, 
-BMP-failure rate, RG-failure rate, mean time to failure and mean time to 
-repair are available as well. The implemented methods are described in 
+Performs parametric and non-parametric estimation and simulation for multi-state discrete-time semi-Markov processes.
+
+For the parametric estimation, several discrete distributions are considered for the sojourn 
+times:
+
+- Uniform,
+- Geometric,
+- Poisson,
+- Discrete Weibull
+- Negative Binomial.
+
+The non-parametric estimation concerns the sojourn time distributions, where no assumptions are done on the shape of distributions. Moreover, the estimation can be done on the basis of one or several sample paths, with or without censoring at the beginning or/and at the end of the sample paths. 
+
+Reliability indicators such as reliability, maintainability, availability, BMP-failure rate, RG-failure rate, mean time to failure and mean time to repair are available as well.
+
+The implemented methods are described in:
 
 * Barbu, V. S., & Limnios, N. (2009). Semi-Markov chains and hidden semi-Markov models toward applications: their use in reliability and DNA analysis (Vol. 191). _Springer Science & Business Media_. doi:10.1007/978-0-387-73173-5. ([Journal version](https://link.springer.com/book/10.1007/978-0-387-73173-5))
 
@@ -30,7 +35,6 @@ also considered.
 The official repository is at [PLMLab](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/). But to help with issues and contributions, a mirror has been setup at [Github](https://github.com/corentin-dev/smmR).
 
 ## Install
-
 
 * Install from CRAN:
 
