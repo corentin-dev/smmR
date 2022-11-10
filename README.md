@@ -47,6 +47,70 @@ if (!require("devtools")) {
 devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", dependencies = TRUE, build_vignettes = FALSE)
 ```
 
+## Quickstart
+
+```R
+library(smmR)
+```
+
+To create an object `smmparametric`, we need several informations:
+
+- a state space (here `states`)
+- an initial distribution (here `alpha`)
+- a transition matrix (here `p`)
+- a distribution matrix stating the laws (here `dist`)
+- parameters for each states
+
+```R
+states <- c("a", "b", "c") # state space
+
+alpha <- c(1, 0, 0) # initial distribution
+```
+
+We define the transition matrix `p` and the distribution matrix `dist` (see [here](https://lmrs.pages.math.cnrs.fr/statistique/smmR/reference/smmparametric.html?q=geom#arguments) for details):
+```R
+p <- matrix(data = c(0.0, 0.5, 0.5,
+                     1.0, 0.0, 0.0,
+                     1.0, 0.0, 0.0),
+            nrow = 3, ncol = 3, byrow = TRUE)
+
+distr <- matrix(c(NA, "geom", "geom", 
+                  "geom", NA, NA,
+                  "geom", NA, NA), 
+                nrow = 3, ncol = 3, byrow = TRUE) # Distribution matrix
+```
+
+There is only one parameter for the geometrical law:
+```
+parameters <- array(c( NA, 0.8, 0.8,
+                       0.3,  NA,  NA,
+                       0.5,  NA,  NA,
+                       NA,  NA,  NA,
+                       NA,  NA,  NA,
+                       NA,  NA,  NA), 
+                    c(3, 3, 2))
+```
+
+Finally, we create our object `smmparametric`:
+
+```R
+mysmmparam <- smmparametric(states = states, init = alpha, ptrans = p, 
+                         type.sojourn = "fij", distr = distr, param = parameters)
+```
+
+From this `smmparametric` object, we can simulate sequences:
+```R
+M <- 10000
+seq <- simulate(object = mysmmparam, nsim = M)
+```
+
+And we can fit another model, here a `smmnonparametric` object:
+```R
+estimate <- fitsmm(sequences = seq, states = states, type.sojourn = "fij")
+```
+
+You can find an application to reliability [here](https://lmrs.pages.math.cnrs.fr/statistique/smmR/articles/Textile-Factory.html).
+
 ## Contributing
 
 Contributions to this package are warmly welcome. Do not hesitate to open an issue to discuss new features. 
