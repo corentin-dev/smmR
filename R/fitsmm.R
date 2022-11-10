@@ -207,7 +207,7 @@
 #' 
 #' @testexamples
 #' expect_equal(length(seqs), 3)
-#' #expect_equal(sapply(seqs, length), c(1000, 10000, 2000))
+#' expect_true(all(sapply(seqs, length) >= c(1000, 10000, 2000)))
 #' expect_equal(seqs[[1]][995:1000], c("t","t","t","t","c","t"))
 #'
 fitsmm <- function(sequences, states, type.sojourn = c("fij", "fi", "fj", "f"), 
