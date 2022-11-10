@@ -30,10 +30,6 @@ The implemented methods are described in:
 Estimation and simulation of discrete-time k-th order Markov chains are 
 also considered.
 
-## Contribute
-
-The official repository is at [PLMLab](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/). But to help with issues and contributions, a mirror has been setup at [Github](https://github.com/corentin-dev/smmR).
-
 ## Install
 
 * Install from CRAN:
@@ -118,6 +114,8 @@ You can find an application to reliability [here](https://lmrs.pages.math.cnrs.f
 ## Contributing
 
 Contributions to this package are warmly welcome. Do not hesitate to open an issue to discuss new features. 
+
+The official repository is at [PLMLab](https://plmlab.math.cnrs.fr/lmrs/statistique/smmR/). But to help with issues and contributions, a mirror has been setup at [Github](https://github.com/corentin-dev/smmR).
 
 If you want to contribute to the code, you can fork the repository, make some changes and create a pull request to have them integrated into the package. You can use the `devtools::check()` function in order to verify that tests are still passing. See also the contributing guidelines.
 
