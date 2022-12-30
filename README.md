@@ -12,7 +12,7 @@ times:
 - Uniform,
 - Geometric,
 - Poisson,
-- Discrete Weibull
+- Discrete Weibull,
 - Negative Binomial.
 
 The non-parametric estimation concerns the sojourn time distributions, where no assumptions are done on the shape of distributions. Moreover, the estimation can be done on the basis of one or several sample paths, with or without censoring at the beginning or/and at the end of the sample paths. 
@@ -53,13 +53,13 @@ devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", depen
 library(smmR)
 ```
 
-To create an object `smmparametric`, we need several informations:
+To create an object `smmparametric`, we need several pieces of information:
 
 - a state space (here `states`)
 - an initial distribution (here `alpha`)
 - a transition matrix (here `p`)
 - a distribution matrix stating the laws (here `dist`)
-- parameters for each states
+- parameters for each state
 
 ```R
 states <- c("a", "b", "c") # state space
