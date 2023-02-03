@@ -44,7 +44,10 @@ install.packages('smmR')
 if (!require("devtools")) {
   install.packages("devtools")
 }
-devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", dependencies = TRUE, build_vignettes = FALSE)
+devtools::install_git(
+  url = "https://plmlab.math.cnrs.fr/lmrs/statistique/smmR",
+  dependencies = TRUE,
+  build_vignettes = FALSE)
 ```
 
 ## Quickstart
