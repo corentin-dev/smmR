@@ -1,8 +1,8 @@
 Type: Package
 Package: smmR
 Title: Simulation, Estimation and Reliability of Semi-Markov Models
-Version: 1.0.2.9
-Date: 2021-02-26
+Version: 1.0.4
+Date: 2023-02-03
 Authors@R: c(person("Vlad Stefan", "Barbu", role = c("aut"),
     comment = c(ORCID = "0000-0002-0840-016X")),
     person("Caroline", "Berard", role = c("ctb")),

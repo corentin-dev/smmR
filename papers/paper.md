@@ -79,7 +79,10 @@ or directly from the repository in order to get the `git` version:
 if (!require("devtools")) {
   install.packages("devtools")
 }
-devtools::install_git("https://plmlab.math.cnrs.fr/lmrs/statistique/smmR", dependencies = TRUE, build_vignettes = FALSE)
+devtools::install_git(
+  url = "https://plmlab.math.cnrs.fr/lmrs/statistique/smmR",
+  dependencies = TRUE,
+  build_vignettes = FALSE)
 ```
 
 Load the library:
@@ -133,6 +136,13 @@ The estimate $\hat{p}$ of the transition matrix $p$ is:
 
 ```r
 print(x = estimate$ptrans, digits = 2)
+```
+
+```
+     1 2    3
+1 0.00 1 0.00
+2 0.95 0 0.05
+3 1.00 0 0.00
 ```
 
 # Contributing
