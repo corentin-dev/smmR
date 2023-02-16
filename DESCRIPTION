@@ -5,12 +5,9 @@ Version: 1.0.4
 Date: 2023-02-03
 Authors@R: c(person("Vlad Stefan", "Barbu", role = c("aut"),
     comment = c(ORCID = "0000-0002-0840-016X")),
-    person("Caroline", "Berard", role = c("ctb")),
-    person("Dominique", "Cellier", role = c("ctb")),
     person("Florian", "Lecocq", role = c("aut")),
     person("Corentin", "Lothode", role = c("aut"),
     comment = c(ORCID = "0000-0002-8209-317X")),
-    person("Mathilde", "Sautreuil", role = c("ctb")),
     person("Nicolas", "Vergne", role = c("aut", "cre"),
     email = "nicolas.vergne@univ-rouen.fr"))
 Description: Performs parametric and non-parametric estimation and simulation 
