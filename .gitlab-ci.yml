@@ -1,5 +1,5 @@
 build_package:
-  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/rmd:4.1.2
+  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/r-rmd:latest
   stage: build
   script:
     - apt update
@@ -14,7 +14,7 @@ build_package:
     paths:
       - docs
 pages:
-  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/rmd:4.1.2
+  image: registry.plmlab.math.cnrs.fr/docker-images/rocker-r-ver/r-rmd:latest
   stage: deploy
   script:
     - mkdir public
